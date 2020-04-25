@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="Envelopes.CategoriesPage.CategoriesGrid.CategoriesGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:categoriesGrid="clr-namespace:Envelopes.CategoriesPage.CategoriesGrid"
+             d:DataContext="{d:DesignInstance categoriesGrid:ICategoriesGridViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel>
+        <Label Content="Accounts" />
+        <DataGrid Name="AccountsDataGrid"
+                  CanUserAddRows="False"
+                  AutoGenerateColumns="False"
+                  SelectedItem="{Binding SelectedAccount}"
+                  ItemsSource="{Binding AccountsList}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id"
+                                    Width="*"
+                                    Binding="{Binding Id}"
+                                    FontSize="15" />
+                <DataGridTextColumn Header="Account"
+                                    Width="3*"
+                                    Binding="{Binding Name}"
+                                    FontSize="15" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.DeleteAccountCommand}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Command="{Binding AddAccountCommand}" Content="Add Account" />
+    </StackPanel>
+</UserControl>

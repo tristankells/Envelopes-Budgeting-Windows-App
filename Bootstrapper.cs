@@ -1,4 +1,5 @@
 ﻿using Envelopes.Data;
+using Envelopes.Data.Persistence;
 using Envelopes.TransactionsPage;
 using Envelopes.TransactionsPage.AccountsPane;
 using Ninject.Modules;
@@ -23,6 +24,9 @@ namespace Envelopes
             kernel.Bind<ITransactionsPageViewModel>().To<TransactionsPageViewModel>();
             kernel.Bind<IAccountsPanePresenter>().To<AccountsPanePresenter>();
             kernel.Bind<IAccountsPaneViewModel>().To<AccountsPaneViewModel>();
+
+            kernel.Bind<IPersistenceService>().To<ExcelPersistenceService>();
+            kernel.Bind<IDataService>().To<DataService>().InSingletonScope();
         }
     }
 }

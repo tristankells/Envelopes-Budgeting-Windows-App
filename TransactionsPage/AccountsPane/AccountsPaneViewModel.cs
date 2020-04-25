@@ -15,27 +15,19 @@ namespace Envelopes.TransactionsPage.AccountsPane {
         public Account SelectedAccount { get; set; }
         public void AddAccount(Account account);
         public bool RemoveAccount(Account account);
-
-        public event PropertyChangedEventHandler OnAccountNameUpdated;
     }
 
     public class AccountsPaneViewModel : NotifyPropertyChanged, IAccountsPaneViewModel {
-        private ObservableCollection<Account> accountsList;
         public ICommand AddAccountCommand { get; set; }
         public ICommand DeleteAccountCommand { get; set; }
-
-        public event PropertyChangedEventHandler OnAccountNameUpdated;
-
+        
         private Account selectedAccount;
         public Account SelectedAccount {
             get => selectedAccount;
             set => SetPropertyValue(ref selectedAccount, value, nameof(SelectedAccount));
         }
 
-        public AccountsPaneViewModel() {
-            accountsList = new ObservableCollection<Account>();
-        }
-
+        private ObservableCollection<Account> accountsList;
         public ObservableCollection<Account> AccountsList {
             get => accountsList;
 
@@ -51,6 +43,10 @@ namespace Envelopes.TransactionsPage.AccountsPane {
             }
         }
 
+        public AccountsPaneViewModel() {
+            accountsList = new ObservableCollection<Account>();
+        }
+
         public void AddAccount(Account account) {
             account.PropertyChanged += OnItemPropertyChanged;
             accountsList.Add(account);
@@ -62,11 +58,9 @@ namespace Envelopes.TransactionsPage.AccountsPane {
             return accountsList.Remove(account);
         }
 
-
         private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(Account.Name):
-                    OnAccountNameUpdated?.Invoke(sender, e);
                     break;
 
             }

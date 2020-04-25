@@ -15,41 +15,50 @@ namespace Envelopes.TransactionsPage.AccountsPane {
         public AccountsPaneView GetView();
     }
 
-    class AccountsPanePresenter : Presenter, IAccountsPanePresenter {
+    public class AccountsPanePresenter : Presenter, IAccountsPanePresenter {
         #region Fields
 
         private readonly AccountsPaneView view;
         private readonly IAccountsPaneViewModel viewModel;
+        private readonly IDataService dataService;
 
         #endregion
 
-        public AccountsPanePresenter(AccountsPaneView view, IAccountsPaneViewModel viewModel) : base(view, viewModel) {
+        public AccountsPanePresenter(AccountsPaneView view, 
+            IAccountsPaneViewModel viewModel,
+            IDataService dataService) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
-
+            this.dataService = dataService;
 
             BindEvents();
             BindCommands();
         }
 
         private void BindEvents() {
-            view.Loaded += View_Loaded; 
-            //viewModel.OnAccountNameUpdated += ViewModel_OnAccountNameUpdated;
+            view.Loaded += View_Loaded;
             view.AccountsDataGrid.CellEditEnding += AccountsDataGrid_CellEditEnding;
-         
         }
 
-        private void AccountsDataGrid_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e) {
-            var editedTextBox = (TextBox) e.EditingElement;
-            if (editedTextBox == null) {
-                return;
+        private void AccountsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+            switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
+                case nameof(Account.Name):
+                    ValidateAccountNameTextBoxUpdate(e);
+                    break;
             }
+        }
 
+        private void ValidateAccountNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
+            var editedTextBox = (TextBox)e.EditingElement;
             var newAccountName = editedTextBox.Text;
-            var existingNames = viewModel.AccountsList.Select(account => account.Name);
-            if (existingNames.Contains(newAccountName)) {
-                view.AccountsDataGrid.CancelEdit();
+            if (!IsAccountNameUnique(newAccountName)) {
+                editedTextBox.Text = (e.Row.Item as Account)?.Name ?? string.Empty;
             }
+        }
+
+        private bool IsAccountNameUnique(string newName) {
+            var existingNames = viewModel.AccountsList.Select(account => account.Name);
+            return !existingNames.Contains(newName);
         }
 
 
@@ -65,7 +74,7 @@ namespace Envelopes.TransactionsPage.AccountsPane {
         }
 
         private void AddAccount() {
-            var newAccount = DataService.Instance.AddAccount();
+            var newAccount = dataService.AddAccount();
             viewModel.AddAccount(newAccount);
         }
 
@@ -91,7 +100,7 @@ namespace Envelopes.TransactionsPage.AccountsPane {
 
         private void DeleteAccount() {
             var selectedAccount = viewModel.SelectedAccount;
-            DataService.Instance.RemoveAccount(selectedAccount);
+            dataService.RemoveAccount(selectedAccount);
             viewModel.RemoveAccount(selectedAccount);
         }
 
@@ -102,7 +111,7 @@ namespace Envelopes.TransactionsPage.AccountsPane {
         public AccountsPaneView GetView() => view;
 
         private void PopulateAccountsList() {
-            var accounts = DataService.Instance.GetAccounts();
+            var accounts = dataService.GetAccounts();
             foreach (var account in accounts) {
                 viewModel.AddAccount(account);
             }

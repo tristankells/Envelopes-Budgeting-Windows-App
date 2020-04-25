@@ -14,6 +14,7 @@ namespace Envelopes
         public FrameworkElement CurrentPage { get; set; }
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
+        public ICommand SaveBudgetCommand { get; set; }
     }
     public class MainWindowViewModel : NotifyPropertyChanged, IMainWindowViewModel
     {
@@ -25,6 +26,8 @@ namespace Envelopes
 
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
+        public ICommand SaveBudgetCommand { get; set; }
+        
 
         public FrameworkElement CurrentPage {
             get => currentPage;

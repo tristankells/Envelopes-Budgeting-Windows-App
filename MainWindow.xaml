@@ -9,6 +9,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <StackPanel Orientation="Vertical">
+            <Button Command="{Binding SaveBudgetCommand }" Content="Save"></Button>
             <Button Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions"></Button>
             <Button Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
             <ContentControl Content="{Binding CurrentPage}"/>

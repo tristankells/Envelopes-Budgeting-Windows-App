@@ -5,16 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Envelopes.Models;
 
-namespace Envelopes.Data {
-    interface IPersistenceService {
-
-        Task SaveAccounts(IList<Account> accounts, string path);
-        Task SaveAccounts(IList<Account> accounts);
-
-        Task<IList<Account>> LoadAccounts(string path);
-        Task<IList<Account>> LoadAccounts();
-    }
-
+namespace Envelopes.Data.Persistence {
     public class JsonPersistenceService : IPersistenceService {
         private const string DefaultBudgetJsonPath = "Envelopes.json";
         private readonly string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -23,13 +14,17 @@ namespace Envelopes.Data {
             await SaveAccounts(accounts, DefaultBudgetJsonPath);
         }
 
-        public async Task SaveAccounts(IList<Account> accounts, string path) {
+        public async Task SaveAccounts(IList<Account> accounts, string fileName) {
             // Turn list in to json object
             var json = JsonSerializer.Serialize(accounts);
 
             // Write the specified text asynchronously to a new file named "YouNeedABudget.json".
-            await using var outputFile = new StreamWriter(Path.Combine(docPath, path));
+            await using var outputFile = new StreamWriter(Path.Combine(docPath, fileName));
             await outputFile.WriteAsync(json);
+        }
+
+        public async Task<IList<Account>> LoadAccounts() {
+            return await LoadAccounts(DefaultBudgetJsonPath);
         }
 
         public async Task<IList<Account>> LoadAccounts(string path) {
@@ -43,8 +38,13 @@ namespace Envelopes.Data {
             return accounts;
         }
 
-        public async Task<IList<Account>> LoadAccounts() {
-            return await LoadAccounts(DefaultBudgetJsonPath);
+
+        public Task<ApplicationData> GetApplicationData(string fileName) {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ApplicationData> GetApplicationData() {
+            return await GetApplicationData(DefaultBudgetJsonPath);
         }
     }
 }

@@ -12,8 +12,8 @@
         <DataGrid Name="AccountsDataGrid"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
-                  SelectedItem="{Binding SelectedAccount}"
-                  ItemsSource="{Binding AccountsList}">
+                  SelectedItem="{Binding SelectedItem}"
+                  ItemsSource="{Binding ItemList}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id"
                                     Width="*"
@@ -27,12 +27,12 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Delete"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.DeleteAccountCommand}" />
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.DeleteItemCommand}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding AddAccountCommand}" Content="Add Account" />
+        <Button Command="{Binding AddItemCommand}" Content="Add Account" />
     </StackPanel>
 </UserControl>

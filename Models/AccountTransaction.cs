@@ -13,16 +13,16 @@ namespace Envelopes.Models
         private int payeeId;
         private int categoryId;
         private string memo;
-        private float outflow;
-        private float inflow;
+        private decimal outflow;
+        private decimal inflow;
 
         #endregion
 
         #region Properties
 
-        public int ID {
+        public int Id {
             get => id;
-            set => SetPropertyValue(ref id, value, nameof(ID));
+            set => SetPropertyValue(ref id, value, nameof(Id));
         }
 
         public int AccountId {
@@ -50,12 +50,12 @@ namespace Envelopes.Models
             set => SetPropertyValue(ref memo, value, nameof(Memo));
         }
 
-        public float Outflow {
+        public decimal Outflow {
             get => outflow;
             set => SetPropertyValue(ref outflow, value, nameof(Outflow));
         }
 
-        public float Inflow {
+        public decimal Inflow {
             get => inflow;
             set => SetPropertyValue(ref inflow, value, nameof(Inflow));
         }

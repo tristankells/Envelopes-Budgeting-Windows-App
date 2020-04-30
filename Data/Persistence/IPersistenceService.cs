@@ -1,15 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Envelopes.Models;
+﻿using System.Threading.Tasks;
 
-namespace Envelopes.Data {
+namespace Envelopes.Data.Persistence {
     public interface IPersistenceService {
 
-        Task SaveAccounts(IList<Account> accounts, string fileName);
-        Task SaveAccounts(IList<Account> accounts);
-
-        Task<IList<Account>> LoadAccounts(string path);
-        Task<IList<Account>> LoadAccounts();
+        Task SaveApplicationData(ApplicationData data, string fileName);
+        Task SaveApplicationData(ApplicationData data);
 
         Task<ApplicationData> GetApplicationData(string fileName);
         Task<ApplicationData> GetApplicationData();

@@ -16,6 +16,6 @@
             Name="AccountsPaneControl" />
         <ContentControl
             Grid.Column="1"
-            Name="TransactionGrid" />
+            Name="TransactionsGridControl" />
     </Grid>
 </UserControl>

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Envelopes.Models;
 
-namespace Envelopes.Data
-{
+namespace Envelopes.Data {
     /// <summary>
     /// Data wrapper for passing application entities loaded from persistence service. 
     /// </summary>
@@ -21,6 +20,15 @@ namespace Envelopes.Data
             Categories = new List<Category>();
             CategoryGroups = new List<CategoryGroup>();
             Payees = new List<Payee>();
+        }
+
+        public ApplicationData(IList<Account> accounts, IList<AccountTransaction> accountTransactions,
+            IList<Category> categories, IList<CategoryGroup> categoryGroups, IList<Payee> payees) {
+            Accounts = accounts;
+            AccountTransactions = accountTransactions;
+            Categories = categories;
+            CategoryGroups = categoryGroups;
+            Payees = payees;
         }
     }
 }

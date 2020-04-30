@@ -1,17 +1,13 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Models;
+using Envelopes.TransactionsPage.AccountsPane;
 
-namespace Envelopes.TransactionsPage.AccountsPane {
-    public interface IAccountsPanePresenter  {
+namespace Envelopes.Pages.TransactionsPage.AccountsPane {
+    public interface IAccountsPanePresenter {
         public AccountsPaneView GetView();
     }
 
@@ -24,7 +20,9 @@ namespace Envelopes.TransactionsPage.AccountsPane {
 
         #endregion
 
-        public AccountsPanePresenter(AccountsPaneView view, 
+        #region Constructors
+
+        public AccountsPanePresenter(AccountsPaneView view,
             IAccountsPaneViewModel viewModel,
             IDataService dataService) : base(view, viewModel) {
             this.view = view;
@@ -35,9 +33,14 @@ namespace Envelopes.TransactionsPage.AccountsPane {
             BindCommands();
         }
 
+        #endregion
+
+        #region Events
+
         private void BindEvents() {
             view.Loaded += View_Loaded;
             view.AccountsDataGrid.CellEditEnding += AccountsDataGrid_CellEditEnding;
+            view.Unloaded += View_Unloaded;
         }
 
         private void AccountsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
@@ -48,8 +51,22 @@ namespace Envelopes.TransactionsPage.AccountsPane {
             }
         }
 
+        private void View_Loaded(object sender, RoutedEventArgs e) {
+            PopulateAccountsList();
+        }
+
+        private void View_Unloaded(object sender, RoutedEventArgs e) {
+            viewModel.ItemList.Clear();
+        }
+
+        #endregion
+
+        #region Methods
+
+        public AccountsPaneView GetView() => view;
+
         private void ValidateAccountNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
-            var editedTextBox = (TextBox)e.EditingElement;
+            var editedTextBox = (TextBox) e.EditingElement;
             var newAccountName = editedTextBox.Text;
             if (!IsAccountNameUnique(newAccountName)) {
                 editedTextBox.Text = (e.Row.Item as Account)?.Name ?? string.Empty;
@@ -57,25 +74,20 @@ namespace Envelopes.TransactionsPage.AccountsPane {
         }
 
         private bool IsAccountNameUnique(string newName) {
-            var existingNames = viewModel.AccountsList.Select(account => account.Name);
+            var existingNames = viewModel.ItemList.Select(account => account.Name);
             return !existingNames.Contains(newName);
         }
 
-
         private void BindCommands() {
-            viewModel.AddAccountCommand = new DelegateCommand(ExecuteAddAccount, CanExecuteAddAccount);
-            viewModel.DeleteAccountCommand = new DelegateCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
+            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddAccount, CanExecuteAddAccount);
+            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
         }
 
         private bool CanExecuteAddAccount() => true;
 
         private void ExecuteAddAccount() {
-            AddAccount();
-        }
-
-        private void AddAccount() {
             var newAccount = dataService.AddAccount();
-            viewModel.AddAccount(newAccount);
+            viewModel.AddItem(newAccount);
         }
 
         private bool CanExecuteDeleteAccount() => true;
@@ -95,26 +107,21 @@ namespace Envelopes.TransactionsPage.AccountsPane {
                     DeleteAccount();
                     break;
             }
-
         }
 
         private void DeleteAccount() {
-            var selectedAccount = viewModel.SelectedAccount;
+            var selectedAccount = viewModel.SelectedItem;
             dataService.RemoveAccount(selectedAccount);
-            viewModel.RemoveAccount(selectedAccount);
+            viewModel.RemoveItem(selectedAccount);
         }
-
-        private void View_Loaded(object sender, RoutedEventArgs e) {
-            PopulateAccountsList();
-        }
-
-        public AccountsPaneView GetView() => view;
 
         private void PopulateAccountsList() {
             var accounts = dataService.GetAccounts();
             foreach (var account in accounts) {
-                viewModel.AddAccount(account);
+                viewModel.AddItem(account);
             }
         }
+
+        #endregion
     }
 }

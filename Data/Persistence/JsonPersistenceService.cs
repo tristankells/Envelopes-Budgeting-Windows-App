@@ -10,11 +10,11 @@ namespace Envelopes.Data.Persistence {
         private const string DefaultBudgetJsonPath = "Envelopes.json";
         private readonly string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        public async Task SaveAccounts(IList<Account> accounts) {
-            await SaveAccounts(accounts, DefaultBudgetJsonPath);
+        public async Task SaveApplicationData(IList<Account> accounts) {
+            await SaveApplicationData(accounts, DefaultBudgetJsonPath);
         }
 
-        public async Task SaveAccounts(IList<Account> accounts, string fileName) {
+        public async Task SaveApplicationData(IList<Account> accounts, string fileName) {
             // Turn list in to json object
             var json = JsonSerializer.Serialize(accounts);
 
@@ -38,6 +38,14 @@ namespace Envelopes.Data.Persistence {
             return accounts;
         }
 
+
+        public Task SaveApplicationData(ApplicationData data, string fileName) {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveApplicationData(ApplicationData data) {
+            throw new NotImplementedException();
+        }
 
         public Task<ApplicationData> GetApplicationData(string fileName) {
             throw new NotImplementedException();

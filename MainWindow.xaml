@@ -6,12 +6,18 @@
         xmlns:envelopes="clr-namespace:Envelopes"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="900" Width="1600">
     <Grid>
         <StackPanel Orientation="Vertical">
             <Button Command="{Binding SaveBudgetCommand }" Content="Save"></Button>
-            <Button Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions"></Button>
-            <Button Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions"></Button>
+                <Button Grid.Column="1" Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
+            </Grid>
             <ContentControl Content="{Binding CurrentPage}"/>
         </StackPanel>
     </Grid>

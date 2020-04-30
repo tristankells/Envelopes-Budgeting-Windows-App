@@ -9,7 +9,7 @@ using Envelopes.TransactionsPage.AccountsPane;
 
 namespace Envelopes
 {
-    public interface IMainWindowViewModel : IViewModel
+    public interface IMainWindowViewModel : IViewModelBase
     {
         public FrameworkElement CurrentPage { get; set; }
         public ICommand NavigateToTransactionsPageCommand { get; set; }

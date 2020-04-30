@@ -5,12 +5,64 @@ using Envelopes.Data.Persistence;
 using Envelopes.Models;
 
 namespace Envelopes.Data {
+    public interface IIdentifierService {
+        public void Setup(ApplicationData applicationData);
+        public int GetNewAccountId();
+        public int GetNewCategoryId();
+        int GetNewTransactionId();
+    }
+
+    public class IdentifierService : IIdentifierService {
+        private int accountIdCounter;
+        private int categoryIdCounter;
+        private int accountTransactionsIdCounter;
+
+        public void Setup(ApplicationData applicationData) {
+            accountIdCounter = applicationData.Accounts.Any()
+                ? applicationData.Accounts.Select(account => account.Id).Max()
+                : 0;
+            categoryIdCounter = applicationData.Categories.Any()
+                ? applicationData.Categories.Select(account => account.Id).Max()
+                : 0;
+            accountTransactionsIdCounter = applicationData.AccountTransactions.Any()
+                ? applicationData.AccountTransactions.Select(account => account.Id).Max()
+                : 0;
+        }
+
+        public int GetNewAccountId() {
+            accountIdCounter++;
+            return accountIdCounter;
+        }
+
+        public int GetNewCategoryId() {
+            categoryIdCounter++;
+            return categoryIdCounter;
+        }
+
+        public int GetNewTransactionId() {
+            accountTransactionsIdCounter++;
+            return accountTransactionsIdCounter;
+        }
+    }
+
     public interface IDataService {
-        public IEnumerable<Account> GetAccounts();
         public Task LoadApplicationData();
-        public Account RemoveAccount(Account account);
         public Task SaveBudget();
+
+        //Accounts
+        public IEnumerable<Account> GetAccounts();
         public Account AddAccount();
+        public bool RemoveAccount(Account account);
+
+        // Categories
+        public IEnumerable<Category> GetCategories();
+        public bool RemoveCategory(Category selectedAccount);
+        public Category AddCategory();
+
+        // Account Transactions
+        public IEnumerable<AccountTransaction> GetAccountTransactions();
+        public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
+        public AccountTransaction AddAccountTransaction();
     }
 
     public class DataService : IDataService {
@@ -18,16 +70,19 @@ namespace Envelopes.Data {
         public string FileName { get; set; }
 
         private IList<Account> accounts;
+        private IList<Category> categories;
+        private IList<AccountTransaction> accountTransactions;
+
         private readonly IPersistenceService persistenceService;
+        private readonly IIdentifierService identifierService;
 
-        private int accountIdCounter;
-
-        /// <summary>
-        /// Until I can figure out how to get the singleton pattern working with Ninject, injecting dependencies in here.
-        /// </summary>
-        public DataService(IPersistenceService persistenceService) {
+        public DataService(IPersistenceService persistenceService, IIdentifierService identifierService) {
             accounts = new List<Account>();
-            this.persistenceService = new ExcelPersistenceService();
+            categories = new List<Category>();
+            accountTransactions = new List<AccountTransaction>();
+
+            this.persistenceService = persistenceService;
+            this.identifierService = identifierService;
         }
 
         public async Task LoadApplicationData() {
@@ -35,12 +90,31 @@ namespace Envelopes.Data {
                 ? persistenceService.GetApplicationData()
                 : persistenceService.GetApplicationData(FileName));
 
-            accounts = applicationData.Accounts;
+            identifierService.Setup(applicationData);
 
-            // Finding the largest ID, make our ID counter that number + 1
-            if (accounts.Any()) {
-                accountIdCounter = accounts.Select(account => account.Id).Max() + 1;
-            }
+            accounts = applicationData.Accounts;
+            categories = applicationData.Categories;
+            accountTransactions = applicationData.AccountTransactions;
+        }
+
+
+        /// <summary>
+        /// Attempts to save data to specified persistence service.
+        /// </summary>
+        public async Task SaveBudget() {
+            var applicationData = new ApplicationData() {
+                Accounts = accounts.ToList(),
+                Categories = categories.ToList(),
+                AccountTransactions = accountTransactions.ToList()
+            };
+            await (string.IsNullOrEmpty(FileName)
+                ? persistenceService.SaveApplicationData(applicationData)
+                : persistenceService.SaveApplicationData(applicationData, FileName));
+        }
+
+        // Accounts
+        public IEnumerable<Account> GetAccounts() {
+            return accounts;
         }
 
         /// <summary>
@@ -48,9 +122,8 @@ namespace Envelopes.Data {
         /// </summary>
         public Account AddAccount() {
             var account = new Account() {
-                Id = accountIdCounter
+                Id = identifierService.GetNewAccountId()
             };
-            accountIdCounter++;
             accounts.Add(account);
             return account;
         }
@@ -58,22 +131,42 @@ namespace Envelopes.Data {
         /// <summary>
         /// Save new account to to Account list. Save 
         /// </summary>
-        public Account RemoveAccount(Account account) {
-            accounts.Remove(account);
-            return account;
+        public bool RemoveAccount(Account account) {
+            return accounts.Remove(account);
         }
 
-        /// <summary>
-        /// Attempts to save data to specified persistence service.
-        /// </summary>
-        public async Task SaveBudget() {
-            await (string.IsNullOrEmpty(FileName)
-                ? persistenceService.SaveAccounts(accounts.ToList())
-                : persistenceService.SaveAccounts(accounts.ToList(), FileName));
+        // Categories
+        public IEnumerable<Category> GetCategories() {
+            return categories;
         }
 
-        public IEnumerable<Account> GetAccounts() {
-            return accounts;
+        public Category AddCategory() {
+            var category = new Category() {
+                Id = identifierService.GetNewCategoryId()
+            };
+            categories.Add(category);
+            return category;
+        }
+
+        public bool RemoveCategory(Category category) {
+            return categories.Remove(category);
+        }
+
+        // Account Transactions
+        public IEnumerable<AccountTransaction> GetAccountTransactions() {
+            return accountTransactions;
+        }
+
+        public AccountTransaction AddAccountTransaction() {
+            var transaction = new AccountTransaction() {
+                Id = identifierService.GetNewTransactionId()
+            };
+            accountTransactions.Add(transaction);
+            return transaction;
+        }
+
+        public bool RemoveAccountTransaction(AccountTransaction transaction) {
+            return accountTransactions.Remove(transaction);
         }
     }
 }

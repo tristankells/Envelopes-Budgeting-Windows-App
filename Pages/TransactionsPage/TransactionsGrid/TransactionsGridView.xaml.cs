@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Envelopes.CategoriesPage
+namespace Envelopes.TransactionsPage.TransactionsGrid
 {
     /// <summary>
-    /// Interaction logic for CategoriesPageView.xaml
+    /// Interaction logic for TransactionsGridView.xaml
     /// </summary>
-    public partial class CategoriesPageView : UserControl
+    public partial class TransactionsGridView : UserControl
     {
-        public CategoriesPageView()
+        public TransactionsGridView()
         {
             InitializeComponent();
         }

@@ -23,6 +23,8 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref name, value, nameof(Name));
         }
 
+
+
         #endregion
     }
 }

@@ -17,7 +17,9 @@ namespace Envelopes.Common {
 
     public class ItemsViewModelBase<T> : NotifyPropertyChanged, IItemsViewModelBase<T> {
         private event PropertyChangedEventHandler ItemPropertyChanged;
+        private event PropertyChangedEventHandler SelectedItemChanged;
         private event NotifyCollectionChangedEventHandler ItemsCollectionsChanged;
+
 
         public ICommand AddItemCommand { get; set; }
         public ICommand DeleteItemCommand { get; set; }
@@ -26,7 +28,7 @@ namespace Envelopes.Common {
 
         public T SelectedItem {
             get => selectedItem;
-            set => SetPropertyValue(ref selectedItem, value, nameof(SelectedItem));
+            set { SetPropertyValue(ref selectedItem, value, nameof(SelectedItem)); }
         }
 
         private ObservableCollection<T> itemsList;

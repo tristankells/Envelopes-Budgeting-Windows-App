@@ -19,7 +19,7 @@
                                     Width="*"
                                     Binding="{Binding Id}"
                                     FontSize="15" />
-                <DataGridTextColumn Header="Account"
+                <DataGridTextColumn Header="Name"
                                     Width="3*"
                                     Binding="{Binding Name}"
                                     FontSize="15" />

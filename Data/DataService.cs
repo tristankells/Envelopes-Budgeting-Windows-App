@@ -10,6 +10,7 @@ namespace Envelopes.Data {
         public int GetNewAccountId();
         public int GetNewCategoryId();
         int GetNewTransactionId();
+
     }
 
     public class IdentifierService : IIdentifierService {
@@ -49,6 +50,7 @@ namespace Envelopes.Data {
         public Task LoadApplicationData();
         public Task SaveBudget();
 
+        public void SetActiveAccount(Account account);
         //Accounts
         public IEnumerable<Account> GetAccounts();
         public Account AddAccount();
@@ -73,6 +75,8 @@ namespace Envelopes.Data {
         private IList<Category> categories;
         private IList<AccountTransaction> accountTransactions;
 
+        private Account activeAccount;
+
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
 
@@ -95,8 +99,9 @@ namespace Envelopes.Data {
             accounts = applicationData.Accounts;
             categories = applicationData.Categories;
             accountTransactions = applicationData.AccountTransactions;
-        }
 
+            activeAccount = accounts.First();
+        }
 
         /// <summary>
         /// Attempts to save data to specified persistence service.
@@ -159,7 +164,9 @@ namespace Envelopes.Data {
 
         public AccountTransaction AddAccountTransaction() {
             var transaction = new AccountTransaction() {
-                Id = identifierService.GetNewTransactionId()
+                Id = identifierService.GetNewTransactionId(),
+                AccountId = activeAccount.Id,
+                AccountName = activeAccount.Name
             };
             accountTransactions.Add(transaction);
             return transaction;
@@ -167,6 +174,10 @@ namespace Envelopes.Data {
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) {
             return accountTransactions.Remove(transaction);
+        }
+
+        public void SetActiveAccount(Account account) {
+            activeAccount = account;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Envelopes.CategoriesPage.CategoriesGrid;
 using Envelopes.Common;
@@ -6,6 +8,26 @@ using Envelopes.Data;
 using Envelopes.Models;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
+    public interface IGridValidator {
+        public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
+            string originalValue);
+    }
+
+
+    public class GridValidator : IGridValidator {
+        public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
+            string originalValue) {
+            var newAccountName = updatedTextBox.Text;
+            if (!IsPropertyUnique(newAccountName, existingValues)) {
+                updatedTextBox.Text = originalValue ?? string.Empty;
+            }
+        }
+
+        private static bool IsPropertyUnique(string newValue, IList<string> existingValue) {
+            return !existingValue.Contains(newValue);
+        }
+    }
+
     public interface ICategoriesGridPresenter {
         public CategoriesGridView GetView();
     }
@@ -16,16 +38,20 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         private readonly CategoriesGridView view;
         private readonly ICategoriesGridViewModelBase viewModel;
         private readonly IDataService dataService;
+        private readonly IGridValidator gridValidator;
 
         #endregion
 
         #region Constructors
 
-        public CategoriesGridPresenter(CategoriesGridView view, ICategoriesGridViewModelBase viewModel,
-            IDataService dataService) : base(view, viewModel) {
+        public CategoriesGridPresenter(CategoriesGridView view,
+            ICategoriesGridViewModelBase viewModel,
+            IDataService dataService,
+            IGridValidator gridValidator) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
+            this.gridValidator = gridValidator;
 
             BindEvents();
             BindCommands();
@@ -42,8 +68,27 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void CategoriesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
-            throw new System.NotImplementedException();
+            switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
+                case nameof(Account.Name):
+                    gridValidator.ValidateNewTextBoxValueIsUniqueInColumn((TextBox) e.EditingElement,
+                        viewModel.ItemList.Select(account => account.Name).ToList(), (e.Row.Item as Account)?.Name);
+                    //ValidateCatergoryNameTextBoxUpdate(e);
+                    break;
+            }
         }
+
+        //private void ValidateCatergoryNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
+        //    var editedTextBox = (TextBox) e.EditingElement;
+        //    var newAccountName = editedTextBox.Text;
+        //    if (!IsCategoryNameUnique(newAccountName)) {
+        //        editedTextBox.Text = (e.Row.Item as Category)?.Name ?? string.Empty;
+        //    }
+        //}
+
+        //private bool IsCategoryNameUnique(string newAccountName) {
+        //    var existingNames = viewModel.ItemList.Select(account => account.Name);
+        //    return !existingNames.Contains(newAccountName);
+        //}
 
         private void View_Unloaded(object sender, RoutedEventArgs e) {
             viewModel.ItemList.Clear();
@@ -67,6 +112,23 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         private bool CanExecuteDeleteCategory() => true;
 
         private void ExecuteDeleteCategory() {
+            //Confirm the user would like to delete the category
+            MessageBoxResult result =
+                MessageBox.Show(
+                    "Are you sure you would like to delete your category? This will reset the category of all the account transactions.",
+                    "Delete Account", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            switch (result) {
+                case MessageBoxResult.No:
+                case MessageBoxResult.Cancel:
+                    // Don't delete category
+                    break;
+                case MessageBoxResult.Yes: // Attempt to delete category
+                    DeleteCategory();
+                    break;
+            }
+        }
+
+        private void DeleteCategory() {
             var selectedCategory = viewModel.SelectedItem;
 
             if (dataService.RemoveCategory(selectedCategory)) {
@@ -83,8 +145,7 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
 
         private void PopulateCategoriesList() {
             var categories = dataService.GetCategories();
-            foreach (var category in categories)
-            {
+            foreach (var category in categories) {
                 viewModel.AddItem(category);
             }
         }

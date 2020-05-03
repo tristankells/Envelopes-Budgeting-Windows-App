@@ -37,6 +37,7 @@ namespace Envelopes {
 
             // Data
             kernel.Bind<IPersistenceService>().To<ExcelPersistenceService>();
+            kernel.Bind<IGridValidator>().To<GridValidator>();
             kernel.Bind<IIdentifierService>().To<IdentifierService>().InSingletonScope();
             kernel.Bind<IDataService>().To<DataService>().InSingletonScope();
         }

@@ -1,10 +1,8 @@
 ﻿using System;
 using Envelopes.Common;
 
-namespace Envelopes.Models
-{
-    public class AccountTransaction : Model
-    {
+namespace Envelopes.Models {
+    public class AccountTransaction : Model {
         #region Fields
 
         private int id;
@@ -15,6 +13,9 @@ namespace Envelopes.Models
         private string memo;
         private decimal outflow;
         private decimal inflow;
+        private string payeeName;
+        private string categoryName;
+        private string accountName;
 
         #endregion
 
@@ -61,5 +62,20 @@ namespace Envelopes.Models
         }
 
         #endregion
+
+        public string PayeeName {
+            get => payeeName;
+            set => SetPropertyValue(ref payeeName, value, nameof(PayeeName));
+        }
+
+        public string CategoryName {
+            get => categoryName;
+            set => SetPropertyValue(ref categoryName, value, nameof(CategoryName));
+        }
+
+        public string AccountName {
+            get => accountName;
+            set => SetPropertyValue(ref accountName, value, nameof(AccountName));
+        }
     }
 }

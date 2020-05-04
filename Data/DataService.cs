@@ -100,7 +100,9 @@ namespace Envelopes.Data {
             categories = applicationData.Categories;
             accountTransactions = applicationData.AccountTransactions;
 
-            activeAccount = accounts.First();
+            if (accounts.Any()) {
+                activeAccount = accounts.First();
+            }
         }
 
         /// <summary>

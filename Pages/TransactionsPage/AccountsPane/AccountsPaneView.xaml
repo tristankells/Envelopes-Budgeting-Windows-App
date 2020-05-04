@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:accountsPane="clr-namespace:Envelopes.TransactionsPage.AccountsPane"
+             xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
              xmlns:accountsPane1="clr-namespace:Envelopes.Pages.TransactionsPage.AccountsPane"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance accountsPane1:IAccountsPaneViewModel}"
@@ -11,6 +12,9 @@
     <StackPanel>
         <Label Content="Accounts" />
         <DataGrid Name="AccountsDataGrid"
+                  dd:DragDrop.IsDragSource="True"
+                  dd:DragDrop.IsDropTarget="True"
+                  dd:DragDrop.DropHandler="{Binding}"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"

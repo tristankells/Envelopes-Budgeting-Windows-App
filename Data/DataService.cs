@@ -1,58 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
 
 namespace Envelopes.Data {
-    public interface IIdentifierService {
-        public void Setup(ApplicationData applicationData);
-        public int GetNewAccountId();
-        public int GetNewCategoryId();
-        int GetNewTransactionId();
-
-    }
-
-    public class IdentifierService : IIdentifierService {
-        private int accountIdCounter;
-        private int categoryIdCounter;
-        private int accountTransactionsIdCounter;
-
-        public void Setup(ApplicationData applicationData) {
-            accountIdCounter = applicationData.Accounts.Any()
-                ? applicationData.Accounts.Select(account => account.Id).Max()
-                : 0;
-            categoryIdCounter = applicationData.Categories.Any()
-                ? applicationData.Categories.Select(account => account.Id).Max()
-                : 0;
-            accountTransactionsIdCounter = applicationData.AccountTransactions.Any()
-                ? applicationData.AccountTransactions.Select(account => account.Id).Max()
-                : 0;
-        }
-
-        public int GetNewAccountId() {
-            accountIdCounter++;
-            return accountIdCounter;
-        }
-
-        public int GetNewCategoryId() {
-            categoryIdCounter++;
-            return categoryIdCounter;
-        }
-
-        public int GetNewTransactionId() {
-            accountTransactionsIdCounter++;
-            return accountTransactionsIdCounter;
-        }
-    }
-
     public interface IDataService {
         public Task LoadApplicationData();
         public Task SaveBudget();
 
         public void SetActiveAccount(Account account);
+
         //Accounts
         public IEnumerable<Account> GetAccounts();
         public Account AddAccount();
@@ -128,7 +89,8 @@ namespace Envelopes.Data {
                 : persistenceService.SaveApplicationData(applicationData, FileName));
         }
 
-        // Accounts
+        #region Accounts
+
         public IEnumerable<Account> GetAccounts() {
             return accounts;
         }
@@ -151,7 +113,16 @@ namespace Envelopes.Data {
             return accounts.Remove(account);
         }
 
-        // Categories
+
+        public void SetActiveAccount(Account account) {
+            activeAccount = account;
+        }
+
+        #endregion
+
+
+        #region Categories
+
         public IEnumerable<Category> GetCategories() {
             return categories;
         }
@@ -170,10 +141,14 @@ namespace Envelopes.Data {
                     accountTransaction.CategoryId = 0;
                 }
             }
+
             return categories.Remove(category);
         }
 
-        // Account Transactions
+        #endregion
+
+
+        #region Account Transactions
         public IEnumerable<AccountTransaction> GetAccountTransactions() {
             return accountTransactions;
         }
@@ -190,11 +165,14 @@ namespace Envelopes.Data {
         }
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) {
-            return accountTransactions.Remove(transaction);
+            if (accountTransactions.Remove(transaction)) {
+                return true;
+            }
+            return false;
         }
 
-        public void SetActiveAccount(Account account) {
-            activeAccount = account;
-        }
+        #endregion
+
     }
+
 }

@@ -17,9 +17,7 @@ namespace Envelopes.Common {
 
     public class ItemsViewModelBase<T> : NotifyPropertyChanged, IItemsViewModelBase<T> {
         private event PropertyChangedEventHandler ItemPropertyChanged;
-        private event PropertyChangedEventHandler SelectedItemChanged;
         private event NotifyCollectionChangedEventHandler ItemsCollectionsChanged;
-
 
         public ICommand AddItemCommand { get; set; }
         public ICommand DeleteItemCommand { get; set; }

@@ -2,6 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Documents;
 using Envelopes.Common;
+using Envelopes.Pages.TransactionsPage;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
 using Envelopes.TransactionsPage.AccountsPane;
 using Envelopes.TransactionsPage.TransactionsGrid;

@@ -2,6 +2,7 @@
 using Envelopes.CategoriesPage.CategoriesGrid;
 using Envelopes.Common;
 using Envelopes.Pages.BudgetPage.CategoriesGrid;
+using Envelopes.Pages.TransactionsPage;
 using Envelopes.TransactionsPage;
 using Envelopes.TransactionsPage.AccountsPane;
 

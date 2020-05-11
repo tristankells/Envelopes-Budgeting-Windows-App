@@ -1,7 +1,6 @@
 ﻿using Envelopes.Common;
-using Envelopes.TransactionsPage.AccountsPane;
 
-namespace Envelopes.TransactionsPage {
+namespace Envelopes.Pages.TransactionsPage {
     public interface ITransactionsPageViewModelBase : IViewModelBase {
     }
 

@@ -6,7 +6,7 @@
         xmlns:envelopes="clr-namespace:Envelopes"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
-        Title="MainWindow" Height="900" Width="1600">
+        Title="Envelopes" Height="900" Width="1600">
     <Grid>
         <StackPanel Orientation="Vertical">
             <Button Command="{Binding SaveBudgetCommand }" Content="Save"></Button>

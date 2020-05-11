@@ -8,6 +8,7 @@ namespace Envelopes.Models {
 
         private int id;
         private string name;
+        private decimal total;
 
         #endregion
 
@@ -23,7 +24,10 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref name, value, nameof(Name));
         }
 
-
+        public decimal Total {
+            get => total;
+            set => SetPropertyValue(ref total, value, nameof(Total));
+        }
 
         #endregion
     }

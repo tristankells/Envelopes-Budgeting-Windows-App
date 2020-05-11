@@ -13,6 +13,9 @@ namespace Envelopes.Models {
         private string memo;
         private decimal outflow;
         private decimal inflow;
+
+        private Category category;
+
         private string payeeName;
         private string categoryName;
         private string accountName;
@@ -41,10 +44,7 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref payeeId, value, nameof(PayeeId));
         }
 
-        public int CategoryId {
-            get => categoryId;
-            set => SetPropertyValue(ref categoryId, value, nameof(CategoryId));
-        }
+
 
         public string Memo {
             get => memo;
@@ -61,16 +61,26 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref inflow, value, nameof(Inflow));
         }
 
-        #endregion
+        public int CategoryId {
+            get => categoryId;
+            set => SetPropertyValue(ref categoryId, value, nameof(CategoryId));
+        }
 
-        public string PayeeName {
-            get => payeeName;
-            set => SetPropertyValue(ref payeeName, value, nameof(PayeeName));
+        public Category Category {
+            get => category;
+            set => SetPropertyValue(ref category, value, nameof(Category));
         }
 
         public string CategoryName {
             get => categoryName;
             set => SetPropertyValue(ref categoryName, value, nameof(CategoryName));
+        }
+
+        #endregion
+
+        public string PayeeName {
+            get => payeeName;
+            set => SetPropertyValue(ref payeeName, value, nameof(PayeeName));
         }
 
         public string AccountName {

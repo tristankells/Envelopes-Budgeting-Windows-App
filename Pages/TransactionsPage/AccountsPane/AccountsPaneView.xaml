@@ -28,6 +28,11 @@
                                     Width="3*"
                                     Binding="{Binding Name}"
                                     FontSize="15" />
+                <DataGridTextColumn Header="Total"
+                                    Width="3*"
+                                    IsReadOnly="True"
+                                    Binding="{Binding Total}"
+                                    FontSize="15" />
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

@@ -3,6 +3,7 @@ using Envelopes.Data;
 using Envelopes.Data.Persistence;
 using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
+using Envelopes.Pages.TransactionsPage.TransactionsGrid;
 using Envelopes.TransactionsPage;
 using Envelopes.TransactionsPage.AccountsPane;
 using Envelopes.TransactionsPage.TransactionsGrid;

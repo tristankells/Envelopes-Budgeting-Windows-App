@@ -8,25 +8,7 @@ using Envelopes.Data;
 using Envelopes.Models;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
-    public interface IGridValidator {
-        public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
-            string originalValue);
-    }
 
-
-    public class GridValidator : IGridValidator {
-        public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
-            string originalValue) {
-            var newAccountName = updatedTextBox.Text;
-            if (!IsPropertyUnique(newAccountName, existingValues)) {
-                updatedTextBox.Text = originalValue ?? string.Empty;
-            }
-        }
-
-        private static bool IsPropertyUnique(string newValue, IList<string> existingValue) {
-            return !existingValue.Contains(newValue);
-        }
-    }
 
     public interface ICategoriesGridPresenter {
         public CategoriesGridView GetView();
@@ -72,23 +54,9 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
                 case nameof(Account.Name):
                     gridValidator.ValidateNewTextBoxValueIsUniqueInColumn((TextBox) e.EditingElement,
                         viewModel.ItemList.Select(account => account.Name).ToList(), (e.Row.Item as Account)?.Name);
-                    //ValidateCatergoryNameTextBoxUpdate(e);
                     break;
             }
         }
-
-        //private void ValidateCatergoryNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
-        //    var editedTextBox = (TextBox) e.EditingElement;
-        //    var newAccountName = editedTextBox.Text;
-        //    if (!IsCategoryNameUnique(newAccountName)) {
-        //        editedTextBox.Text = (e.Row.Item as Category)?.Name ?? string.Empty;
-        //    }
-        //}
-
-        //private bool IsCategoryNameUnique(string newAccountName) {
-        //    var existingNames = viewModel.ItemList.Select(account => account.Name);
-        //    return !existingNames.Contains(newAccountName);
-        //}
 
         private void View_Unloaded(object sender, RoutedEventArgs e) {
             viewModel.ItemList.Clear();

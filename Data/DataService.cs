@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Envelopes.Data.Persistence;
@@ -96,12 +98,19 @@ namespace Envelopes.Data {
 
             identifierService.Setup(applicationData);
 
-            accounts = applicationData.Accounts;
-            categories = applicationData.Categories;
             accountTransactions = applicationData.AccountTransactions;
+
+            categories = applicationData.Categories;
+
+            accounts = applicationData.Accounts;
 
             if (accounts.Any()) {
                 activeAccount = accounts.First();
+
+                foreach (var account in accounts) {
+                    account.Total = accountTransactions.Where(transaction => transaction.AccountId == account.Id)
+                        .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
+                }
             }
         }
 
@@ -156,6 +165,11 @@ namespace Envelopes.Data {
         }
 
         public bool RemoveCategory(Category category) {
+            foreach (var accountTransaction in accountTransactions) {
+                if (accountTransaction.CategoryId == category.Id) {
+                    accountTransaction.CategoryId = 0;
+                }
+            }
             return categories.Remove(category);
         }
 
@@ -168,7 +182,8 @@ namespace Envelopes.Data {
             var transaction = new AccountTransaction() {
                 Id = identifierService.GetNewTransactionId(),
                 AccountId = activeAccount.Id,
-                AccountName = activeAccount.Name
+                AccountName = activeAccount.Name,
+                Date = DateTime.Now
             };
             accountTransactions.Add(transaction);
             return transaction;

@@ -1,11 +1,13 @@
 ﻿<UserControl x:Class="Envelopes.TransactionsPage.TransactionsGrid.TransactionsGridView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Envelopes.TransactionsPage.TransactionsGrid"
-             mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance local:ITransactionsGridViewModel}"
+             xmlns:ds="clr-namespace:Envelopes.Data"
+             xmlns:transactionsGrid="clr-namespace:Envelopes.Pages.TransactionsPage.TransactionsGrid"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance transactionsGrid:ITransactionsGridViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
         <Label Content="Transactions" />
@@ -15,22 +17,37 @@
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id"
-                                    Width="*"
-                                    Binding="{Binding Id}"
-                                    FontSize="15" />
-                <DataGridTextColumn Header="Account Id"
-                                    Width="*"
-                                    Binding="{Binding AccountId}"
-                                    FontSize="15" />
-                <DataGridTextColumn Header="Account Name"
-                                    Width="*"
-                                    Binding="{Binding AccountName}"
-                                    FontSize="15" />
-                <DataGridTextColumn Header="Date"
-                                    Width="*"
-                                    Binding="{Binding Date}"
-                                    FontSize="15" />
+                <DataGridComboBoxColumn
+                    Header="Account"
+                    SelectedValueBinding="{Binding AccountId}"
+                    DisplayMemberPath="Name"
+                    SelectedValuePath="Id">
+                    <DataGridComboBoxColumn.ElementStyle>
+                        <Style TargetType="{x:Type ComboBox}">
+                            <Setter Property="ItemsSource"
+                                    Value="{Binding Path=DataContext.Accounts, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        </Style>
+                    </DataGridComboBoxColumn.ElementStyle>
+                    <DataGridComboBoxColumn.EditingElementStyle>
+                        <Style TargetType="{x:Type ComboBox}">
+                            <Setter Property="ItemsSource"
+                                    Value="{Binding Path=DataContext.Accounts, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        </Style>
+                    </DataGridComboBoxColumn.EditingElementStyle>
+                </DataGridComboBoxColumn>
+                <DataGridTemplateColumn Header="Date"
+                                        Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Date, StringFormat=\{0:dd/MM/yy \}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding Date}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Payee Id"
                                     Width="*"
                                     Binding="{Binding PayeeId}"
@@ -39,14 +56,24 @@
                                     Width="*"
                                     Binding="{Binding PayeeName}"
                                     FontSize="15" />
-                <DataGridTextColumn Header="Category Id"
-                                    Width="*"
-                                    Binding="{Binding CategoryId}"
-                                    FontSize="15" />
-                <DataGridTextColumn Header="Category Name"
-                                    Width="*"
-                                    Binding="{Binding CategoryName}"
-                                    FontSize="15" />
+                <DataGridComboBoxColumn
+                    Header="Category Name"
+                    SelectedValueBinding="{Binding CategoryId}"
+                    DisplayMemberPath="Name"
+                    SelectedValuePath="Id">
+                    <DataGridComboBoxColumn.ElementStyle>
+                        <Style TargetType="{x:Type ComboBox}">
+                            <Setter Property="ItemsSource"
+                                    Value="{Binding Path=DataContext.Categories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        </Style>
+                    </DataGridComboBoxColumn.ElementStyle>
+                    <DataGridComboBoxColumn.EditingElementStyle>
+                        <Style TargetType="{x:Type ComboBox}">
+                            <Setter Property="ItemsSource"
+                                    Value="{Binding Path=DataContext.Categories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        </Style>
+                    </DataGridComboBoxColumn.EditingElementStyle>
+                </DataGridComboBoxColumn>
                 <DataGridTextColumn Header="Memo"
                                     Width="*"
                                     Binding="{Binding Memo}"

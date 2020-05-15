@@ -61,6 +61,11 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref inflow, value, nameof(Inflow));
         }
 
+        public decimal Total {
+            get => inflow - outflow;
+            set => SetPropertyValue(ref inflow, value, nameof(Total));
+        }
+
         public int CategoryId {
             get => categoryId;
             set => SetPropertyValue(ref categoryId, value, nameof(CategoryId));

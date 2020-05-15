@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Envelopes.Common;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
 
@@ -28,25 +30,27 @@ namespace Envelopes.Data {
         public IEnumerable<AccountTransaction> GetAccountTransactions();
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
         public AccountTransaction AddAccountTransaction();
+
     }
 
     public class DataService : IDataService {
         // Ugly solution, have added this for integration tests, to change the file.
-        public string FileName { get; set; }
-
-        private IList<Account> accounts;
-        private IList<Category> categories;
-        private IList<AccountTransaction> accountTransactions;
-
-        private Account activeAccount;
 
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
 
+        public string FileName { get; set; }
+
+        private IList<Account> accounts;
+        private IList<Category> categories;
+        private ObservableCollection<AccountTransaction> accountTransactions = new ObservableCollection<AccountTransaction>();
+
+        private Account activeAccount;
+
         public DataService(IPersistenceService persistenceService, IIdentifierService identifierService) {
             accounts = new List<Account>();
             categories = new List<Category>();
-            accountTransactions = new List<AccountTransaction>();
+
 
             this.persistenceService = persistenceService;
             this.identifierService = identifierService;
@@ -59,7 +63,13 @@ namespace Envelopes.Data {
 
             identifierService.Setup(applicationData);
 
-            accountTransactions = applicationData.AccountTransactions;
+            foreach (var accountTransaction in applicationData.AccountTransactions) {
+                accountTransaction.PropertyChanged += Transaction_PropertyChanged;
+                accountTransactions.Add(accountTransaction);
+            }
+            accountTransactions = new ObservableCollection<AccountTransaction>(applicationData.AccountTransactions);
+            accountTransactions.CollectionChanged += AccountTransactions_CollectionChanged;
+
 
             categories = applicationData.Categories;
 
@@ -160,15 +170,42 @@ namespace Envelopes.Data {
                 AccountName = activeAccount.Name,
                 Date = DateTime.Now
             };
+            transaction.PropertyChanged += Transaction_PropertyChanged;
             accountTransactions.Add(transaction);
             return transaction;
         }
 
-        public bool RemoveAccountTransaction(AccountTransaction transaction) {
-            if (accountTransactions.Remove(transaction)) {
-                return true;
+        private void Transaction_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            if (e is PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
+                var difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
+                var transaction = sender as AccountTransaction;
+
+                var account = accounts.FirstOrDefault(a => a.Id == transaction?.AccountId);
+                if (account == null) { return;}
+
+                switch (e.PropertyName) {
+                    case nameof(AccountTransaction.Outflow):
+                        account.Total -= difference;
+                        break;
+                    case nameof(AccountTransaction.Inflow):
+                        account.Total += difference;
+                        break;
+                }
             }
-            return false;
+        }
+
+        private void AccountTransactions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            var updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
+            if (updatedTransaction == null) return;
+
+            var account = accounts.FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
+            if (account == null) return;
+
+            account.Total -= updatedTransaction.Total;
+        }
+
+        public bool RemoveAccountTransaction(AccountTransaction transaction) {
+            return accountTransactions.Remove(transaction);
         }
 
         #endregion

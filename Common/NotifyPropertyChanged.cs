@@ -24,6 +24,21 @@ namespace Envelopes.Common {
         }
 
         /// <summary>
+        /// Raises the <see cref="E:Aderant.PresentationFramework.NotifyPropertyChanged.PropertyChanged" /> event for property with the given <paramref name="propertyName" />.
+        /// </summary>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="oldValue">The name of the property.</param>
+        /// <param name="newValue">The name of the property.</param>
+        protected void OnPropertyChanged<T>( T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+            PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if (propertyChanged == null) {
+                return;
+            }
+
+            propertyChanged((object)this, new PropertyChangedExtendedEventArgs<T>(propertyName, oldValue, newValue));
+        }
+
+        /// <summary>
         /// Utility method to handle property change notification easily. Consume this like this:
         /// 
         ///   public string MyProperty{
@@ -36,9 +51,23 @@ namespace Envelopes.Common {
                 return false;
             }
 
+            var oldValue = field;
             field = value;
-            this.OnPropertyChanged(propertyName);
+            this.OnPropertyChanged(oldValue, value, propertyName);
             return true;
         }
     }
+
+    public class PropertyChangedExtendedEventArgs<T> : PropertyChangedEventArgs
+{
+    public virtual T OldValue { get; private set; }
+    public virtual T NewValue { get; private set; }
+
+    public PropertyChangedExtendedEventArgs(string propertyName, T oldValue, T newValue)
+        : base(propertyName)
+    {
+        OldValue = oldValue;
+        NewValue = newValue;
+    }
+}
 }

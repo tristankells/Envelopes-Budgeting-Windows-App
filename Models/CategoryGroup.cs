@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Envelopes.Common;
+﻿using Envelopes.Common;
 
 namespace Envelopes.Models {
     public class CategoryGroup : Model

@@ -1,5 +1,4 @@
 ﻿using Envelopes.Common;
-using Envelopes.TransactionsPage.AccountsPane;
 
 namespace Envelopes.Models {
     public class Account : Model

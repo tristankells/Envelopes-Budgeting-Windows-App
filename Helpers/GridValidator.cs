@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
 
-namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
+namespace Envelopes.Helpers {
     public interface IGridValidator {
         public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
             string originalValue);

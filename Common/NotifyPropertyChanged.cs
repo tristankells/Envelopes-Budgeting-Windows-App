@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Envelopes.Common {
     /// <summary>
-    /// View model base class with support for INotifyPropertyChanged and nothing else
+    /// View model base class with support for INotifyPropertyChanged and nothing else.
     /// </summary>
     public class NotifyPropertyChanged : INotifyPropertyChanged {
         /// <summary>Raised when a property is changed</summary>
@@ -29,13 +29,13 @@ namespace Envelopes.Common {
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="oldValue">The name of the property.</param>
         /// <param name="newValue">The name of the property.</param>
-        protected void OnPropertyChanged<T>( T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+        protected void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
             PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
             if (propertyChanged == null) {
                 return;
             }
 
-            propertyChanged((object)this, new PropertyChangedExtendedEventArgs<T>(propertyName, oldValue, newValue));
+            propertyChanged((object) this, new PropertyChangedExtendedEventArgs<T>(propertyName, oldValue, newValue));
         }
 
         /// <summary>
@@ -58,16 +58,18 @@ namespace Envelopes.Common {
         }
     }
 
-    public class PropertyChangedExtendedEventArgs<T> : PropertyChangedEventArgs
-{
-    public virtual T OldValue { get; private set; }
-    public virtual T NewValue { get; private set; }
 
-    public PropertyChangedExtendedEventArgs(string propertyName, T oldValue, T newValue)
-        : base(propertyName)
-    {
-        OldValue = oldValue;
-        NewValue = newValue;
+    /// <summary>
+    /// An extension of PropertyChangedEventArgs that allows us to get the old and the new value of the property that has been set. 
+    /// </summary>
+    public class PropertyChangedExtendedEventArgs<T> : PropertyChangedEventArgs {
+        public T OldValue { get; }
+        public T NewValue { get; }
+
+        public PropertyChangedExtendedEventArgs(string propertyName, T oldValue, T newValue)
+            : base(propertyName) {
+            OldValue = oldValue;
+            NewValue = newValue;
+        }
     }
-}
 }

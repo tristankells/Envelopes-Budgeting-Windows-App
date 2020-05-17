@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using Envelopes.CategoriesPage.CategoriesGrid;
 using Envelopes.Common;
 using Envelopes.Data;
+using Envelopes.Helpers;
 using Envelopes.Models;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {

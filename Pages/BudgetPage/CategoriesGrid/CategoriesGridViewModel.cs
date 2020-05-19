@@ -7,7 +7,6 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid
     public interface ICategoriesGridViewModelBase : IItemsViewModelBase<Category>
     {
 
-
     }
     public class CategoriesGridViewModel: ItemsViewModelBase<Category>, ICategoriesGridViewModelBase
     {

@@ -9,7 +9,7 @@ namespace Envelopes.Models {
         private string name;
         private decimal budgeted;
         private decimal activity;
-        private decimal total;
+        private decimal available;
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace Envelopes.Models {
         }
 
         /// <summary>
-        /// The amount of money budgeted towards a category. The balance of a category is Budgeted - the Total Sum of all accounts against that category.
+        /// The amount of money budgeted towards a category. The balance of a category is Budgeted - the Available Sum of all accounts against that category.
         /// </summary>
         public decimal Budgeted {
             get => budgeted;
@@ -45,7 +45,7 @@ namespace Envelopes.Models {
         #region Calculated Properties
 
         /// <summary>
-        /// CALCULATED PROPERTY: The total of all transactions made against this category.
+        /// CALCULATED PROPERTY: The available of all transactions made against this category.
         /// </summary>
         public decimal Activity
         {
@@ -54,12 +54,12 @@ namespace Envelopes.Models {
         }
 
         /// <summary>
-        /// CALCULATED PROPERTY: The amount of money budgeted towards a category. The balance of a category is Budgeted - the Total Sum of all accounts against that category.
+        /// CALCULATED PROPERTY: The amount of money budgeted towards a category. The balance of a category is Budgeted - the Available Sum of all accounts against that category.
         /// </summary>
-        public decimal Total
+        public decimal Available
         {
-            get => total;
-            set => SetPropertyValue(ref total, value, nameof(Total));
+            get => budgeted + activity;
+            set => SetPropertyValue(ref available, value, nameof(Available));
         }
 
         #endregion

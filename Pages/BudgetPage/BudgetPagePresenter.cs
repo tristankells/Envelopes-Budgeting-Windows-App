@@ -1,12 +1,10 @@
 ﻿using System.Windows;
-using Envelopes.CategoriesPage.CategoriesGrid;
+using Envelopes.BudgetPage;
 using Envelopes.Common;
 using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Envelopes.Pages.TransactionsPage;
-using Envelopes.TransactionsPage;
-using Envelopes.TransactionsPage.AccountsPane;
 
-namespace Envelopes.BudgetPage {
+namespace Envelopes.Pages.BudgetPage {
     public interface IBudgetPagePresenter
     {
         public BudgetPageView GetPageView();

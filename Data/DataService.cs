@@ -31,27 +31,28 @@ namespace Envelopes.Data {
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
         public AccountTransaction AddAccountTransaction();
 
+        public decimal GetRemainingBalanceToBudget();
+
+
+        public event EventHandler BudgetAmountUpdated;
     }
 
     public class DataService : IDataService {
         // Ugly solution, have added this for integration tests, to change the file.
 
+        public event EventHandler BudgetAmountUpdated;
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
 
         public string FileName { get; set; }
 
-        private IList<Account> accounts;
-        private IList<Category> categories;
-        private ObservableCollection<AccountTransaction> accountTransactions = new ObservableCollection<AccountTransaction>();
+        private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
+        private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        private readonly ObservableCollection<AccountTransaction> accountTransactions = new ObservableCollection<AccountTransaction>();
 
         private Account activeAccount;
 
         public DataService(IPersistenceService persistenceService, IIdentifierService identifierService) {
-            accounts = new List<Account>();
-            categories = new List<Category>();
-
-
             this.persistenceService = persistenceService;
             this.identifierService = identifierService;
         }
@@ -67,13 +68,19 @@ namespace Envelopes.Data {
                 accountTransaction.PropertyChanged += Transaction_PropertyChanged;
                 accountTransactions.Add(accountTransaction);
             }
-            accountTransactions = new ObservableCollection<AccountTransaction>(applicationData.AccountTransactions);
             accountTransactions.CollectionChanged += AccountTransactions_CollectionChanged;
 
+            foreach (var category in applicationData.Categories) {
+                category.PropertyChanged += Category_PropertyChanged;
+                categories.Add(category);
+            }
+            categories.CollectionChanged += Categories_CollectionChanged;
 
-            categories = applicationData.Categories;
-
-            accounts = applicationData.Accounts;
+            foreach (var account in applicationData.Accounts) {
+                account.PropertyChanged += Account_PropertyChanged;
+                accounts.Add(account);
+            }
+            accounts.CollectionChanged += Accounts_CollectionChanged; ;
 
             if (accounts.Any()) {
                 activeAccount = accounts.First();
@@ -83,7 +90,25 @@ namespace Envelopes.Data {
                         .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
                 }
             }
+
+            if (categories.Any()) {
+                foreach (var category in categories) {
+                    category.Activity = accountTransactions.Where(transaction => transaction.CategoryId == category.Id)
+                        .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
+                }
+            }
+
         }
+
+        private void Accounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            //throw new NotImplementedException();
+        }
+
+        private void Account_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            //throw new NotImplementedException();
+        }
+
+
 
         /// <summary>
         /// Attempts to save data to specified persistence service.
@@ -141,11 +166,28 @@ namespace Envelopes.Data {
             var category = new Category() {
                 Id = identifierService.GetNewCategoryId()
             };
+            category.PropertyChanged += Category_PropertyChanged;
             categories.Add(category);
             return category;
         }
 
+        private void Category_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            switch (e.PropertyName) {
+                case nameof(Category.Budgeted):
+                    BudgetAmountUpdated?.Invoke(sender, e);
+                    break;
+            }
+        }
+
+        private void Categories_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            if (e.Action == NotifyCollectionChangedAction.Remove) {
+                BudgetAmountUpdated?.Invoke(sender, e);
+            }
+        }
+
         public bool RemoveCategory(Category category) {
+
+            // For all account transactions with this category ID, reset their ID to 0.
             foreach (var accountTransaction in accountTransactions) {
                 if (accountTransaction.CategoryId == category.Id) {
                     accountTransaction.CategoryId = 0;
@@ -209,6 +251,10 @@ namespace Envelopes.Data {
         }
 
         #endregion
+
+        public decimal GetRemainingBalanceToBudget() {
+            return accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
+        }
 
     }
 

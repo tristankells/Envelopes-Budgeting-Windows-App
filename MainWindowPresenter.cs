@@ -4,6 +4,7 @@ using Envelopes.Data;
 using Envelopes.TransactionsPage;
 using System.Windows;
 using Envelopes.Pages.BudgetPage;
+using Envelopes.Pages.TransactionsPage;
 
 namespace Envelopes {
     public interface IMainWindowPresenter {

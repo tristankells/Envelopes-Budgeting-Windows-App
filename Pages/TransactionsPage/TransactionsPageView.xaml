@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:accountsPane="clr-namespace:Envelopes.TransactionsPage.AccountsPane"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -12,9 +11,11 @@
             <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
         <ContentControl
+            Margin="5,0,5,5"
             Grid.Column="0"
             Name="AccountsPaneControl" />
         <ContentControl
+            Margin="5,0,5,5"
             Grid.Column="1"
             Name="TransactionsGridControl" />
     </Grid>

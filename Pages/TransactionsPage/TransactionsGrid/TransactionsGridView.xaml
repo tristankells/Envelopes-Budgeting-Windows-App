@@ -10,9 +10,8 @@
              d:DataContext="{d:DesignInstance transactionsGrid:ITransactionsGridViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
-        <Label Content="Transactions" />
-        <DataGrid Name="TransactionsDataGrid"
-                  CanUserAddRows="False"
+        <Label HorizontalAlignment="Center" Content="Transactions" />
+        <DataGrid CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">

@@ -68,7 +68,7 @@ namespace Envelopes.Data {
                 accountTransaction.PropertyChanged += Transaction_PropertyChanged;
                 accountTransactions.Add(accountTransaction);
             }
-            accountTransactions.CollectionChanged += AccountTransactions_CollectionChanged;
+            accountTransactions.CollectionChanged += OnAccountTransactionsCollectionChanged;
 
             foreach (var category in applicationData.Categories) {
                 category.PropertyChanged += Category_PropertyChanged;
@@ -236,14 +236,17 @@ namespace Envelopes.Data {
             }
         }
 
-        private void AccountTransactions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            var updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
-            if (updatedTransaction == null) return;
+        private void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            // Deduct the transaction total from the transaction account balance.
+            if (e.Action == NotifyCollectionChangedAction.Remove) {
+                var updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
+                if (updatedTransaction == null) return;
 
-            var account = accounts.FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
-            if (account == null) return;
+                var account = accounts.FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
+                if (account == null) return;
 
-            account.Total -= updatedTransaction.Total;
+                account.Total -= updatedTransaction.Total;
+            }
         }
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) {

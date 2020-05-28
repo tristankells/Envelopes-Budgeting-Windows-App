@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
-using Envelopes.Models;
-using Envelopes.Pages.TransactionsPage.TransactionsGrid;
+using Envelopes.TransactionsPage.TransactionsGrid;
 
-namespace Envelopes.TransactionsPage.TransactionsGrid {
+namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public interface ITransactionsGridPresenter {
         TransactionsGridView GetView();
     }

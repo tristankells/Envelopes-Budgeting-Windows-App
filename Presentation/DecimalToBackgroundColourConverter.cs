@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Windows.Media;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 
-namespace Envelopes.Common {
+namespace Envelopes.Presentation {
 
     /// <summary>
     /// Converts a decimal value to the either red or green. Used to set the background colour of UI elements depending on a decimal value.

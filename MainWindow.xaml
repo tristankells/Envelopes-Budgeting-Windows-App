@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:envelopes="clr-namespace:Envelopes"
         xmlns:common="clr-namespace:Envelopes.Common"
+        xmlns:presentation="clr-namespace:Envelopes.Presentation"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
         Title="Envelopes" Height="900" Width="1600">
     <Window.Resources>
-        <common:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
+        <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">

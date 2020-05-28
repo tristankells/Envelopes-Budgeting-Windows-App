@@ -9,8 +9,15 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance accountsPane1:IAccountsPaneViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <StackPanel>
-        <Label HorizontalAlignment="Center" Content="Accounts" />
+        <Label Style="{StaticResource GridAndListTitleLabelStyle}" Content="Accounts" />
         <DataGrid Name="AccountsDataGrid"
                   dd:DragDrop.IsDragSource="True"
                   dd:DragDrop.IsDropTarget="True"

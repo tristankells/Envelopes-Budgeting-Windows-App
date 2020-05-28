@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Envelopes.Common;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
+using Envelopes.Pages.TransactionsPage.TransactionsGrid;
 using Envelopes.TransactionsPage;
 using Envelopes.TransactionsPage.TransactionsGrid;
 

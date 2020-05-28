@@ -4,15 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:categoriesGrid="clr-namespace:Envelopes.Pages.BudgetPage.CategoriesGrid"
-             xmlns:common="clr-namespace:Envelopes.Common"
+             xmlns:presentation="clr-namespace:Envelopes.Presentation"
              d:DataContext="{d:DesignInstance categoriesGrid:ICategoriesGridViewModelBase}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <common:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
+        <ResourceDictionary>
+            <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
-        <Label Content="Categories" />
+        <Label Style="{StaticResource GridAndListTitleLabelStyle}" Content="Categories" />
         <DataGrid Name="CategoriesDataGrid"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"

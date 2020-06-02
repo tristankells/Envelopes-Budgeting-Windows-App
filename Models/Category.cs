@@ -36,9 +36,11 @@ namespace Envelopes.Models {
         /// </summary>
         public decimal Budgeted {
             get => budgeted;
-            set => SetPropertyValue(ref budgeted, value, nameof(Budgeted));
+            set {
+                SetPropertyValue(ref budgeted, value, nameof(Budgeted));
+                OnPropertyChanged(nameof(Available));
+            }
         }
-
 
         #endregion
 

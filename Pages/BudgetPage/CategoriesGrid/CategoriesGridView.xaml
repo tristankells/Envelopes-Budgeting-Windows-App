@@ -17,7 +17,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
-        <Label Style="{StaticResource GridAndListTitleLabelStyle}" Content="Categories" />
+        <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" Text="Categories" />
         <DataGrid Name="CategoriesDataGrid"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"

@@ -3,21 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:accountsPane="clr-namespace:Envelopes.TransactionsPage.AccountsPane"
-             xmlns:accountsPane1="clr-namespace:Envelopes.Pages.TransactionsPage.AccountsPane"
+             xmlns:accountsPane="clr-namespace:Envelopes.Pages.TransactionsPage.AccountsPane"
              xmlns:dd="urn:gong-wpf-dragdrop"
+             xmlns:presentation="clr-namespace:Envelopes.Presentation"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance accountsPane1:IAccountsPaneViewModel}"
+             d:DataContext="{d:DesignInstance accountsPane:IAccountsPaneViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
+            <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
-        <Label Style="{StaticResource GridAndListTitleLabelStyle}" Content="Accounts" />
+        <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" >
+            <Run Text="Accounts" />
+            <Run Text="{Binding AccountsTotalBalance}" Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
+        </TextBlock>
         <DataGrid Name="AccountsDataGrid"
                   dd:DragDrop.IsDragSource="True"
                   dd:DragDrop.IsDropTarget="True"

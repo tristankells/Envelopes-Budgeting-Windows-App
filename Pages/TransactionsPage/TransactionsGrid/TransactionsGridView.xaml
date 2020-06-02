@@ -15,7 +15,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
-        <Label  Style="{StaticResource GridAndListTitleLabelStyle}" Content="Transactions" />
+        <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" Text="Transactions" />
         <DataGrid CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"

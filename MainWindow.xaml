@@ -24,7 +24,7 @@
                 <Button Grid.Column="1" Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
             </Grid>
             <TextBlock FontSize="20" HorizontalAlignment="Center" Text="Remaining To Budget"/>
-            <TextBlock Text="{Binding RemainingBalanceToBudget}" FontSize="20" HorizontalAlignment="Center"  Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
+            <TextBlock Text="{Binding RemainingBalanceToBudget}" FontSize="20" HorizontalAlignment="Center" Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
             <ContentControl Content="{Binding CurrentPage}"/>
         </StackPanel>
     </Grid>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Envelopes.Common;
@@ -31,7 +32,8 @@ namespace Envelopes.Data {
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
         public AccountTransaction AddAccountTransaction();
 
-        public decimal GetRemainingBalanceToBudget();
+        public decimal GetRemainingAccountBalanceToBudget();
+        public decimal GetTotalAccountBalance();
 
 
         public event EventHandler BudgetAmountUpdated;
@@ -57,6 +59,8 @@ namespace Envelopes.Data {
             this.identifierService = identifierService;
         }
 
+
+        //Todo Refactor (To Big)
         public async Task LoadApplicationData() {
             var applicationData = await (string.IsNullOrEmpty(FileName)
                 ? persistenceService.GetApplicationData()
@@ -148,8 +152,8 @@ namespace Envelopes.Data {
             return accounts.Remove(account);
         }
 
-
         public void SetActiveAccount(Account account) {
+            Debugger.Launch();
             activeAccount = account;
         }
 
@@ -186,7 +190,6 @@ namespace Envelopes.Data {
         }
 
         public bool RemoveCategory(Category category) {
-
             // For all account transactions with this category ID, reset their ID to 0.
             foreach (var accountTransaction in accountTransactions) {
                 if (accountTransaction.CategoryId == category.Id) {
@@ -255,10 +258,8 @@ namespace Envelopes.Data {
 
         #endregion
 
-        public decimal GetRemainingBalanceToBudget() {
-            return accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
-        }
-
+        public decimal GetTotalAccountBalance() => accounts.Sum(account => account.Total);
+        
+        public decimal GetRemainingAccountBalanceToBudget() => accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
     }
-
 }

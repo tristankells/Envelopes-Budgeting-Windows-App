@@ -34,7 +34,7 @@ namespace Envelopes {
         }
 
         private void UpdateRemainingBalanceToBudget() {
-            viewModel.RemainingBalanceToBudget = dataService.GetRemainingBalanceToBudget();
+            viewModel.RemainingBalanceToBudget = dataService.GetRemainingAccountBalanceToBudget();
         }
 
         private void BindCommands() {

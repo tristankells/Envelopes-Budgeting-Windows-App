@@ -53,6 +53,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
 
         private void View_Loaded(object sender, RoutedEventArgs e) {
             PopulateAccountsList();
+            UpdateAccountsTotal();
         }
 
         private void View_Unloaded(object sender, RoutedEventArgs e) {
@@ -120,6 +121,10 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             foreach (var account in accounts) {
                 viewModel.AddItem(account);
             }
+        }
+
+        private void UpdateAccountsTotal() {
+            viewModel.AccountsTotalBalance = dataService.GetTotalAccountBalance();
         }
 
         #endregion

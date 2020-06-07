@@ -1,26 +1,26 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using Envelopes.Common;
-using Envelopes.Data;
 using Envelopes.Models;
 using GongSolutions.Wpf.DragDrop;
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPaneViewModel : IItemsViewModelBase<Account> {
         decimal AccountsTotalBalance { get; set; }
+        public event EventHandler ActiveAccountChanged;
     }
 
     public class AccountsPaneViewModel : ItemsViewModelBase<Account>, IAccountsPaneViewModel, IDropTarget {
-        private readonly IDataService dataService;
+        public event EventHandler ActiveAccountChanged;
         private decimal accountsTotalBalance;
         public decimal AccountsTotalBalance {
             get => accountsTotalBalance;
             set => SetPropertyValue(ref accountsTotalBalance, value, nameof(AccountsTotalBalance));
         }
 
-        public AccountsPaneViewModel(IDataService dataService) {
+        public AccountsPaneViewModel() {
             PropertyChanged += AccountsPaneViewModel_PropertyChanged;
-            this.dataService = dataService;
         }
 
         public void DragOver(IDropInfo dropInfo) {
@@ -31,12 +31,10 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             throw new System.NotImplementedException();
         }
 
-        private void AccountsPaneViewModel_PropertyChanged(object sender,
-          PropertyChangedEventArgs e) {
-            Debugger.Launch();
+        private void AccountsPaneViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(SelectedItem):
-                    dataService.SetActiveAccount(SelectedItem);
+                    ActiveAccountChanged?.Invoke(SelectedItem, e);
                     break;
             }
         }

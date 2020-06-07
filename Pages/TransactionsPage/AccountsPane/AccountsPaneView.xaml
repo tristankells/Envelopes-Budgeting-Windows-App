@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Envelopes.TransactionsPage.AccountsPane.AccountsPaneView"
+﻿<UserControl x:Class="Envelopes.Pages.TransactionsPage.AccountsPane.AccountsPaneView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -22,7 +22,7 @@
             <Run Text="Accounts" />
             <Run Text="{Binding AccountsTotalBalance}" Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
         </TextBlock>
-        <DataGrid Name="AccountsDataGrid"
+        <DataGrid Name="accountsDataGrid"
                   dd:DragDrop.IsDragSource="True"
                   dd:DragDrop.IsDropTarget="True"
                   dd:DragDrop.DropHandler="{Binding}"

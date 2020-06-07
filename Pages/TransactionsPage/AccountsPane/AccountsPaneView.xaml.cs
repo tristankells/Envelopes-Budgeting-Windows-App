@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Envelopes.TransactionsPage.AccountsPane
+namespace Envelopes.Pages.TransactionsPage.AccountsPane
 {
+    public interface IView { }
+
+    public interface IAccountsPaneView : IView {
+        public event RoutedEventHandler Loaded;
+        public DataGrid AccountsDataGrid { get; }
+        public event RoutedEventHandler Unloaded;
+    }
+
     /// <summary>
     /// Interaction logic for AccountsPaneView.xaml
     /// </summary>
-    public partial class AccountsPaneView : UserControl
-    {
+    public partial class AccountsPaneView : IAccountsPaneView {
         public AccountsPaneView() {
             InitializeComponent();
+
         }
+
+        public DataGrid AccountsDataGrid => accountsDataGrid;
     }
 }

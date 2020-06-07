@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Models;
-using Envelopes.TransactionsPage.AccountsPane;
+
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPanePresenter {
@@ -39,8 +39,15 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
 
         private void BindEvents() {
             view.Loaded += View_Loaded;
-            view.AccountsDataGrid.CellEditEnding += AccountsDataGrid_CellEditEnding;
+            view.accountsDataGrid.CellEditEnding += AccountsDataGrid_CellEditEnding;
             view.Unloaded += View_Unloaded;
+            viewModel.ActiveAccountChanged += OnActiveAccountChanged;
+        }
+
+        private void OnActiveAccountChanged(object sender, System.EventArgs e) {
+            if (sender is Account account) {
+                dataService.SetActiveAccount(account);
+            }
         }
 
         private void AccountsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {

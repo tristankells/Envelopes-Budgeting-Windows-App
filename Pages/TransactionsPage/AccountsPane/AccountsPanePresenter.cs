@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Envelopes.Common;
@@ -12,15 +13,9 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     }
 
     public class AccountsPanePresenter : Presenter, IAccountsPanePresenter {
-        #region Fields
-
         private readonly AccountsPaneView view;
         private readonly IAccountsPaneViewModel viewModel;
         private readonly IDataService dataService;
-
-        #endregion
-
-        #region Constructors
 
         public AccountsPanePresenter(AccountsPaneView view,
             IAccountsPaneViewModel viewModel,
@@ -33,15 +28,23 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             BindCommands();
         }
 
-        #endregion
-
-        #region Events
+        public AccountsPaneView GetView() => view;
 
         private void BindEvents() {
-            view.Loaded += View_Loaded;
-            view.accountsDataGrid.CellEditEnding += AccountsDataGrid_CellEditEnding;
-            view.Unloaded += View_Unloaded;
+            view.Loaded += OnViewLoaded;
+            view.accountsDataGrid.CellEditEnding += OnAccountsDataGridCellEditEnding;
+            view.Unloaded += OnViewUnloaded;
             viewModel.ActiveAccountChanged += OnActiveAccountChanged;
+            dataService.TransactionBalanceChanged += OnTransactionBalanceChanged;
+        }
+
+        private void BindCommands() {
+            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddAccount, CanExecuteAddAccount);
+            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
+        }
+
+        private void OnTransactionBalanceChanged(object? sender, EventArgs e) {
+            viewModel.AccountsTotalBalance = dataService.GetTotalAccountBalance();
         }
 
         private void OnActiveAccountChanged(object sender, System.EventArgs e) {
@@ -50,7 +53,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             }
         }
 
-        private void AccountsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+        private void OnAccountsDataGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
             switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
                 case nameof(Account.Name):
                     ValidateAccountNameTextBoxUpdate(e);
@@ -58,20 +61,15 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             }
         }
 
-        private void View_Loaded(object sender, RoutedEventArgs e) {
+        private void OnViewLoaded(object sender, RoutedEventArgs e) {
             PopulateAccountsList();
             UpdateAccountsTotal();
         }
 
-        private void View_Unloaded(object sender, RoutedEventArgs e) {
+        private void OnViewUnloaded(object sender, RoutedEventArgs e) {
             viewModel.ItemList.Clear();
         }
 
-        #endregion
-
-        #region Methods
-
-        public AccountsPaneView GetView() => view;
 
         private void ValidateAccountNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
             var editedTextBox = (TextBox) e.EditingElement;
@@ -86,10 +84,6 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             return !existingNames.Contains(newName);
         }
 
-        private void BindCommands() {
-            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddAccount, CanExecuteAddAccount);
-            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
-        }
 
         private bool CanExecuteAddAccount() => true;
 
@@ -133,7 +127,5 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         private void UpdateAccountsTotal() {
             viewModel.AccountsTotalBalance = dataService.GetTotalAccountBalance();
         }
-
-        #endregion
     }
 }

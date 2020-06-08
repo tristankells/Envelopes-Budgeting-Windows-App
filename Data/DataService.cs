@@ -36,13 +36,15 @@ namespace Envelopes.Data {
         public decimal GetTotalAccountBalance();
 
 
-        public event EventHandler BudgetAmountUpdated;
+        public event EventHandler CategoryBudgetedChanged;
+        public event EventHandler TransactionBalanceChanged;
     }
 
     public class DataService : IDataService {
         // Ugly solution, have added this for integration tests, to change the file.
 
-        public event EventHandler BudgetAmountUpdated;
+        public event EventHandler CategoryBudgetedChanged;
+        public event EventHandler TransactionBalanceChanged;
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
 
@@ -69,16 +71,16 @@ namespace Envelopes.Data {
             identifierService.Setup(applicationData);
 
             foreach (var accountTransaction in applicationData.AccountTransactions) {
-                accountTransaction.PropertyChanged += Transaction_PropertyChanged;
+                accountTransaction.PropertyChanged += OnTransactionPropertyChanged;
                 accountTransactions.Add(accountTransaction);
             }
             accountTransactions.CollectionChanged += OnAccountTransactionsCollectionChanged;
 
             foreach (var category in applicationData.Categories) {
-                category.PropertyChanged += Category_PropertyChanged;
+                category.PropertyChanged += OnCategoryPropertyChanged;
                 categories.Add(category);
             }
-            categories.CollectionChanged += Categories_CollectionChanged;
+            categories.CollectionChanged += OnCategoriesCollectionChanged;
 
             foreach (var account in applicationData.Accounts) {
                 account.PropertyChanged += Account_PropertyChanged;
@@ -170,22 +172,22 @@ namespace Envelopes.Data {
             var category = new Category() {
                 Id = identifierService.GetNewCategoryId()
             };
-            category.PropertyChanged += Category_PropertyChanged;
+            category.PropertyChanged += OnCategoryPropertyChanged;
             categories.Add(category);
             return category;
         }
 
-        private void Category_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+        private void OnCategoryPropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(Category.Budgeted):
-                    BudgetAmountUpdated?.Invoke(sender, e);
+                    CategoryBudgetedChanged?.Invoke(sender, e);
                     break;
             }
         }
 
-        private void Categories_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private void OnCategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             if (e.Action == NotifyCollectionChangedAction.Remove) {
-                BudgetAmountUpdated?.Invoke(sender, e);
+                CategoryBudgetedChanged?.Invoke(sender, e);
             }
         }
 
@@ -215,12 +217,12 @@ namespace Envelopes.Data {
                 AccountName = activeAccount.Name,
                 Date = DateTime.Now
             };
-            transaction.PropertyChanged += Transaction_PropertyChanged;
+            transaction.PropertyChanged += OnTransactionPropertyChanged;
             accountTransactions.Add(transaction);
             return transaction;
         }
 
-        private void Transaction_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+        private void OnTransactionPropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e is PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
                 var difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
                 var transaction = sender as AccountTransaction;
@@ -231,9 +233,11 @@ namespace Envelopes.Data {
                 switch (e.PropertyName) {
                     case nameof(AccountTransaction.Outflow):
                         account.Total -= difference;
+                        TransactionBalanceChanged?.Invoke(sender, e);
                         break;
                     case nameof(AccountTransaction.Inflow):
                         account.Total += difference;
+                        TransactionBalanceChanged?.Invoke(sender, e);
                         break;
                 }
             }
@@ -249,6 +253,8 @@ namespace Envelopes.Data {
                 if (account == null) return;
 
                 account.Total -= updatedTransaction.Total;
+
+                TransactionBalanceChanged?.Invoke(sender, e);
             }
         }
 

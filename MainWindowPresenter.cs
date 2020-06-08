@@ -1,4 +1,5 @@
-﻿using Envelopes.BudgetPage;
+﻿using System;
+using Envelopes.BudgetPage;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.TransactionsPage;
@@ -64,20 +65,25 @@ namespace Envelopes {
         }
 
         private void BindEvents() {
-            view.Loaded += View_Loaded;
-            view.Closing += View_Closing;
-            dataService.BudgetAmountUpdated += DataService_BudgetAmountUpdated;
+            view.Loaded += OnViewLoaded;
+            view.Closing += OnViewClosing;
+            dataService.CategoryBudgetedChanged += OnCategoryBudgetedChanged;
+            dataService.TransactionBalanceChanged += OnTransactionsBalanceChanged;
         }
 
-        private void DataService_BudgetAmountUpdated(object sender, System.EventArgs e) {
+        private void OnTransactionsBalanceChanged(object? sender, EventArgs e) {
             UpdateRemainingBalanceToBudget();
         }
 
-        private async void View_Closing(object sender, System.EventArgs e) {
+        private void OnCategoryBudgetedChanged(object sender, System.EventArgs e) {
+            UpdateRemainingBalanceToBudget();
+        }
+
+        private async void OnViewClosing(object sender, System.EventArgs e) {
             await dataService.SaveBudget();
         }
 
-        private async void View_Loaded(object sender, RoutedEventArgs e) {
+        private async void OnViewLoaded(object sender, RoutedEventArgs e) {
             await dataService.LoadApplicationData();
             viewModel.CurrentPage = transactionsPagePresenter.GetPageView();
             UpdateRemainingBalanceToBudget();

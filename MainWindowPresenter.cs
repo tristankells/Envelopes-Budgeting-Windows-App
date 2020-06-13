@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Envelopes.BudgetPage;
 using Envelopes.Common;
 using Envelopes.Data;
@@ -18,17 +19,20 @@ namespace Envelopes {
         private readonly IDataService dataService;
         private readonly ITransactionsPagePresenter transactionsPagePresenter;
         private readonly IBudgetPagePresenter budgetPagePresenter;
+        private INotificationService notificationService;
 
         public MainWindowPresenter(MainWindow view,
             IMainWindowViewModel viewModel,
             ITransactionsPagePresenter transactionsPagePresenter,
             IBudgetPagePresenter budgetPagePresenter,
-            IDataService dataService) : base(view, viewModel) {
+            IDataService dataService,
+            INotificationService notificationService) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.transactionsPagePresenter = transactionsPagePresenter;
             this.budgetPagePresenter = budgetPagePresenter;
             this.dataService = dataService;
+            this.notificationService = notificationService;
 
             BindEvents();
             BindCommands();
@@ -67,15 +71,15 @@ namespace Envelopes {
         private void BindEvents() {
             view.Loaded += OnViewLoaded;
             view.Closing += OnViewClosing;
-            dataService.CategoryBudgetedChanged += OnCategoryBudgetedChanged;
-            dataService.TransactionBalanceChanged += OnTransactionsBalanceChanged;
+            notificationService.OnCategoryBudgetedChanged += OnCategoryBudgetedChanged;
+            notificationService.OnTransactionBalanceChanged += OnTransactionsBalanceChanged;
         }
 
         private void OnTransactionsBalanceChanged(object? sender, EventArgs e) {
             UpdateRemainingBalanceToBudget();
         }
 
-        private void OnCategoryBudgetedChanged(object sender, System.EventArgs e) {
+        private void OnCategoryBudgetedChanged(object? sender, System.EventArgs e) {
             UpdateRemainingBalanceToBudget();
         }
 

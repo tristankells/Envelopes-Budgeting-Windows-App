@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,13 +17,16 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         private readonly AccountsPaneView view;
         private readonly IAccountsPaneViewModel viewModel;
         private readonly IDataService dataService;
+        private INotificationService notificationService;
 
         public AccountsPanePresenter(AccountsPaneView view,
             IAccountsPaneViewModel viewModel,
-            IDataService dataService) : base(view, viewModel) {
+            IDataService dataService,
+            INotificationService notificationService) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
+            this.notificationService = notificationService;
 
             BindEvents();
             BindCommands();
@@ -35,7 +39,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             view.accountsDataGrid.CellEditEnding += OnAccountsDataGridCellEditEnding;
             view.Unloaded += OnViewUnloaded;
             viewModel.ActiveAccountChanged += OnActiveAccountChanged;
-            dataService.TransactionBalanceChanged += OnTransactionBalanceChanged;
+            notificationService.OnTransactionBalanceChanged += OnTransactionBalanceChanged;
         }
 
         private void BindCommands() {
@@ -47,13 +51,13 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             viewModel.AccountsTotalBalance = dataService.GetTotalAccountBalance();
         }
 
-        private void OnActiveAccountChanged(object sender, System.EventArgs e) {
+        private void OnActiveAccountChanged(object? sender, System.EventArgs e) {
             if (sender is Account account) {
                 dataService.SetActiveAccount(account);
             }
         }
 
-        private void OnAccountsDataGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+        private void OnAccountsDataGridCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e) {
             switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
                 case nameof(Account.Name):
                     ValidateAccountNameTextBoxUpdate(e);

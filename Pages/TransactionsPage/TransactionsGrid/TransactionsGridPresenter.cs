@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿#nullable enable
+using System;
+using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.TransactionsPage.TransactionsGrid;
@@ -12,13 +14,16 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         private readonly TransactionsGridView view;
         private readonly ITransactionsGridViewModel viewModel;
         private readonly IDataService dataService;
+        private readonly INotificationService notificationService;
 
         public TransactionsGridPresenter(TransactionsGridView view,
             ITransactionsGridViewModel viewModel,
-            IDataService dataService) : base(view, viewModel) {
+            IDataService dataService,
+            INotificationService notificationService) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
+            this.notificationService = notificationService;
 
             BindEvents();
             BindCommands();
@@ -27,11 +32,17 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         #region Events
 
         private void BindEvents() {
-            view.Loaded += View_Loaded;
-            view.Unloaded += View_Unloaded;
+            view.Loaded += OnViewLoaded;
+            view.Unloaded += OnViewUnloaded;
+            notificationService.OnActiveAccountChanged += OnActiveAccountChanged;
         }
 
-        private void View_Loaded(object sender, RoutedEventArgs e) {
+        private void OnActiveAccountChanged(object? sender, EventArgs e) {
+            viewModel.ItemList.Clear();
+            PopulateTransactionsList();
+        }
+
+        private void OnViewLoaded(object sender, RoutedEventArgs e) {
             PopulateTransactionsList();
             PopulateCategories();
             PopulateAccounts();
@@ -51,9 +62,9 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             }
         }
 
-        private void View_Unloaded(object sender, RoutedEventArgs e) {
-            view.Loaded -= View_Loaded;
-            view.Unloaded -= View_Unloaded;
+        private void OnViewUnloaded(object sender, RoutedEventArgs e) {
+            view.Loaded -= OnViewLoaded;
+            view.Unloaded -= OnViewUnloaded;
         }
 
         #endregion
@@ -83,8 +94,8 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         }
 
         private void PopulateTransactionsList() {
-            var accounts = dataService.GetAccountTransactions();
-            foreach (var account in accounts) {
+            var transactions = dataService.GetAccountTransactionsFilteredByActiveAccount();
+            foreach (var account in transactions) {
                 viewModel.AddItem(account);
             }
         }

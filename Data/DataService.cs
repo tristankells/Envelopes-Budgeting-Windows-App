@@ -28,23 +28,16 @@ namespace Envelopes.Data {
         public Category AddCategory();
 
         // Account Transactions
-        public IEnumerable<AccountTransaction> GetAccountTransactions();
+        public IEnumerable<AccountTransaction> GetAccountTransactionsFilteredByActiveAccount();
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
         public AccountTransaction AddAccountTransaction();
 
         public decimal GetRemainingAccountBalanceToBudget();
         public decimal GetTotalAccountBalance();
-
-
-        public event EventHandler CategoryBudgetedChanged;
-        public event EventHandler TransactionBalanceChanged;
     }
 
     public class DataService : IDataService {
-        // Ugly solution, have added this for integration tests, to change the file.
-
-        public event EventHandler CategoryBudgetedChanged;
-        public event EventHandler TransactionBalanceChanged;
+        private readonly INotificationService notificationService;
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
 
@@ -52,15 +45,18 @@ namespace Envelopes.Data {
 
         private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
         private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
-        private readonly ObservableCollection<AccountTransaction> accountTransactions = new ObservableCollection<AccountTransaction>();
+
+        private readonly ObservableCollection<AccountTransaction> accountTransactions =
+            new ObservableCollection<AccountTransaction>();
 
         private Account activeAccount;
 
-        public DataService(IPersistenceService persistenceService, IIdentifierService identifierService) {
+        public DataService(IPersistenceService persistenceService, IIdentifierService identifierService,
+            INotificationService notificationService) {
+            this.notificationService = notificationService;
             this.persistenceService = persistenceService;
             this.identifierService = identifierService;
         }
-
 
         //Todo Refactor (To Big)
         public async Task LoadApplicationData() {
@@ -74,19 +70,23 @@ namespace Envelopes.Data {
                 accountTransaction.PropertyChanged += OnTransactionPropertyChanged;
                 accountTransactions.Add(accountTransaction);
             }
+
             accountTransactions.CollectionChanged += OnAccountTransactionsCollectionChanged;
 
             foreach (var category in applicationData.Categories) {
                 category.PropertyChanged += OnCategoryPropertyChanged;
                 categories.Add(category);
             }
+
             categories.CollectionChanged += OnCategoriesCollectionChanged;
 
             foreach (var account in applicationData.Accounts) {
                 account.PropertyChanged += Account_PropertyChanged;
                 accounts.Add(account);
             }
-            accounts.CollectionChanged += Accounts_CollectionChanged; ;
+
+            accounts.CollectionChanged += Accounts_CollectionChanged;
+            ;
 
             if (accounts.Any()) {
                 activeAccount = accounts.First();
@@ -103,7 +103,6 @@ namespace Envelopes.Data {
                         .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
                 }
             }
-
         }
 
         private void Accounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
@@ -113,7 +112,6 @@ namespace Envelopes.Data {
         private void Account_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             //throw new NotImplementedException();
         }
-
 
 
         /// <summary>
@@ -155,8 +153,9 @@ namespace Envelopes.Data {
         }
 
         public void SetActiveAccount(Account account) {
-            Debugger.Launch();
+            if (activeAccount == account) return;
             activeAccount = account;
+            notificationService.NotifyActiveAccountChanged(account);
         }
 
         #endregion
@@ -180,14 +179,14 @@ namespace Envelopes.Data {
         private void OnCategoryPropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(Category.Budgeted):
-                    CategoryBudgetedChanged?.Invoke(sender, e);
+                    notificationService.NotifyCategoryBudgetedChanged();
                     break;
             }
         }
 
         private void OnCategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             if (e.Action == NotifyCollectionChangedAction.Remove) {
-                CategoryBudgetedChanged?.Invoke(sender, e);
+                notificationService.NotifyCategoryBudgetedChanged();
             }
         }
 
@@ -206,8 +205,9 @@ namespace Envelopes.Data {
 
 
         #region Account Transactions
-        public IEnumerable<AccountTransaction> GetAccountTransactions() {
-            return accountTransactions;
+
+        public IEnumerable<AccountTransaction> GetAccountTransactionsFilteredByActiveAccount() {
+            return accountTransactions.Where(t => t.AccountId == activeAccount.Id);
         }
 
         public AccountTransaction AddAccountTransaction() {
@@ -228,16 +228,18 @@ namespace Envelopes.Data {
                 var transaction = sender as AccountTransaction;
 
                 var account = accounts.FirstOrDefault(a => a.Id == transaction?.AccountId);
-                if (account == null) { return;}
+                if (account == null) {
+                    return;
+                }
 
                 switch (e.PropertyName) {
                     case nameof(AccountTransaction.Outflow):
                         account.Total -= difference;
-                        TransactionBalanceChanged?.Invoke(sender, e);
+                        notificationService.NotifyTransactionBalanceChanged();
                         break;
                     case nameof(AccountTransaction.Inflow):
                         account.Total += difference;
-                        TransactionBalanceChanged?.Invoke(sender, e);
+                        notificationService.NotifyTransactionBalanceChanged();
                         break;
                 }
             }
@@ -254,7 +256,7 @@ namespace Envelopes.Data {
 
                 account.Total -= updatedTransaction.Total;
 
-                TransactionBalanceChanged?.Invoke(sender, e);
+                notificationService.NotifyTransactionBalanceChanged();
             }
         }
 
@@ -265,7 +267,35 @@ namespace Envelopes.Data {
         #endregion
 
         public decimal GetTotalAccountBalance() => accounts.Sum(account => account.Total);
-        
-        public decimal GetRemainingAccountBalanceToBudget() => accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
+
+        public decimal GetRemainingAccountBalanceToBudget() =>
+            accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
+    }
+
+
+    public interface INotificationService {
+        public event EventHandler OnCategoryBudgetedChanged;
+        public event EventHandler OnTransactionBalanceChanged;
+        public event EventHandler OnActiveAccountChanged;
+        void NotifyActiveAccountChanged(Account account);
+        void NotifyCategoryBudgetedChanged();
+        void NotifyTransactionBalanceChanged();
+    }
+
+    public class NotificationService : INotificationService {
+        public event EventHandler OnCategoryBudgetedChanged;
+        public event EventHandler OnTransactionBalanceChanged;
+        public event EventHandler OnActiveAccountChanged;
+        public void NotifyActiveAccountChanged(Account account) {
+            OnActiveAccountChanged?.Invoke(account, null);
+        }
+
+        public void NotifyCategoryBudgetedChanged() {
+            OnCategoryBudgetedChanged?.Invoke(null, null);
+        }
+
+        public void NotifyTransactionBalanceChanged() {
+            OnTransactionBalanceChanged?.Invoke(null, null);
+        }
     }
 }

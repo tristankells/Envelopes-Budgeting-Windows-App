@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using Envelopes.Common;
-using Envelopes.Data;
 using Envelopes.Models;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
@@ -14,6 +13,8 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public class TransactionsGridViewModel : ItemsViewModelBase<AccountTransaction>, ITransactionsGridViewModel {
         private ObservableCollection<Category> categories;
         private ObservableCollection<Account> accounts;
+
+        
 
         public TransactionsGridViewModel() {
             Categories = new ObservableCollection<Category>();

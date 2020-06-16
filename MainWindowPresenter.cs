@@ -1,9 +1,7 @@
 ﻿#nullable enable
 using System;
-using Envelopes.BudgetPage;
 using Envelopes.Common;
 using Envelopes.Data;
-using Envelopes.TransactionsPage;
 using System.Windows;
 using Envelopes.Pages.BudgetPage;
 using Envelopes.Pages.TransactionsPage;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Envelopes.Common;
@@ -45,13 +44,13 @@ namespace Envelopes.Data {
 
         private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
         private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
-
         private readonly ObservableCollection<AccountTransaction> accountTransactions =
             new ObservableCollection<AccountTransaction>();
 
         private Account activeAccount;
 
-        public DataService(IPersistenceService persistenceService, IIdentifierService identifierService,
+        public DataService(IPersistenceService persistenceService, 
+            IIdentifierService identifierService,
             INotificationService notificationService) {
             this.notificationService = notificationService;
             this.persistenceService = persistenceService;
@@ -134,9 +133,6 @@ namespace Envelopes.Data {
             return accounts;
         }
 
-        /// <summary>
-        /// Save new account to to Account list. Save 
-        /// </summary>
         public Account AddAccount() {
             var account = new Account() {
                 Id = identifierService.GetNewAccountId()
@@ -145,10 +141,15 @@ namespace Envelopes.Data {
             return account;
         }
 
-        /// <summary>
-        /// Save new account to to Account list. Save 
-        /// </summary>
         public bool RemoveAccount(Account account) {
+            bool isCurrentlyActiveAccount = account == activeAccount;
+            bool isMoreThanOneAccount = accounts.Count > 1;
+
+            if (isCurrentlyActiveAccount && isMoreThanOneAccount) {
+                var indexOfCurrentAccount = accounts.IndexOf(account);
+                SetActiveAccount(accounts[indexOfCurrentAccount + 1]);
+            }
+
             return accounts.Remove(account);
         }
 

@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using Envelopes.Pages.TransactionsPage.AccountsPane;
 
-namespace Envelopes.TransactionsPage.TransactionsGrid
+namespace Envelopes.Pages.TransactionsPage.TransactionsGrid
 {
     /// <summary>
     /// Interaction logic for TransactionsGridView.xaml
     /// </summary>
-    public partial class TransactionsGridView : UserControl
+    public partial class TransactionsGridView : IView
     {
         public TransactionsGridView()
         {

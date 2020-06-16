@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Envelopes.Pages.TransactionsPage.AccountsPane;
 
 namespace Envelopes.Common {
 
@@ -6,10 +7,10 @@ namespace Envelopes.Common {
     /// Simple base class for presenters that connects the DataContext of a View object to a IViewModelBase replacing three lines with a call to base class constructor.
     /// </summary>
     public abstract class Presenter {
-        private FrameworkElement View { get; }
+        private IView View { get; }
         private IViewModelBase ViewModel { get; }
 
-        protected Presenter(FrameworkElement view, IViewModelBase viewModel) {
+        protected Presenter(IView view, IViewModelBase viewModel) {
             View = view;
             ViewModel = viewModel;
             View.DataContext = ViewModel;

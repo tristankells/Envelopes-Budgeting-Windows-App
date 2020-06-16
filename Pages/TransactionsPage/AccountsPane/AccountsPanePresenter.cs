@@ -10,33 +10,48 @@ using Envelopes.Models;
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPanePresenter {
-        public AccountsPaneView GetView();
+        public IAccountsPaneView GetView();
     }
 
+    public interface IMessageBoxWrapper {
+        MessageBoxResult Show(string s, string deleteAccount, MessageBoxButton yesNoCancel, MessageBoxImage warning);
+    }
+
+    public class MessageBoxWrapper : IMessageBoxWrapper {
+        public MessageBoxResult Show(string s, string deleteAccount, MessageBoxButton yesNoCancel, MessageBoxImage warning) {
+            return MessageBox.Show(s, deleteAccount, yesNoCancel, warning);
+        }
+    }
+
+
     public class AccountsPanePresenter : Presenter, IAccountsPanePresenter {
-        private readonly AccountsPaneView view;
+        private readonly IAccountsPaneView view;
         private readonly IAccountsPaneViewModel viewModel;
         private readonly IDataService dataService;
-        private INotificationService notificationService;
+        private readonly INotificationService notificationService;
+        private readonly IMessageBoxWrapper messageBoxWrapper;
 
-        public AccountsPanePresenter(AccountsPaneView view,
+        public AccountsPanePresenter(IAccountsPaneView view,
             IAccountsPaneViewModel viewModel,
             IDataService dataService,
-            INotificationService notificationService) : base(view, viewModel) {
+            INotificationService notificationService,
+            IMessageBoxWrapper messageBoxWrapper
+            ) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
             this.notificationService = notificationService;
+            this.messageBoxWrapper = messageBoxWrapper;
 
             BindEvents();
             BindCommands();
         }
 
-        public AccountsPaneView GetView() => view;
+        public IAccountsPaneView GetView() => view;
 
         private void BindEvents() {
             view.Loaded += OnViewLoaded;
-            view.accountsDataGrid.CellEditEnding += OnAccountsDataGridCellEditEnding;
+            view.AccountsDataGrid.CellEditEnding += OnAccountsDataGridCellEditEnding;
             view.Unloaded += OnViewUnloaded;
             viewModel.ActiveAccountChanged += OnActiveAccountChanged;
             notificationService.OnTransactionBalanceChanged += OnTransactionBalanceChanged;
@@ -74,7 +89,6 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             viewModel.ItemList.Clear();
         }
 
-
         private void ValidateAccountNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
             var editedTextBox = (TextBox) e.EditingElement;
             var newAccountName = editedTextBox.Text;
@@ -88,7 +102,6 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             return !existingNames.Contains(newName);
         }
 
-
         private bool CanExecuteAddAccount() => true;
 
         private void ExecuteAddAccount() {
@@ -101,7 +114,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         private void ExecuteDeleteAccount() {
             //Confirm the user would like to delete the account
             MessageBoxResult result =
-                MessageBox.Show(
+                messageBoxWrapper.Show(
                     "Are you sure you would like to delete your account? This will remove all transactions attaches to this account?",
                     "Delete Account", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
             switch (result) {

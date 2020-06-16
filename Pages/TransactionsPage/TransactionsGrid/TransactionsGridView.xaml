@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Envelopes.TransactionsPage.TransactionsGrid.TransactionsGridView"
+﻿<UserControl x:Class="Envelopes.Pages.TransactionsPage.TransactionsGrid.TransactionsGridView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,7 +16,8 @@
     </UserControl.Resources>
     <StackPanel>
         <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" Text="Transactions" />
-        <DataGrid CanUserAddRows="False"
+        <DataGrid Name="TransactionsDataGrid"
+                  CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
@@ -100,6 +101,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding AddItemCommand}" Content="Add Account" />
+        <Button Command="{Binding AddItemCommand}" Content="Add Transaction" />
     </StackPanel>
 </UserControl>

@@ -1,11 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using Envelopes.Pages.TransactionsPage.AccountsPane;
 
-namespace Envelopes.BudgetPage
+namespace Envelopes.Pages.BudgetPage
 {
     /// <summary>
     /// Interaction logic for CategoriesPageView.xaml
     /// </summary>
-    public partial class BudgetPageView : UserControl
+    public partial class BudgetPageView : IView
     {
         public BudgetPageView()
         {

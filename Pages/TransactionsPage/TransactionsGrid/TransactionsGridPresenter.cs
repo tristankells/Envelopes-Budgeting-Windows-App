@@ -3,7 +3,6 @@ using System;
 using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
-using Envelopes.TransactionsPage.TransactionsGrid;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public interface ITransactionsGridPresenter {

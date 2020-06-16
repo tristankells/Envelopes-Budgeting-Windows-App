@@ -2,8 +2,6 @@
 using Envelopes.Common;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
 using Envelopes.Pages.TransactionsPage.TransactionsGrid;
-using Envelopes.TransactionsPage;
-using Envelopes.TransactionsPage.TransactionsGrid;
 
 namespace Envelopes.Pages.TransactionsPage {
     public interface ITransactionsPagePresenter  {
@@ -20,7 +18,8 @@ namespace Envelopes.Pages.TransactionsPage {
 
         #endregion
 
-        public TransactionsPagePresenter(TransactionsPageView view, ITransactionsPageViewModelBase viewModelBase,
+        public TransactionsPagePresenter(TransactionsPageView view, 
+            ITransactionsPageViewModelBase viewModelBase,
             IAccountsPanePresenter accountsPanePresenter,
             ITransactionsGridPresenter transactionsGridPresenter) : base(view,
             viewModelBase) {

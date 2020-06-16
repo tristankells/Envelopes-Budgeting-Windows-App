@@ -3,7 +3,9 @@ using System.Windows.Controls;
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane
 {
-    public interface IView { }
+    public interface IView {
+        object DataContext { get; set; }
+    }
 
     public interface IAccountsPaneView : IView {
         public event RoutedEventHandler Loaded;

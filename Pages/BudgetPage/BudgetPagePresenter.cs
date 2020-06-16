@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Envelopes.BudgetPage;
 using Envelopes.Common;
 using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Envelopes.Pages.TransactionsPage;

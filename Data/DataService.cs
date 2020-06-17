@@ -44,12 +44,13 @@ namespace Envelopes.Data {
 
         private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
         private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
+
         private readonly ObservableCollection<AccountTransaction> accountTransactions =
             new ObservableCollection<AccountTransaction>();
 
         private Account activeAccount;
 
-        public DataService(IPersistenceService persistenceService, 
+        public DataService(IPersistenceService persistenceService,
             IIdentifierService identifierService,
             INotificationService notificationService) {
             this.notificationService = notificationService;
@@ -65,43 +66,59 @@ namespace Envelopes.Data {
 
             identifierService.Setup(applicationData);
 
-            foreach (var accountTransaction in applicationData.AccountTransactions) {
-                accountTransaction.PropertyChanged += OnTransactionPropertyChanged;
-                accountTransactions.Add(accountTransaction);
+            LoadAccountTransaction(applicationData.AccountTransactions);
+            LoadCategories(applicationData.Categories);
+            LoadAccount(applicationData.Accounts);
+
+            if (accounts.Any()) {
+                activeAccount = accounts.First();
+                SetAccountsTotals();
             }
 
-            accountTransactions.CollectionChanged += OnAccountTransactionsCollectionChanged;
+            if (categories.Any()) {
+                SetCategoriesActivityAmount();
+            }
+        }
 
-            foreach (var category in applicationData.Categories) {
+        private void SetAccountsTotals() {
+            foreach (var account in accounts) {
+                account.Total = accountTransactions.Where(transaction => transaction.AccountId == account.Id)
+                    .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
+            }
+        }
+
+        private void SetCategoriesActivityAmount() {
+            foreach (var category in categories) {
+                category.Activity = accountTransactions.Where(transaction => transaction.CategoryId == category.Id)
+                    .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
+            }
+        }
+
+        private void LoadCategories(IList<Category> categoryList) {
+            foreach (var category in categoryList) {
                 category.PropertyChanged += OnCategoryPropertyChanged;
                 categories.Add(category);
             }
 
             categories.CollectionChanged += OnCategoriesCollectionChanged;
+        }
 
-            foreach (var account in applicationData.Accounts) {
+        private void LoadAccount(IList<Account> accountList) {
+            foreach (var account in accountList) {
                 account.PropertyChanged += Account_PropertyChanged;
                 accounts.Add(account);
             }
 
             accounts.CollectionChanged += Accounts_CollectionChanged;
-            ;
+        }
 
-            if (accounts.Any()) {
-                activeAccount = accounts.First();
-
-                foreach (var account in accounts) {
-                    account.Total = accountTransactions.Where(transaction => transaction.AccountId == account.Id)
-                        .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
-                }
+        private void LoadAccountTransaction(IList<AccountTransaction> accountTransactionList) {
+            foreach (var transaction in accountTransactionList) {
+                transaction.PropertyChanged += OnTransactionPropertyChanged;
+                accountTransactions.Add(transaction);
             }
 
-            if (categories.Any()) {
-                foreach (var category in categories) {
-                    category.Activity = accountTransactions.Where(transaction => transaction.CategoryId == category.Id)
-                        .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
-                }
-            }
+            accountTransactions.CollectionChanged += OnAccountTransactionsCollectionChanged;
         }
 
         private void Accounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
@@ -287,6 +304,7 @@ namespace Envelopes.Data {
         public event EventHandler OnCategoryBudgetedChanged;
         public event EventHandler OnTransactionBalanceChanged;
         public event EventHandler OnActiveAccountChanged;
+
         public void NotifyActiveAccountChanged(Account account) {
             OnActiveAccountChanged?.Invoke(account, null);
         }

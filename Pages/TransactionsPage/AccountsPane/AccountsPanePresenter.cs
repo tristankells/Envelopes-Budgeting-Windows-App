@@ -135,7 +135,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         }
 
         private void PopulateAccountsList() {
-            var accounts = dataService.GetAccounts();
+            var accounts = dataService.Accounts();
             foreach (var account in accounts) {
                 viewModel.AddItem(account);
             }

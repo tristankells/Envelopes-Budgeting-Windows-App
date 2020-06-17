@@ -55,7 +55,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         }
 
         private void PopulateAccounts() {
-            var accounts = dataService.GetAccounts();
+            var accounts = dataService.Accounts();
             foreach (var account in accounts) {
                 viewModel.Accounts.Add(account);
             }

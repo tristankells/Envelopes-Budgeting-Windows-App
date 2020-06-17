@@ -17,7 +17,7 @@ namespace Envelopes.Data {
         public void SetActiveAccount(Account account);
 
         //Accounts
-        public IEnumerable<Account> GetAccounts();
+        public IEnumerable<Account> Accounts();
         public Account AddAccount();
         public bool RemoveAccount(Account account);
 
@@ -146,7 +146,7 @@ namespace Envelopes.Data {
 
         #region Accounts
 
-        public IEnumerable<Account> GetAccounts() {
+        public IEnumerable<Account> Accounts() {
             return accounts;
         }
 
@@ -162,12 +162,21 @@ namespace Envelopes.Data {
             bool isCurrentlyActiveAccount = account == activeAccount;
             bool isMoreThanOneAccount = accounts.Count > 1;
 
+            RemoveAllAccountTransactionsForAccount(account.Id);
+
             if (isCurrentlyActiveAccount && isMoreThanOneAccount) {
                 var indexOfCurrentAccount = accounts.IndexOf(account);
                 SetActiveAccount(accounts[indexOfCurrentAccount + 1]);
             }
 
             return accounts.Remove(account);
+        }
+
+        private void RemoveAllAccountTransactionsForAccount(int accountId) {
+            var accountTransactionToRemove = accountTransactions.Where(accountTransaction => accountTransaction.AccountId == accountId).ToList();
+            foreach (var accountTransaction in accountTransactionToRemove) {
+                accountTransactions.Remove(accountTransaction);
+            }
         }
 
         public void SetActiveAccount(Account account) {
@@ -223,6 +232,10 @@ namespace Envelopes.Data {
 
 
         #region Account Transactions
+
+        public IEnumerable<AccountTransaction> AccountTransactions() {
+            return accountTransactions;
+        }
 
         public IEnumerable<AccountTransaction> GetAccountTransactionsFilteredByActiveAccount() {
             return accountTransactions.Where(t => t.AccountId == activeAccount.Id);

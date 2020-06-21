@@ -14,8 +14,6 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         private ObservableCollection<Category> categories;
         private ObservableCollection<Account> accounts;
 
-        
-
         public TransactionsGridViewModel() {
             Categories = new ObservableCollection<Category>();
             Accounts = new ObservableCollection<Account>();

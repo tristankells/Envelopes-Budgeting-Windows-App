@@ -6,6 +6,7 @@ using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Envelopes.Pages.TransactionsPage;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
 using Envelopes.Pages.TransactionsPage.TransactionsGrid;
+using Envelopes.Presentation;
 using Ninject.Modules;
 using Ninject;
 
@@ -24,7 +25,7 @@ namespace Envelopes {
 
             // Transactions Page
             kernel.Bind<ITransactionsPagePresenter>().To<TransactionsPagePresenter>();
-            kernel.Bind<ITransactionsPageViewModelBase>().To<TransactionsPageViewModelBase>();
+            kernel.Bind<ITransactionsPageViewModel>().To<TransactionsPageViewModel>();
             kernel.Bind<IAccountsPaneView>().To<AccountsPaneView>();
             kernel.Bind<IAccountsPanePresenter>().To<AccountsPanePresenter>();
             kernel.Bind<IAccountsPaneViewModel>().To<AccountsPaneViewModel>();

@@ -1,8 +1,10 @@
 ﻿#nullable enable
 using System;
+using System.Linq;
 using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
+using Envelopes.Models;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public interface ITransactionsGridPresenter {
@@ -14,6 +16,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         private readonly ITransactionsGridViewModel viewModel;
         private readonly IDataService dataService;
         private readonly INotificationService notificationService;
+        private Account activeAccount; //The ID of the currently selected Account in the AccountsPane
 
         public TransactionsGridPresenter(TransactionsGridView view,
             ITransactionsGridViewModel viewModel,
@@ -34,21 +37,30 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             view.Loaded += OnViewLoaded;
             view.Unloaded += OnViewUnloaded;
             notificationService.OnActiveAccountChanged += OnActiveAccountChanged;
+            notificationService.OnShowAllTransactionsExecuted += OnShowAllTransactionsExecuted;
+        }
+
+        private void OnShowAllTransactionsExecuted(object? sender, EventArgs e) {
+            viewModel.ItemList.Clear();
+            PopulateTransactionsList(false);
         }
 
         private void OnActiveAccountChanged(object? sender, EventArgs e) {
+            if (sender is Account account) {
+                activeAccount = account;
+            }
             viewModel.ItemList.Clear();
-            PopulateTransactionsList();
+            PopulateTransactionsList(true);
         }
 
         private void OnViewLoaded(object sender, RoutedEventArgs e) {
-            PopulateTransactionsList();
+            PopulateTransactionsList(false);
             PopulateCategories();
             PopulateAccounts();
         }
 
         private void PopulateCategories() {
-            var categories = dataService.GetCategories();
+            var categories = dataService.Categories();
             foreach (var category in categories) {
                 viewModel.Categories.Add(category);
             }
@@ -78,7 +90,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         private bool CanExecuteAddTransaction() => true;
 
         private void ExecuteAddTransaction() {
-            var newTransaction = dataService.AddAccountTransaction();
+            var newTransaction = dataService.AddAccountTransaction(activeAccount);
             viewModel.AddItem(newTransaction);
         }
 
@@ -92,11 +104,9 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             }
         }
 
-        private void PopulateTransactionsList() {
-            var transactions = dataService.GetAccountTransactionsFilteredByActiveAccount();
-            foreach (var account in transactions) {
-                viewModel.AddItem(account);
-            }
+        private void PopulateTransactionsList(bool isFiltered) {
+            var transactions = isFiltered ? dataService.AccountTransactions().Where(at => at.AccountId == activeAccount.Id) : dataService.AccountTransactions();
+            viewModel.AddRange(transactions);
         }
     }
 }

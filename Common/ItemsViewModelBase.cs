@@ -1,6 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace Envelopes.Common {
@@ -29,6 +32,11 @@ namespace Envelopes.Common {
         /// Add an item to the view model's collection.
         /// </summary>
         public void AddItem(T item);
+
+        /// <summary>
+        /// Add an item to the view model's collection.
+        /// </summary>
+        public void AddRange(IEnumerable<T> items);
         /// <summary>
         /// Remove an item from the view model's collection.
         /// </summary>
@@ -99,6 +107,12 @@ namespace Envelopes.Common {
             if (!(item is Model modelItem)) return;
             modelItem.PropertyChanged += OnItemPropertyChanged;
             ItemList.Add(item);
+        }
+
+        public void AddRange(IEnumerable<T> items) {
+            foreach (var item in items) {
+                AddItem(item);
+            }
         }
 
         public bool RemoveItem(T item) {

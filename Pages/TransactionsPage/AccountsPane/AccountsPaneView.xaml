@@ -55,5 +55,6 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button Command="{Binding AddItemCommand}" Content="Add Account" />
+        <Button Command="{Binding ShowAllTransactionsCommand}" Content="Show All Transactions" />
     </StackPanel>
 </UserControl>

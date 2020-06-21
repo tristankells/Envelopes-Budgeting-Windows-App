@@ -14,14 +14,14 @@ namespace Envelopes.Pages.BudgetPage {
         #region Fields
 
         private BudgetPageView view;
-        private ITransactionsPageViewModelBase viewModelBase;
+        private ITransactionsPageViewModel viewModel;
         private ICategoriesGridPresenter categoriesGridPresenter;
 
         #endregion
 
-        public BudgetPagePresenter(BudgetPageView view, ITransactionsPageViewModelBase viewModelBase, ICategoriesGridPresenter categoriesGridPresenter) : base(view, viewModelBase) {
+        public BudgetPagePresenter(BudgetPageView view, ITransactionsPageViewModel viewModel, ICategoriesGridPresenter categoriesGridPresenter) : base(view, viewModel) {
             this.view = view;
-            this.viewModelBase = viewModelBase;
+            this.viewModel = viewModel;
             this.categoriesGridPresenter = categoriesGridPresenter;
 
             BindEvents();

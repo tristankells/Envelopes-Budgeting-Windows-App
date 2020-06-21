@@ -7,11 +7,13 @@ using GongSolutions.Wpf.DragDrop;
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPaneViewModel : IItemsViewModelBase<Account> {
         decimal AccountsTotalBalance { get; set; }
-        public event EventHandler ActiveAccountChanged;
+        DelegateCommand ShowAllTransactionsCommand { get; set; }
+        public event EventHandler SelectedAccountChanged;
     }
 
     public class AccountsPaneViewModel : ItemsViewModelBase<Account>, IAccountsPaneViewModel, IDropTarget {
-        public event EventHandler ActiveAccountChanged;
+        public DelegateCommand ShowAllTransactionsCommand { get; set; }
+        public event EventHandler SelectedAccountChanged;
         private decimal accountsTotalBalance;
         public decimal AccountsTotalBalance {
             get => accountsTotalBalance;
@@ -33,7 +35,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         private void AccountsPaneViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(SelectedItem):
-                    ActiveAccountChanged?.Invoke(SelectedItem, e);
+                    SelectedAccountChanged?.Invoke(SelectedItem, e);
                     break;
             }
         }

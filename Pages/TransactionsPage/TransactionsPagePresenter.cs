@@ -12,19 +12,19 @@ namespace Envelopes.Pages.TransactionsPage {
         #region Fields
 
         private readonly TransactionsPageView view;
-        private ITransactionsPageViewModelBase viewModelBase;
+        private ITransactionsPageViewModel viewModel;
         private readonly IAccountsPanePresenter accountsPanePresenter;
         private readonly ITransactionsGridPresenter transactionsGridPresenter;
 
         #endregion
 
         public TransactionsPagePresenter(TransactionsPageView view, 
-            ITransactionsPageViewModelBase viewModelBase,
+            ITransactionsPageViewModel viewModel,
             IAccountsPanePresenter accountsPanePresenter,
             ITransactionsGridPresenter transactionsGridPresenter) : base(view,
-            viewModelBase) {
+            viewModel) {
             this.view = view;
-            this.viewModelBase = viewModelBase;
+            this.viewModel = viewModel;
             this.accountsPanePresenter = accountsPanePresenter;
             this.transactionsGridPresenter = transactionsGridPresenter;
 

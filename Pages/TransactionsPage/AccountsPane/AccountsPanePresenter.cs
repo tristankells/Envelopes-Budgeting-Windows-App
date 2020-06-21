@@ -6,23 +6,13 @@ using System.Windows.Controls;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Models;
+using Envelopes.Presentation;
 
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPanePresenter {
         public IAccountsPaneView GetView();
     }
-
-    public interface IMessageBoxWrapper {
-        MessageBoxResult Show(string s, string deleteAccount, MessageBoxButton yesNoCancel, MessageBoxImage warning);
-    }
-
-    public class MessageBoxWrapper : IMessageBoxWrapper {
-        public MessageBoxResult Show(string s, string deleteAccount, MessageBoxButton yesNoCancel, MessageBoxImage warning) {
-            return MessageBox.Show(s, deleteAccount, yesNoCancel, warning);
-        }
-    }
-
 
     public class AccountsPanePresenter : Presenter, IAccountsPanePresenter {
         private readonly IAccountsPaneView view;
@@ -35,8 +25,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             IAccountsPaneViewModel viewModel,
             IDataService dataService,
             INotificationService notificationService,
-            IMessageBoxWrapper messageBoxWrapper
-            ) : base(view, viewModel) {
+            IMessageBoxWrapper messageBoxWrapper) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
@@ -53,13 +42,14 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             view.Loaded += OnViewLoaded;
             view.AccountsDataGrid.CellEditEnding += OnAccountsDataGridCellEditEnding;
             view.Unloaded += OnViewUnloaded;
-            viewModel.ActiveAccountChanged += OnActiveAccountChanged;
+            viewModel.SelectedAccountChanged += OnActiveAccountChanged;
             notificationService.OnTransactionBalanceChanged += OnTransactionBalanceChanged;
         }
 
         private void BindCommands() {
             viewModel.AddItemCommand = new DelegateCommand(ExecuteAddAccount, CanExecuteAddAccount);
             viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
+            viewModel.ShowAllTransactionsCommand = new DelegateCommand(ExecuteShowAllTransactions, CanExecuteShowAllTransactions);
         }
 
         private void OnTransactionBalanceChanged(object? sender, EventArgs e) {
@@ -68,7 +58,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
 
         private void OnActiveAccountChanged(object? sender, System.EventArgs e) {
             if (sender is Account account) {
-                dataService.SetActiveAccount(account);
+                notificationService.NotifyActiveAccountChanged(account);
             }
         }
 
@@ -109,6 +99,12 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             viewModel.AddItem(newAccount);
         }
 
+        private bool CanExecuteShowAllTransactions() => true;
+
+        private void ExecuteShowAllTransactions() {
+            notificationService.NotifyShowAllTransactionsExecuted();
+        }
+
         private bool CanExecuteDeleteAccount() => true;
 
         private void ExecuteDeleteAccount() {
@@ -122,7 +118,8 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
                 case MessageBoxResult.Cancel:
                     // Don't delete account
                     break;
-                case MessageBoxResult.Yes: // Attempt to delete account
+                case MessageBoxResult.Yes:
+                    // Attempt to delete account
                     DeleteAccount();
                     break;
             }
@@ -136,9 +133,15 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
 
         private void PopulateAccountsList() {
             var accounts = dataService.Accounts();
+            
             foreach (var account in accounts) {
                 viewModel.AddItem(account);
             }
+
+            if (viewModel.ItemList.Any()) {
+                viewModel.SelectedItem = viewModel.ItemList.FirstOrDefault();
+            }
+  
         }
 
         private void UpdateAccountsTotal() {

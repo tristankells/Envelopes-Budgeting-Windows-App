@@ -8,20 +8,26 @@
         xmlns:presentation="clr-namespace:Envelopes.Presentation"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
+        Background="AliceBlue"
         Title="Envelopes" Height="900" Width="1600">
     <Window.Resources>
-        <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Button Command="{Binding SaveBudgetCommand }" Content="Save"></Button>
+            <Button  Style="{StaticResource PageNavigationButton}" Command="{Binding SaveBudgetCommand }" Content="Save"></Button>
             <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions"></Button>
-                <Button Grid.Column="1" Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
+                <Button  Style="{StaticResource PageNavigationButton}" Grid.Column="0" Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions"></Button>
+                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="1" Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
             </Grid>
             <TextBlock FontSize="20" HorizontalAlignment="Center" Text="Remaining To Budget"/>
             <TextBlock Text="{Binding RemainingBalanceToBudget}" FontSize="20" HorizontalAlignment="Center" Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>

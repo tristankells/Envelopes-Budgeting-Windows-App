@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -11,28 +12,26 @@ using Envelopes.Models;
 
 namespace Envelopes.Data {
     public interface IDataService {
-        public Task LoadApplicationData();
-        public Task SaveBudget();
-
-        public void SetActiveAccount(Account account);
-
-        //Accounts
+        // Accounts
         public IEnumerable<Account> Accounts();
         public Account AddAccount();
         public bool RemoveAccount(Account account);
 
         // Categories
-        public IEnumerable<Category> GetCategories();
-        public bool RemoveCategory(Category selectedAccount);
+        public IEnumerable<Category> Categories();
         public Category AddCategory();
+        public bool RemoveCategory(Category selectedAccount);
 
         // Account Transactions
-        public IEnumerable<AccountTransaction> GetAccountTransactionsFilteredByActiveAccount();
+        public IEnumerable<AccountTransaction> AccountTransactions();
+        AccountTransaction AddAccountTransaction(Account activeAccountId);
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
-        public AccountTransaction AddAccountTransaction();
 
+        public Task LoadApplicationData();
+        public Task SaveBudget();
         public decimal GetRemainingAccountBalanceToBudget();
         public decimal GetTotalAccountBalance();
+
     }
 
     public class DataService : IDataService {
@@ -44,11 +43,8 @@ namespace Envelopes.Data {
 
         private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
         private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
-
         private readonly ObservableCollection<AccountTransaction> accountTransactions =
             new ObservableCollection<AccountTransaction>();
-
-        private Account activeAccount;
 
         public DataService(IPersistenceService persistenceService,
             IIdentifierService identifierService,
@@ -58,7 +54,6 @@ namespace Envelopes.Data {
             this.identifierService = identifierService;
         }
 
-        //Todo Refactor (To Big)
         public async Task LoadApplicationData() {
             var applicationData = await (string.IsNullOrEmpty(FileName)
                 ? persistenceService.GetApplicationData()
@@ -71,7 +66,6 @@ namespace Envelopes.Data {
             LoadAccount(applicationData.Accounts);
 
             if (accounts.Any()) {
-                activeAccount = accounts.First();
                 SetAccountsTotals();
             }
 
@@ -159,15 +153,15 @@ namespace Envelopes.Data {
         }
 
         public bool RemoveAccount(Account account) {
-            bool isCurrentlyActiveAccount = account == activeAccount;
-            bool isMoreThanOneAccount = accounts.Count > 1;
-
+            //bool isCurrentlyActiveAccount = account == activeAccount;
+            //bool isMoreThanOneAccount = accounts.Count > 1;
+            //if (isCurrentlyActiveAccount && isMoreThanOneAccount) {
+            //    var indexOfCurrentAccount = accounts.IndexOf(account);
+            //    SetActiveAccount(accounts[indexOfCurrentAccount + 1]);
+            //
             RemoveAllAccountTransactionsForAccount(account.Id);
 
-            if (isCurrentlyActiveAccount && isMoreThanOneAccount) {
-                var indexOfCurrentAccount = accounts.IndexOf(account);
-                SetActiveAccount(accounts[indexOfCurrentAccount + 1]);
-            }
+
 
             return accounts.Remove(account);
         }
@@ -179,18 +173,18 @@ namespace Envelopes.Data {
             }
         }
 
-        public void SetActiveAccount(Account account) {
-            if (activeAccount == account) return;
-            activeAccount = account;
-            notificationService.NotifyActiveAccountChanged(account);
-        }
+        //public void SetActiveAccount(Account account) {
+        //    if (activeAccount == account) return;
+        //    activeAccount = account;
+        //    notificationService.NotifyActiveAccountChanged(account);
+        //}
 
         #endregion
 
 
         #region Categories
 
-        public IEnumerable<Category> GetCategories() {
+        public IEnumerable<Category> Categories() {
             return categories;
         }
 
@@ -218,14 +212,15 @@ namespace Envelopes.Data {
         }
 
         public bool RemoveCategory(Category category) {
-            // For all account transactions with this category ID, reset their ID to 0.
-            foreach (var accountTransaction in accountTransactions) {
-                if (accountTransaction.CategoryId == category.Id) {
-                    accountTransaction.CategoryId = 0;
-                }
-            }
-
+            ResetCategoryForCategoriesAccountTransactions(category.Id); // For all account transactions with this category ID, reset their ID to 0.
             return categories.Remove(category);
+        }
+
+        private void ResetCategoryForCategoriesAccountTransactions(int categoryId) {
+            var categoriesAccountTransactions = accountTransactions.Where(at => at.CategoryId == categoryId);
+            foreach (var accountTransaction in categoriesAccountTransactions) {
+                accountTransaction.CategoryId = 0;
+            }
         }
 
         #endregion
@@ -237,11 +232,7 @@ namespace Envelopes.Data {
             return accountTransactions;
         }
 
-        public IEnumerable<AccountTransaction> GetAccountTransactionsFilteredByActiveAccount() {
-            return accountTransactions.Where(t => t.AccountId == activeAccount.Id);
-        }
-
-        public AccountTransaction AddAccountTransaction() {
+        public AccountTransaction AddAccountTransaction(Account activeAccount) {
             var transaction = new AccountTransaction() {
                 Id = identifierService.GetNewTransactionId(),
                 AccountId = activeAccount.Id,
@@ -301,33 +292,5 @@ namespace Envelopes.Data {
 
         public decimal GetRemainingAccountBalanceToBudget() =>
             accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
-    }
-
-
-    public interface INotificationService {
-        public event EventHandler OnCategoryBudgetedChanged;
-        public event EventHandler OnTransactionBalanceChanged;
-        public event EventHandler OnActiveAccountChanged;
-        void NotifyActiveAccountChanged(Account account);
-        void NotifyCategoryBudgetedChanged();
-        void NotifyTransactionBalanceChanged();
-    }
-
-    public class NotificationService : INotificationService {
-        public event EventHandler OnCategoryBudgetedChanged;
-        public event EventHandler OnTransactionBalanceChanged;
-        public event EventHandler OnActiveAccountChanged;
-
-        public void NotifyActiveAccountChanged(Account account) {
-            OnActiveAccountChanged?.Invoke(account, null);
-        }
-
-        public void NotifyCategoryBudgetedChanged() {
-            OnCategoryBudgetedChanged?.Invoke(null, null);
-        }
-
-        public void NotifyTransactionBalanceChanged() {
-            OnTransactionBalanceChanged?.Invoke(null, null);
-        }
     }
 }

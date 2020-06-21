@@ -6,7 +6,6 @@ namespace Envelopes.Data {
         public int GetNewAccountId();
         public int GetNewCategoryId();
         int GetNewTransactionId();
-
     }
 
     public class IdentifierService : IIdentifierService {

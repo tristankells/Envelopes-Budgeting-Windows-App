@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Envelopes.Common;
@@ -7,7 +8,6 @@ using Envelopes.Helpers;
 using Envelopes.Models;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
-
 
     public interface ICategoriesGridPresenter {
         public CategoriesGridView GetView();
@@ -50,9 +50,19 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
 
         private void CategoriesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
             switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
-                case nameof(Account.Name):
+                case nameof(Category.Name):
                     gridValidator.ValidateNewTextBoxValueIsUniqueInColumn((TextBox) e.EditingElement,
                         viewModel.ItemList.Select(account => account.Name).ToList(), (e.Row.Item as Account)?.Name);
+                    break;
+                case nameof(Category.Available):
+                    var selectCategory = viewModel.SelectedItem;
+                    var textBox = (TextBox) e.EditingElement;
+                    var newValue = Convert.ToDecimal(textBox.Text);
+                    if (selectCategory.Available != newValue) {
+                        var difference = selectCategory.Available - newValue;
+                        selectCategory.Budgeted -= difference;
+                    }
+
                     break;
             }
         }
@@ -111,7 +121,7 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void PopulateCategoriesList() {
-            var categories = dataService.GetCategories();
+            var categories = dataService.Categories();
             foreach (var category in categories) {
                 viewModel.AddItem(category);
             }

@@ -120,19 +120,22 @@ namespace Envelopes.Data.Persistence {
         }
 
         private static void SetDefaultWorksheetValues(ExcelWorksheet worksheet) {
-            worksheet.Cells.AutoFitColumns(0); //Autofit columns for all cells
+            //Autofit columns for all cells
+            worksheet.Cells.AutoFitColumns(0); 
 
             // Lets set the header text 
             worksheet.HeaderFooter.OddHeader.CenteredText = "&24&U&\"Arial,Regular Bold\" Accounts";
+            
             // Add the page number to the footer plus the total number of pages
             worksheet.HeaderFooter.OddFooter.RightAlignedText =
                 string.Format("Page {0} of {1}", ExcelHeaderFooter.PageNumber, ExcelHeaderFooter.NumberOfPages);
+            
             // Add the sheet name to the footer
             worksheet.HeaderFooter.OddFooter.CenteredText = ExcelHeaderFooter.SheetName;
+            
             // Add the file fileName to the footer
             worksheet.HeaderFooter.OddFooter.LeftAlignedText =
                 ExcelHeaderFooter.FilePath + ExcelHeaderFooter.FileName;
-
             worksheet.PrinterSettings.RepeatRows = worksheet.Cells["1:2"];
             worksheet.PrinterSettings.RepeatColumns = worksheet.Cells["A:G"];
 

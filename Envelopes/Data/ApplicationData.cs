@@ -22,13 +22,6 @@ namespace Envelopes.Data {
             Payees = new List<Payee>();
         }
 
-        public ApplicationData(IList<Account> accounts, IList<AccountTransaction> accountTransactions,
-            IList<Category> categories, IList<CategoryGroup> categoryGroups, IList<Payee> payees) {
-            Accounts = accounts;
-            AccountTransactions = accountTransactions;
-            Categories = categories;
-            CategoryGroups = categoryGroups;
-            Payees = payees;
-        }
+
     }
 }

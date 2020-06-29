@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Input;
 
 namespace Envelopes.Common {
@@ -46,7 +44,7 @@ namespace Envelopes.Common {
     /// <summary>
     /// Base class for our ViewModels storing a collection of one type of item. Grids, list of items etc...
     /// </summary>
-    public class ItemsViewModelBase<T> : NotifyPropertyChanged, IItemsViewModelBase<T> {
+    public abstract class ItemsViewModelBase<T> : NotifyPropertyChanged, IItemsViewModelBase<T> {
         #region Fields
 
         private T selectedItem;

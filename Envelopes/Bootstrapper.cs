@@ -44,6 +44,7 @@ namespace Envelopes {
             kernel.Bind<IDataService>().To<DataService>().InSingletonScope();
             kernel.Bind<INotificationService>().To<NotificationService>().InSingletonScope();
             kernel.Bind<IMessageBoxWrapper>().To<MessageBoxWrapper>().InSingletonScope();
+            kernel.Bind<IExcelFileProcessor>().To<ExcelFileProcessor>().InSingletonScope();
         }
     }
 }

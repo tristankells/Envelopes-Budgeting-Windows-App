@@ -13,11 +13,7 @@ namespace Envelopes.Models {
         private string memo;
         private decimal outflow;
         private decimal inflow;
-
-        private Category category;
-
         private string payeeName;
-        private string categoryName;
         private string accountName;
 
         #endregion
@@ -44,8 +40,6 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref payeeId, value, nameof(PayeeId));
         }
 
-
-
         public string Memo {
             get => memo;
             set => SetPropertyValue(ref memo, value, nameof(Memo));
@@ -69,16 +63,6 @@ namespace Envelopes.Models {
         public int CategoryId {
             get => categoryId;
             set => SetPropertyValue(ref categoryId, value, nameof(CategoryId));
-        }
-
-        public Category Category {
-            get => category;
-            set => SetPropertyValue(ref category, value, nameof(Category));
-        }
-
-        public string CategoryName {
-            get => categoryName;
-            set => SetPropertyValue(ref categoryName, value, nameof(CategoryName));
         }
 
         #endregion

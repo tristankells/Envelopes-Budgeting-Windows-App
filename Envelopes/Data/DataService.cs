@@ -55,9 +55,8 @@ namespace Envelopes.Data {
         }
 
         public async Task LoadApplicationData() {
-            var applicationData = await (string.IsNullOrEmpty(FileName)
-                ? persistenceService.GetApplicationData()
-                : persistenceService.GetApplicationData(FileName));
+            var applicationData = await persistenceService.GetApplicationData();
+              
 
             identifierService.Setup(applicationData);
 
@@ -133,9 +132,7 @@ namespace Envelopes.Data {
                 Categories = categories.ToList(),
                 AccountTransactions = accountTransactions.ToList()
             };
-            await (string.IsNullOrEmpty(FileName)
-                ? persistenceService.SaveApplicationData(applicationData)
-                : persistenceService.SaveApplicationData(applicationData, FileName));
+            await persistenceService.SaveApplicationData(applicationData);
         }
 
         #region Accounts

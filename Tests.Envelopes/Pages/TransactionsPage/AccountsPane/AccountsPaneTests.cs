@@ -6,6 +6,7 @@ using Envelopes.Data;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
+using Envelopes.Presentation;
 using Moq;
 using NUnit.Framework;
 

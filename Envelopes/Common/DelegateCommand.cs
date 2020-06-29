@@ -32,30 +32,30 @@ namespace Envelopes.Common {
         /// 	<c>true</c> if this command can execute; otherwise, <c>false</c>.
         /// </returns>
         public bool CanExecute() {
-            return this.canExecuteCallback == null || this.canExecuteCallback();
+            return canExecuteCallback == null || this.canExecuteCallback();
         }
 
         bool ICommand.CanExecute(object parameter) {
-            return this.CanExecute();
+            return CanExecute();
         }
 
         /// <summary>Executes the command.</summary>
         public void Execute() {
-            this.executeCallback();
+            executeCallback();
         }
 
         void ICommand.Execute(object parameter) {
-            this.Execute();
+            Execute();
         }
 
         event EventHandler ICommand.CanExecuteChanged {
             add {
-                if (this.canExecuteCallback == null)
+                if (canExecuteCallback == null)
                     return;
                 CommandManager.RequerySuggested += value;
             }
             remove {
-                if (this.canExecuteCallback == null)
+                if (canExecuteCallback == null)
                     return;
                 CommandManager.RequerySuggested -= value;
             }

@@ -14,9 +14,6 @@
 *.userprefs
 
 # Build results
-
-
-Tests.Envelopes/obj/Debug/netcoreapp3.1
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

@@ -62,7 +62,7 @@
                                     Binding="{Binding PayeeName}"
                                     FontSize="15" />
                 <DataGridComboBoxColumn
-                    Header="Category Name"
+                    Header="category Name"
                     SelectedValueBinding="{Binding CategoryId}"
                     DisplayMemberPath="Name"
                     SelectedValuePath="Id">

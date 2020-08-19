@@ -1,41 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Envelopes.Models;
 using OfficeOpenXml;
 
 namespace Envelopes.Data.Persistence {
-
-    public interface IExcelFileProcessor {
-        public void SaveAs(ExcelPackage package);
-        public ExcelPackage LoadExcelPackageFromFile();
-    }
-
-    public class ExcelFileProcessor : IExcelFileProcessor {
-        private const string FileName = "Envelopes.xlsx";
-        private readonly string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        public void SaveAs(ExcelPackage package) {
-            var filePath = new FileInfo(Path.Combine(directoryPath, FileName));
-            package.SaveAs(filePath);
-        }
-
-         public ExcelPackage LoadExcelPackageFromFile() {
-             var filePath = new FileInfo(Path.Combine(directoryPath, FileName));
-             return new ExcelPackage(filePath);
-        }
+    public interface IPersistenceService {
+        Task SaveApplicationData(ApplicationData data);
+        Task<ApplicationData> GetApplicationData();
     }
 
     public class ExcelPersistenceService : IPersistenceService {
         private readonly IExcelFileProcessor excelFileProcessor;
+        private bool saveInProgress = false;
 
         public ExcelPersistenceService(IExcelFileProcessor excelFileProcessor) {
             this.excelFileProcessor = excelFileProcessor;
         }
 
         public async Task SaveApplicationData(ApplicationData data) {
+            if (saveInProgress) {
+                return;
+            }
+
+            saveInProgress = true;
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            await Task.Factory.StartNew(() => {
+            await Task.Factory.StartNew(async () => {
                 using var package = new ExcelPackage();
                 // Add a new worksheet to the empty workbook
                 AddApplicationDataToExcelPackage(package, data);
@@ -54,8 +45,10 @@ namespace Envelopes.Data.Persistence {
                 package.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
 
                 // Save our new workbook in the output directory and we are done!
-                excelFileProcessor.SaveAs(package);
+                await excelFileProcessor.SaveAs(package);
             });
+
+            saveInProgress = false;
         }
 
         private void AddApplicationDataToExcelPackage(ExcelPackage package, ApplicationData data) {
@@ -121,18 +114,18 @@ namespace Envelopes.Data.Persistence {
 
         private static void SetDefaultWorksheetValues(ExcelWorksheet worksheet) {
             //Autofit columns for all cells
-            worksheet.Cells.AutoFitColumns(0); 
+            worksheet.Cells.AutoFitColumns(0);
 
             // Lets set the header text 
             worksheet.HeaderFooter.OddHeader.CenteredText = "&24&U&\"Arial,Regular Bold\" Accounts";
-            
+
             // Add the page number to the footer plus the total number of pages
             worksheet.HeaderFooter.OddFooter.RightAlignedText =
                 string.Format("Page {0} of {1}", ExcelHeaderFooter.PageNumber, ExcelHeaderFooter.NumberOfPages);
-            
+
             // Add the sheet name to the footer
             worksheet.HeaderFooter.OddFooter.CenteredText = ExcelHeaderFooter.SheetName;
-            
+
             // Add the file fileName to the footer
             worksheet.HeaderFooter.OddFooter.LeftAlignedText =
                 ExcelHeaderFooter.FilePath + ExcelHeaderFooter.FileName;

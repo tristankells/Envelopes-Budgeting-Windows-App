@@ -20,7 +20,7 @@
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Button  Style="{StaticResource PageNavigationButton}" Command="{Binding SaveBudgetCommand }" Content="Save"></Button>
+            <TextBlock FontSize="80" HorizontalAlignment="Center" Text="ENVELOPES"/>
             <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

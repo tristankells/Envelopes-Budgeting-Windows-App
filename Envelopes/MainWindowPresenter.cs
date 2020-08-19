@@ -59,7 +59,6 @@ namespace Envelopes {
             viewModel.CurrentPage = budgetPagePresenter.GetPageView();
         }
 
-
         private bool CanSaveBudget() => true;
 
         private async void ExecuteSaveBudget() {
@@ -68,7 +67,6 @@ namespace Envelopes {
 
         private void BindEvents() {
             view.Loaded += OnViewLoaded;
-            view.Closing += OnViewClosing;
             notificationService.OnCategoryBudgetedChanged += OnCategoryBudgetedChanged;
             notificationService.OnTransactionBalanceChanged += OnTransactionsBalanceChanged;
         }
@@ -79,10 +77,6 @@ namespace Envelopes {
 
         private void OnCategoryBudgetedChanged(object? sender, System.EventArgs e) {
             UpdateRemainingBalanceToBudget();
-        }
-
-        private async void OnViewClosing(object sender, System.EventArgs e) {
-            await dataService.SaveBudget();
         }
 
         private async void OnViewLoaded(object sender, RoutedEventArgs e) {

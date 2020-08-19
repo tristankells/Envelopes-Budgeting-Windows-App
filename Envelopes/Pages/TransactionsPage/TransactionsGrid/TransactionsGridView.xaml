@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -22,15 +22,16 @@
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
             <DataGrid.Columns>
-                <DataGridComboBoxColumn
-                    Header="Account"
-                    SelectedValueBinding="{Binding AccountId}"
-                    DisplayMemberPath="Name"
-                    SelectedValuePath="Id">
+                <DataGridComboBoxColumn Width="3*"
+                                        Header="Account"
+                                        SelectedValueBinding="{Binding AccountId}"
+                                        DisplayMemberPath="Name"
+                                        SelectedValuePath="Id">
                     <DataGridComboBoxColumn.ElementStyle>
                         <Style TargetType="{x:Type ComboBox}">
                             <Setter Property="ItemsSource"
                                     Value="{Binding Path=DataContext.Accounts, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                            <Setter Property="FontSize" Value="15" />
                         </Style>
                     </DataGridComboBoxColumn.ElementStyle>
                     <DataGridComboBoxColumn.EditingElementStyle>
@@ -41,10 +42,12 @@
                     </DataGridComboBoxColumn.EditingElementStyle>
                 </DataGridComboBoxColumn>
                 <DataGridTemplateColumn Header="Date"
-                                        Width="*">
+                                        Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Date, StringFormat=\{0:dd/MM/yy \}}" />
+                            <TextBlock FontSize="15"
+                                       TextAlignment="Center"
+                                       Text="{Binding Date, StringFormat=\{0:dd/MM/yy \}}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
@@ -53,19 +56,15 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Payee Id"
-                                    Width="*"
-                                    Binding="{Binding PayeeId}"
-                                    FontSize="15" />
-                <DataGridTextColumn Header="Payee Name"
-                                    Width="*"
+                <DataGridTextColumn Header="Payee"
+                                    Width="3*"
                                     Binding="{Binding PayeeName}"
                                     FontSize="15" />
-                <DataGridComboBoxColumn
-                    Header="Category Name"
-                    SelectedValueBinding="{Binding CategoryId}"
-                    DisplayMemberPath="Name"
-                    SelectedValuePath="Id">
+                <DataGridComboBoxColumn Width="3*"
+                                        Header="Category"
+                                        SelectedValueBinding="{Binding CategoryId}"
+                                        DisplayMemberPath="Name"
+                                        SelectedValuePath="Id">
                     <DataGridComboBoxColumn.ElementStyle>
                         <Style TargetType="{x:Type ComboBox}">
                             <Setter Property="ItemsSource"
@@ -80,18 +79,19 @@
                     </DataGridComboBoxColumn.EditingElementStyle>
                 </DataGridComboBoxColumn>
                 <DataGridTextColumn Header="Memo"
-                                    Width="*"
+                                    Width="3*"
                                     Binding="{Binding Memo}"
+                                    FontStyle="Italic"
                                     FontSize="15" />
                 <DataGridTextColumn Header="Outflow"
-                                    Width="*"
-                                    Binding="{Binding Outflow}"
+                                    Width="2*"
+                                    Binding="{Binding Outflow, StringFormat='C'}"
                                     FontSize="15" />
                 <DataGridTextColumn Header="Inflow"
-                                    Width="*"
-                                    Binding="{Binding Inflow}"
+                                    Width="2*"
+                                    Binding="{Binding Inflow, StringFormat='C'}"
                                     FontSize="15" />
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Delete"

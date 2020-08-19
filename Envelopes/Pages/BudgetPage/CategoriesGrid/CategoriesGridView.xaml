@@ -20,29 +20,49 @@
         <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" Text="Categories" />
         <DataGrid Name="CategoriesDataGrid"
                   CanUserAddRows="False"
+                  Margin="15"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id"
-                                    Width="*"
-                                    Binding="{Binding Id}"
-                                    FontSize="15" />
                 <DataGridTextColumn Header="Name"
-                                    Width="3*"
+                                    Width="7*"
                                     Binding="{Binding Name}"
-                                    FontSize="15" />
+                                    FontSize="15">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Padding" Value="2" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Budgeted"
-                                    Width="3*"
-                                    Binding="{Binding Budgeted}"
-                                    FontSize="15" />
+                                    Width="2*"
+                                    Binding="{Binding Budgeted, StringFormat=C}"
+                                    FontSize="15">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextAlignment" Value="Center" />
+                            <Setter Property="Padding" Value="2" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Activity"
-                                    Width="3*"
-                                    Binding="{Binding Activity}"
-                                    FontSize="15" />
+                                    Width="2*"
+                                    IsReadOnly="True"
+                                    Binding="{Binding Activity, StringFormat=C}"
+                                    FontSize="15">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextAlignment" Value="Center" />
+                            <Setter Property="Padding" Value="2" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Available"
-                                    Width="3*"
-                                    Binding="{Binding Available}"
+                                    Width="2*"
+                                    FontWeight="Bold"
+                                    Binding="{Binding Available, StringFormat=C}"
                                     FontSize="15">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
@@ -50,8 +70,14 @@
                                     Value="{Binding Available, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
                         </Style>
                     </DataGridTextColumn.CellStyle>
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextAlignment" Value="Center" />
+                            <Setter Property="Padding" Value="2" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Delete"
@@ -61,6 +87,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding AddItemCommand}" Content="Add Category" />
+        <Button FontSize="20" Width="300" Style="{StaticResource PageNavigationButton}"
+                Command="{Binding AddItemCommand }" Content="Add Category" />
     </StackPanel>
 </UserControl>

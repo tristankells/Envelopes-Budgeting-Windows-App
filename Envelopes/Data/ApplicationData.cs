@@ -21,7 +21,5 @@ namespace Envelopes.Data {
             CategoryGroups = new List<CategoryGroup>();
             Payees = new List<Payee>();
         }
-
-
     }
 }

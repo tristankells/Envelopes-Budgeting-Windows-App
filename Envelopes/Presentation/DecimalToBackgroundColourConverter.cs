@@ -14,11 +14,11 @@ namespace Envelopes.Presentation {
             var input = value as decimal? ?? 0;
 
             if (input < 0) {
-                return Brushes.MistyRose;
+                return "#f49e8b";
             }
 
             if (input > 0) {
-                return Brushes.LightGreen;
+                return "#b5e08a" ;
             }
 
             return DependencyProperty.UnsetValue;

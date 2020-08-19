@@ -56,8 +56,11 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
                     break;
                 case nameof(Category.Available):
                     var selectCategory = viewModel.SelectedItem;
-                    var textBox = (TextBox) e.EditingElement;
-                    var newValue = Convert.ToDecimal(textBox.Text);
+                    var textBoxText = ((TextBox) e.EditingElement).Text;
+
+                    decimal.TryParse(textBoxText, out decimal newValue);
+                   
+
                     if (selectCategory.Available != newValue) {
                         var difference = selectCategory.Available - newValue;
                         selectCategory.Budgeted -= difference;

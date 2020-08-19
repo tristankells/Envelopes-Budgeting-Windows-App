@@ -20,7 +20,7 @@
     <StackPanel>
         <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" >
             <Run Text="Accounts" />
-            <Run Text="{Binding AccountsTotalBalance}" Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
+            <Run Text="{Binding AccountsTotalBalance, StringFormat='C'}" Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
         </TextBlock>
         <DataGrid Name="accountsDataGrid"
                   dd:DragDrop.IsDragSource="True"
@@ -42,7 +42,7 @@
                 <DataGridTextColumn Header="Available"
                                     Width="3*"
                                     IsReadOnly="True"
-                                    Binding="{Binding Total}"
+                                    Binding="{Binding Total, StringFormat='C'}"
                                     FontSize="15" />
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>

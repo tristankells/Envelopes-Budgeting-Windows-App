@@ -37,6 +37,7 @@ namespace Envelopes.Data {
         private readonly INotificationService notificationService;
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
+        private bool ignoreApplicationSaveEvents = false;
 
         public string FileName { get; set; }
 
@@ -54,9 +55,10 @@ namespace Envelopes.Data {
         }
 
         public async Task LoadApplicationData() {
-            var applicationData = await persistenceService.GetApplicationData();
-              
+            ignoreApplicationSaveEvents = true;
 
+            ApplicationData applicationData = await persistenceService.GetApplicationData();
+            
             identifierService.Setup(applicationData);
 
             LoadAccountTransaction(applicationData.AccountTransactions);
@@ -70,6 +72,8 @@ namespace Envelopes.Data {
             if (categories.Any()) {
                 SetCategoriesActivityAmount();
             }
+
+            ignoreApplicationSaveEvents = false;
         }
 
         private void SetAccountsTotals() {
@@ -113,12 +117,12 @@ namespace Envelopes.Data {
             accountTransactions.CollectionChanged += OnAccountTransactionsCollectionChanged;
         }
 
-        private void Accounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            //throw new NotImplementedException();
+        private async void Accounts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            await SaveBudget();
         }
 
-        private void Account_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-            //throw new NotImplementedException();
+        private async void Account_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            await SaveBudget();
         }
 
 
@@ -126,6 +130,10 @@ namespace Envelopes.Data {
         /// Attempts to save data to specified persistence service.
         /// </summary>
         public async Task SaveBudget() {
+            if (ignoreApplicationSaveEvents) {
+                return;
+            }
+
             var applicationData = new ApplicationData() {
                 Accounts = accounts.ToList(),
                 Categories = categories.ToList(),
@@ -181,6 +189,7 @@ namespace Envelopes.Data {
         #region Categories
 
         public IEnumerable<Category> Categories() {
+            SetCategoriesActivityAmount();
             return categories;
         }
 
@@ -193,18 +202,22 @@ namespace Envelopes.Data {
             return category;
         }
 
-        private void OnCategoryPropertyChanged(object sender, PropertyChangedEventArgs e) {
+        private async void OnCategoryPropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(Category.Budgeted):
                     notificationService.NotifyCategoryBudgetedChanged();
                     break;
             }
+
+            await SaveBudget();
         }
 
-        private void OnCategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private async void OnCategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             if (e.Action == NotifyCollectionChangedAction.Remove) {
                 notificationService.NotifyCategoryBudgetedChanged();
             }
+
+            await SaveBudget();
         }
 
         public bool RemoveCategory(Category category) {
@@ -240,7 +253,7 @@ namespace Envelopes.Data {
             return transaction;
         }
 
-        private void OnTransactionPropertyChanged(object sender, PropertyChangedEventArgs e) {
+        private async void OnTransactionPropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e is PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
                 var difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
                 var transaction = sender as AccountTransaction;
@@ -261,21 +274,24 @@ namespace Envelopes.Data {
                         break;
                 }
             }
+
+            await SaveBudget();
         }
 
-        private void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private async void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             // Deduct the transaction total from the transaction account balance.
             if (e.Action == NotifyCollectionChangedAction.Remove) {
                 var updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
                 if (updatedTransaction == null) return;
 
-                var account = accounts.FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
+                Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
                 if (account == null) return;
-
                 account.Total -= updatedTransaction.Total;
 
                 notificationService.NotifyTransactionBalanceChanged();
             }
+
+            await SaveBudget();
         }
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) {

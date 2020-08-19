@@ -23,25 +23,21 @@ namespace Tests.Envelopes.Data.Persistence {
             excelPersistenceService = new ExcelPersistenceService(excelFileProcessor.Object);
         }
 
-
         [Test]
-        public async Task SaveApplicationData_TriesToSaveTheCorrectDataToFile_WithCategoryTransactions() {
+        public async Task SaveApplicationData_TriesToSaveTheCorrectDataToFile() {
             var appData = new ApplicationData();
             var account = TestDataSetup.CreateAccount();
-            var category = TestDataSetup.CreateCategoryOne();
-            var accountTransactionOne = TestDataSetup.CreateAccountTransaction_WithSingleCategoryTransaction();
-            var accountTransactionTwo = TestDataSetup.CreateAccountTransaction_WithMultipleCategoryTransactions();
+            var category = TestDataSetup.CreateCategory();
+            var accountTransaction = TestDataSetup.CreateAccountTransaction();
             appData.Accounts.Add(account);
             appData.Categories.Add(category);
-            appData.AccountTransactions.Add(accountTransactionOne);
-            appData.AccountTransactions.Add(accountTransactionTwo);
+            appData.AccountTransactions.Add(accountTransaction);
 
             excelFileProcessor.Setup(efp => efp.SaveAs(It.IsAny<ExcelPackage>()))
                 .Callback<ExcelPackage>((ep) => {
                     ValidateExcelPackageContainsAccount(ep, account);
                     ValidateExcelPackageContainsCategory(ep, category);
-                    ValidateExcelPackageContainsAccountTransaction(ep, accountTransactionOne);
-                    ValidateExcelPackageContainsAccountTransaction(ep, accountTransactionTwo, 2);
+                    ValidateExcelPackageContainsAccountTransaction(ep, accountTransaction);
                 }).Verifiable();
 
             await excelPersistenceService.SaveApplicationData(appData);
@@ -49,43 +45,33 @@ namespace Tests.Envelopes.Data.Persistence {
             excelFileProcessor.Verify();
         }
 
-        private static void ValidateExcelPackageContainsAccount(ExcelPackage excelPackage, Account account, int rowNumber = 1) {
-            var rowNumberIncludingHeader = rowNumber + 1;
-            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountsWorksheetName].Cells[rowNumberIncludingHeader, 1].GetValue<int>());
-            Assert.AreEqual(account.Name, excelPackage.Workbook.Worksheets[AccountsWorksheetName].Cells[rowNumberIncludingHeader, 2].GetValue<string>());
+        private static void ValidateExcelPackageContainsAccount(ExcelPackage excelPackage, Account account) {
+            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountsWorksheetName].Cells[2, 1].GetValue<int>());
+            Assert.AreEqual(account.Name, excelPackage.Workbook.Worksheets[AccountsWorksheetName].Cells[2, 2].GetValue<string>());
         }
 
-        private static void ValidateExcelPackageContainsCategory(ExcelPackage excelPackage, Category account, int rowNumber = 1) {
-            var rowNumberIncludingHeader = rowNumber + 1;
-            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[rowNumberIncludingHeader, 1].GetValue<int>());
-            Assert.AreEqual(account.Name, excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[rowNumberIncludingHeader, 2].GetValue<string>());
-            Assert.AreEqual(account.Budgeted, excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[rowNumberIncludingHeader, 3].GetValue<decimal>());
+        private static void ValidateExcelPackageContainsCategory(ExcelPackage excelPackage, Category account) {
+            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[2, 1].GetValue<int>());
+            Assert.AreEqual(account.Name, excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[2, 2].GetValue<string>());
+            Assert.AreEqual(account.Budgeted, excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[2, 3].GetValue<decimal>());
         }
 
-        private static void ValidateExcelPackageContainsAccountTransaction(ExcelPackage excelPackage, AccountTransaction account, int rowNumber = 1) {
-            var rowNumberIncludingHeader = rowNumber + 1;
- 
-            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[rowNumberIncludingHeader, 1].GetValue<int>());
-            Assert.AreEqual(account.AccountId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[rowNumberIncludingHeader, 2].GetValue<int>());
-            Assert.AreEqual(account.Date, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[rowNumberIncludingHeader, 3].GetValue<DateTime>());
-            Assert.AreEqual(account.PayeeId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[rowNumberIncludingHeader, 4].GetValue<int>());
-            Assert.AreEqual(account.Memo, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[rowNumberIncludingHeader, 5].GetValue<string>());
-
-            for (var i = 0; i < account.CategoryTransactions.Count; i++) {
-                var categoryTransactionRowNumber = rowNumberIncludingHeader + i;
-                Assert.AreEqual(account.CategoryTransactions[i].CategoryId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[categoryTransactionRowNumber, 6].GetValue<int>());
-                Assert.AreEqual(account.CategoryTransactions[i].Outflow, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[categoryTransactionRowNumber, 7].GetValue<decimal>());
-                Assert.AreEqual(account.CategoryTransactions[i].Inflow, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[categoryTransactionRowNumber, 8].GetValue<decimal>());
-            }
+        private static void ValidateExcelPackageContainsAccountTransaction(ExcelPackage excelPackage, AccountTransaction account) {
+            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].GetValue<int>());
+            Assert.AreEqual(account.AccountId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].GetValue<int>());
+            Assert.AreEqual(account.Date, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].GetValue<DateTime>());
+            Assert.AreEqual(account.PayeeId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].GetValue<int>());
+            Assert.AreEqual(account.CategoryId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 5].GetValue<int>());
+            Assert.AreEqual(account.Memo, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 6].GetValue<string>());
+            Assert.AreEqual(account.Outflow, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 7].GetValue<decimal>());
+            Assert.AreEqual(account.Inflow, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 8].GetValue<decimal>());
         }
 
         [Test]
         public async Task GetApplicationData_ConvertsExcelToTheCorrectApplicationData() {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var account = TestDataSetup.CreateAccount();
-            var category = TestDataSetup.CreateCategoryOne();
-            var accountTransactionOne = TestDataSetup.CreateAccountTransaction_WithSingleCategoryTransaction();
-            var accountTransactionTwo = TestDataSetup.CreateAccountTransaction_WithMultipleCategoryTransactions();
+            var category = TestDataSetup.CreateCategory();
+            var accountTransaction = TestDataSetup.CreateAccountTransaction();
 
             var excelPackage = new ExcelPackage();
             excelPackage.Workbook.Worksheets.Add(AccountsWorksheetName);
@@ -98,27 +84,14 @@ namespace Tests.Envelopes.Data.Persistence {
             excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[2, 3].Value = category.Budgeted;
 
             excelPackage.Workbook.Worksheets.Add(AccountTransactionsWorksheetName);
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].Value = accountTransactionOne.Id;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].Value = accountTransactionOne.AccountId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].Value = accountTransactionOne.Date;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].Value = accountTransactionOne.PayeeId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 5].Value = accountTransactionOne.Memo;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 6].Value = accountTransactionOne.CategoryTransactions[0].CategoryId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 7].Value = accountTransactionOne.CategoryTransactions[0].Outflow;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 8].Value = accountTransactionOne.CategoryTransactions[0].Inflow;
-
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 1].Value = accountTransactionTwo.Id;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 2].Value = accountTransactionTwo.AccountId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 3].Value = accountTransactionTwo.Date;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 4].Value = accountTransactionTwo.PayeeId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 5].Value = accountTransactionTwo.Memo;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 6].Value = accountTransactionTwo.CategoryTransactions[0].CategoryId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 7].Value = accountTransactionTwo.CategoryTransactions[0].Outflow;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[3, 8].Value = accountTransactionTwo.CategoryTransactions[0].Inflow;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[4, 6].Value = accountTransactionTwo.CategoryTransactions[1].CategoryId;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[4, 7].Value = accountTransactionTwo.CategoryTransactions[1].Outflow;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[4, 8].Value = accountTransactionTwo.CategoryTransactions[1].Inflow;
-
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].Value = accountTransaction.Id;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].Value = accountTransaction.AccountId;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].Value = accountTransaction.Date;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].Value = accountTransaction.PayeeId;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 5].Value = accountTransaction.CategoryId;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 6].Value = accountTransaction.Memo;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 7].Value = accountTransaction.Outflow;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 8].Value = accountTransaction.Inflow;
 
             excelFileProcessor.Setup(efp => efp.LoadExcelPackageFromFile())
                 .Returns(() => excelPackage);
@@ -127,12 +100,11 @@ namespace Tests.Envelopes.Data.Persistence {
 
             Assert.AreEqual(1, applicationData.Accounts.Count);
             Assert.AreEqual(1, applicationData.Categories.Count);
-            Assert.AreEqual(2, applicationData.AccountTransactions.Count);
+            Assert.AreEqual(1, applicationData.AccountTransactions.Count);
 
             ValidateAccountsAreEqual(account, applicationData.Accounts.FirstOrDefault());
             ValidateCategoriesAreEqual(category, applicationData.Categories.FirstOrDefault());
-            ValidateAccountTransactionsAreEqual(accountTransactionOne, applicationData.AccountTransactions[0]);
-            ValidateAccountTransactionsAreEqual(accountTransactionTwo, applicationData.AccountTransactions[1]);
+            ValidateAccountTransactionsAreEqual(accountTransaction, applicationData.AccountTransactions.FirstOrDefault());
         }
 
         private static void ValidateAccountsAreEqual(Account expected, Account actual) {
@@ -151,13 +123,10 @@ namespace Tests.Envelopes.Data.Persistence {
             Assert.AreEqual(expected.Date, actual.Date);
             Assert.AreEqual(expected.PayeeId, actual.PayeeId);
             Assert.AreEqual(expected.Id, actual.Id);
+            Assert.AreEqual(expected.CategoryId, actual.CategoryId);
             Assert.AreEqual(expected.Memo, actual.Memo);
-
-            for (var i = 0; i < expected.CategoryTransactions.Count; i++) {
-                Assert.AreEqual(expected.CategoryTransactions[i].CategoryId, actual.CategoryTransactions[i].CategoryId);
-                Assert.AreEqual(expected.CategoryTransactions[i].Outflow, actual.CategoryTransactions[i].Outflow);
-                Assert.AreEqual(expected.CategoryTransactions[i].Inflow, actual.CategoryTransactions[i].Inflow);
-            }
+            Assert.AreEqual(expected.Outflow, actual.Outflow);
+            Assert.AreEqual(expected.Inflow, actual.Inflow);
         }
     }
 }

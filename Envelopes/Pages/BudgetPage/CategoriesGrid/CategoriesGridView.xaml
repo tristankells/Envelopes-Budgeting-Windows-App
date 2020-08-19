@@ -61,6 +61,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding AddItemCommand}" Content="Add category" />
+        <Button Command="{Binding AddItemCommand}" Content="Add Category" />
     </StackPanel>
 </UserControl>

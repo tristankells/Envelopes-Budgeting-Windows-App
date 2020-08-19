@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Envelopes.Common;
 
 namespace Envelopes.Models {
@@ -16,7 +15,6 @@ namespace Envelopes.Models {
         private decimal inflow;
         private string payeeName;
         private string accountName;
-        private List<CategoryTransaction> categoryTransactions;
 
         #endregion
 
@@ -78,37 +76,5 @@ namespace Envelopes.Models {
             get => accountName;
             set => SetPropertyValue(ref accountName, value, nameof(AccountName));
         }
-
-        public List<CategoryTransaction> CategoryTransactions {
-            get => categoryTransactions ??= new List<CategoryTransaction>();
-            set => SetPropertyValue(ref categoryTransactions, value, nameof(CategoryTransactions));
-        }
     }
-
-    public class CategoryTransaction : Model {
-        private int accountTransactionId;
-        private AccountTransaction accountTransaction;
-
-        private int categoryId;
-        private Category category;
-
-        private decimal outflow;
-        private decimal inflow;
-
-
-        public int CategoryId {
-            get => categoryId;
-            set => SetPropertyValue(ref categoryId, value, nameof(CategoryId));
-        }
-
-        public decimal Outflow {
-            get => outflow;
-            set => SetPropertyValue(ref outflow, value, nameof(Outflow));
-        }
-
-        public decimal Inflow {
-            get => inflow;
-            set => SetPropertyValue(ref inflow, value, nameof(Inflow));
-        }
-}
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Envelopes.Models;
+﻿using Envelopes.Models;
 
 namespace Tests.Envelopes {
     public static class TestDataSetup {
@@ -10,7 +9,7 @@ namespace Tests.Envelopes {
             };
         }
 
-        public static Category CreateCategoryOne() {
+        public static Category CreateCategory() {
             return new Category() {
                 Id = 1,
                 Name = "Savings",
@@ -18,42 +17,15 @@ namespace Tests.Envelopes {
             };
         }
 
-        public static Category CreateCategoryTwo() {
-            return new Category() {
-                Id = 2,
-                Name = "Eating Out",
-                Budgeted = 20.0M
-            };
-        }
-
-        public static AccountTransaction CreateAccountTransaction_WithSingleCategoryTransaction() {
+        public static AccountTransaction CreateAccountTransaction() {
             return new AccountTransaction() {
                 AccountId = 1,
                 Id = 1,
-                CategoryTransactions = new List<CategoryTransaction> {
-                    new CategoryTransaction() {
-                        CategoryId = 1,
-                        Inflow = 10M
-                    }
-                }
+                CategoryId = 1,
+                Inflow = 100.0M
             };
         }
 
-        public static AccountTransaction CreateAccountTransaction_WithMultipleCategoryTransactions() {
-            return new AccountTransaction() {
-                AccountId = 1,
-                Id = 1,
-                CategoryTransactions = new List<CategoryTransaction> {
-                    new CategoryTransaction() {
-                        CategoryId = 1,
-                        Inflow = 10M
-                    },
-                    new CategoryTransaction() {
-                        CategoryId = 2,
-                        Inflow = 20M
-                    }
-                }
-            };
-        }
+
     }
 }

@@ -38,11 +38,11 @@ namespace Tests.Envelopes.Data.Persistence {
                     ValidateExcelPackageContainsAccount(ep, account);
                     ValidateExcelPackageContainsCategory(ep, category);
                     ValidateExcelPackageContainsAccountTransaction(ep, accountTransaction);
-                }).Verifiable();
+                });
 
             await excelPersistenceService.SaveApplicationData(appData);
 
-            excelFileProcessor.Verify();
+            excelFileProcessor.Verify(efp => efp.SaveAs(It.IsAny<ExcelPackage>()), Times.Once);
         }
 
         private static void ValidateExcelPackageContainsAccount(ExcelPackage excelPackage, Account account) {

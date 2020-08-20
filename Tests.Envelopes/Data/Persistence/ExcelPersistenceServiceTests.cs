@@ -60,7 +60,7 @@ namespace Tests.Envelopes.Data.Persistence {
             Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].GetValue<int>());
             Assert.AreEqual(account.AccountId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].GetValue<int>());
             Assert.AreEqual(account.Date, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].GetValue<DateTime>());
-            Assert.AreEqual(account.PayeeId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].GetValue<int>());
+            Assert.AreEqual(account.Payee, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].GetValue<int>());
             Assert.AreEqual(account.CategoryId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 5].GetValue<int>());
             Assert.AreEqual(account.Memo, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 6].GetValue<string>());
             Assert.AreEqual(account.Outflow, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 7].GetValue<decimal>());
@@ -87,7 +87,7 @@ namespace Tests.Envelopes.Data.Persistence {
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].Value = accountTransaction.Id;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].Value = accountTransaction.AccountId;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].Value = accountTransaction.Date;
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].Value = accountTransaction.PayeeId;
+            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].Value = accountTransaction.Payee;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 5].Value = accountTransaction.CategoryId;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 6].Value = accountTransaction.Memo;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 7].Value = accountTransaction.Outflow;
@@ -121,7 +121,7 @@ namespace Tests.Envelopes.Data.Persistence {
             Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.AccountId, actual.AccountId);
             Assert.AreEqual(expected.Date, actual.Date);
-            Assert.AreEqual(expected.PayeeId, actual.PayeeId);
+            Assert.AreEqual(expected.Payee, actual.Payee);
             Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.CategoryId, actual.CategoryId);
             Assert.AreEqual(expected.Memo, actual.Memo);

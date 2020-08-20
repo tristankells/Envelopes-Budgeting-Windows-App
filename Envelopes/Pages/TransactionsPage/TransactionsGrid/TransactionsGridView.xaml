@@ -58,7 +58,7 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Payee"
                                     Width="3*"
-                                    Binding="{Binding PayeeName}"
+                                    Binding="{Binding Payee}"
                                     FontSize="15" />
                 <DataGridComboBoxColumn Width="3*"
                                         Header="Category"

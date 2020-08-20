@@ -8,12 +8,11 @@ namespace Envelopes.Models {
         private int id;
         private int accountId;
         private DateTime date;
-        private int payeeId;
+        private string payee;
         private int categoryId;
         private string memo;
         private decimal outflow;
         private decimal inflow;
-        private string payeeName;
         private string accountName;
 
         #endregion
@@ -35,9 +34,9 @@ namespace Envelopes.Models {
             set => SetPropertyValue(ref date, value, nameof(Date));
         }
 
-        public int PayeeId {
-            get => payeeId;
-            set => SetPropertyValue(ref payeeId, value, nameof(PayeeId));
+        public string Payee {
+            get => payee;
+            set => SetPropertyValue(ref payee, value, nameof(Payee));
         }
 
         public string Memo {
@@ -67,10 +66,10 @@ namespace Envelopes.Models {
 
         #endregion
 
-        public string PayeeName {
-            get => payeeName;
-            set => SetPropertyValue(ref payeeName, value, nameof(PayeeName));
-        }
+        //public string PayeeName {
+        //    get => payeeName;
+        //    set => SetPropertyValue(ref payeeName, value, nameof(PayeeName));
+        //}
 
         public string AccountName {
             get => accountName;

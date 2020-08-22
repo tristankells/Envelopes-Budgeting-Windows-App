@@ -53,7 +53,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         }
 
         private void OnTransactionBalanceChanged(object? sender, EventArgs e) {
-            viewModel.AccountsTotalBalance = dataService.GetTotalAccountBalance();
+            viewModel.AccountsTotalBalance = dataService.GetTotalInflow();
         }
 
         private void OnActiveAccountChanged(object? sender, System.EventArgs e) {
@@ -145,7 +145,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         }
 
         private void UpdateAccountsTotal() {
-            viewModel.AccountsTotalBalance = dataService.GetTotalAccountBalance();
+            viewModel.AccountsTotalBalance = dataService.GetTotalInflow();
         }
     }
 }

@@ -25,7 +25,5 @@ namespace Tests.Envelopes {
                 Inflow = 100.0M
             };
         }
-
-
     }
 }

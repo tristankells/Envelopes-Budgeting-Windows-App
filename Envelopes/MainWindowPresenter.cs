@@ -36,12 +36,13 @@ namespace Envelopes {
             BindCommands();
         }
 
-        private void UpdateRemainingBalanceToBudget() {
+        private void UpdateBalanceHeader() {
+            viewModel.TotalBalance = dataService.GetTotalInflow();
+            viewModel.TotalBudgeted = dataService.GetTotalBudgeted();
             viewModel.RemainingBalanceToBudget = dataService.GetRemainingAccountBalanceToBudget();
         }
 
         private void BindCommands() {
-            viewModel.SaveBudgetCommand = new DelegateCommand(ExecuteSaveBudget, CanSaveBudget);
             viewModel.NavigateToBudgetPageCommand = new DelegateCommand(ExecuteNavigateToBudgetPage, CanNavigateToBudgetPage);
             viewModel.NavigateToTransactionsPageCommand = new DelegateCommand(ExecuteNavigateTransactionsPage, CanNavigateToTransactionsPage);
         }
@@ -59,12 +60,6 @@ namespace Envelopes {
             viewModel.CurrentPage = budgetPagePresenter.GetPageView();
         }
 
-        private bool CanSaveBudget() => true;
-
-        private async void ExecuteSaveBudget() {
-            await dataService.SaveBudget();
-        }
-
         private void BindEvents() {
             view.Loaded += OnViewLoaded;
             notificationService.OnCategoryBudgetedChanged += OnCategoryBudgetedChanged;
@@ -72,17 +67,17 @@ namespace Envelopes {
         }
 
         private void OnTransactionsBalanceChanged(object? sender, EventArgs e) {
-            UpdateRemainingBalanceToBudget();
+            UpdateBalanceHeader();
         }
 
         private void OnCategoryBudgetedChanged(object? sender, System.EventArgs e) {
-            UpdateRemainingBalanceToBudget();
+            UpdateBalanceHeader();
         }
 
         private async void OnViewLoaded(object sender, RoutedEventArgs e) {
             await dataService.LoadApplicationData();
             viewModel.CurrentPage = transactionsPagePresenter.GetPageView();
-            UpdateRemainingBalanceToBudget();
+            UpdateBalanceHeader();
         }
 
         public Window MainWindow => view;

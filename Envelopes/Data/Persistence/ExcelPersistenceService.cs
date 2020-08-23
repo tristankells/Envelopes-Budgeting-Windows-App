@@ -102,7 +102,7 @@ namespace Envelopes.Data.Persistence {
                 worksheet.Cells["A" + (i + 2)].Value = transactions[i].Id;
                 worksheet.Cells["B" + (i + 2)].Value = transactions[i].AccountId;
                 worksheet.Cells["C" + (i + 2)].Value = transactions[i].Date;
-                worksheet.Cells["D" + (i + 2)].Value = transactions[i].PayeeId;
+                worksheet.Cells["D" + (i + 2)].Value = transactions[i].Payee;
                 worksheet.Cells["E" + (i + 2)].Value = transactions[i].CategoryId;
                 worksheet.Cells["F" + (i + 2)].Value = transactions[i].Memo;
                 worksheet.Cells["G" + (i + 2)].Value = transactions[i].Outflow;
@@ -208,7 +208,7 @@ namespace Envelopes.Data.Persistence {
                         Id = worksheet.Cells[row, 1].GetValue<int>(),
                         AccountId = worksheet.Cells[row, 2].GetValue<int>(),
                         Date = worksheet.Cells[row, 3].GetValue<DateTime>(),
-                        PayeeId = worksheet.Cells[row, 4].GetValue<int>(),
+                        Payee = worksheet.Cells[row, 4].GetValue<string>(),
                         CategoryId = worksheet.Cells[row, 5].GetValue<int>(),
                         Memo = worksheet.Cells[row, 6].GetValue<string>(),
                         Outflow = worksheet.Cells[row, 7].GetValue<decimal>(),

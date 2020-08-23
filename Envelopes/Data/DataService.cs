@@ -29,22 +29,21 @@ namespace Envelopes.Data {
         public Task LoadApplicationData();
         public Task SaveBudget();
         public decimal GetRemainingAccountBalanceToBudget();
-        public decimal GetTotalAccountBalance();
-
+        public decimal GetTotalBudgeted();
+        public decimal GetTotalInflow();
     }
 
     public class DataService : IDataService {
         private readonly INotificationService notificationService;
         private readonly IPersistenceService persistenceService;
         private readonly IIdentifierService identifierService;
-        private bool ignoreApplicationSaveEvents = false;
-
-        public string FileName { get; set; }
 
         private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
         private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
         private readonly ObservableCollection<AccountTransaction> accountTransactions =
             new ObservableCollection<AccountTransaction>();
+
+        private bool ignoreApplicationSaveEvents;
 
         public DataService(IPersistenceService persistenceService,
             IIdentifierService identifierService,
@@ -255,10 +254,10 @@ namespace Envelopes.Data {
 
         private async void OnTransactionPropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e is PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
-                var difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
+                decimal difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
                 var transaction = sender as AccountTransaction;
 
-                var account = accounts.FirstOrDefault(a => a.Id == transaction?.AccountId);
+                Account account = accounts.FirstOrDefault(a => a.Id == transaction?.AccountId);
                 if (account == null) {
                     return;
                 }
@@ -300,9 +299,13 @@ namespace Envelopes.Data {
 
         #endregion
 
-        public decimal GetTotalAccountBalance() => accounts.Sum(account => account.Total);
+        public decimal GetTotalInflow() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow);
+
+        public decimal GetTotalBudgeted() => categories.Sum(category => category.Budgeted);
 
         public decimal GetRemainingAccountBalanceToBudget() =>
-            accounts.Sum(account => account.Total) - categories.Sum(category => category.Budgeted);
+            accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - categories.Sum(category => category.Budgeted);
+
+
     }
 }

@@ -8,7 +8,8 @@ namespace Envelopes {
         public FrameworkElement CurrentPage { get; set; }
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
-        public ICommand SaveBudgetCommand { get; set; }
+        public decimal TotalBalance { get; set; }
+        public decimal TotalBudgeted { get; set; }
         public decimal RemainingBalanceToBudget { get; set; }
     }
 
@@ -17,12 +18,23 @@ namespace Envelopes {
 
         private FrameworkElement currentPage;
         private decimal remainingBalanceToBudget;
+        private decimal balanceOfAllAccounts;
+        private decimal totalBudgeted;
 
         #endregion
 
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
-        public ICommand SaveBudgetCommand { get; set; }
+
+        public decimal TotalBalance {
+            get => balanceOfAllAccounts;
+            set => SetPropertyValue(ref balanceOfAllAccounts, value, nameof(TotalBalance));
+        }
+
+        public decimal TotalBudgeted {
+            get => totalBudgeted;
+            set => SetPropertyValue(ref totalBudgeted, value, nameof(TotalBudgeted));
+        }
 
         public decimal RemainingBalanceToBudget {
             get => remainingBalanceToBudget;

@@ -42,6 +42,7 @@
                     </DataGridComboBoxColumn.EditingElementStyle>
                 </DataGridComboBoxColumn>
                 <DataGridTemplateColumn Header="Date"
+                                        SortMemberPath="Date"
                                         Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -69,12 +70,16 @@
                         <Style TargetType="{x:Type ComboBox}">
                             <Setter Property="ItemsSource"
                                     Value="{Binding Path=DataContext.Categories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                            <Setter Property="FontSize"
+                                    Value="15" />
                         </Style>
                     </DataGridComboBoxColumn.ElementStyle>
                     <DataGridComboBoxColumn.EditingElementStyle>
                         <Style TargetType="{x:Type ComboBox}">
                             <Setter Property="ItemsSource"
                                     Value="{Binding Path=DataContext.Categories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                            <Setter Property="FontSize"
+                                    Value="15" />
                         </Style>
                     </DataGridComboBoxColumn.EditingElementStyle>
                 </DataGridComboBoxColumn>

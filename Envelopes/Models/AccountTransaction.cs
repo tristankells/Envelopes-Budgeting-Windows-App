@@ -66,10 +66,6 @@ namespace Envelopes.Models {
 
         #endregion
 
-        //public string PayeeName {
-        //    get => payeeName;
-        //    set => SetPropertyValue(ref payeeName, value, nameof(PayeeName));
-        //}
 
         public string AccountName {
             get => accountName;

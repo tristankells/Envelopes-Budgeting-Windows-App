@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using OfficeOpenXml;
@@ -10,11 +12,11 @@ namespace Envelopes.Data.Persistence {
     }
 
     public class ExcelFileProcessor : IExcelFileProcessor {
-        private const string FileName = "Envelopes_Dev.xlsx";
+        private readonly string fileName = ConfigurationManager.AppSettings.Get("BudgetPath");
         private readonly string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public async Task SaveAs(ExcelPackage package) {
-            var filePath = new FileInfo(Path.Combine(directoryPath, FileName));
+            var filePath = new FileInfo(Path.Combine(directoryPath, fileName));
             try {
                 await package.SaveAsAsync(filePath);
             }
@@ -25,7 +27,7 @@ namespace Envelopes.Data.Persistence {
         }
 
         public ExcelPackage LoadExcelPackageFromFile() {
-            var filePath = new FileInfo(Path.Combine(directoryPath, FileName));
+            var filePath = new FileInfo(Path.Combine(directoryPath, fileName));
             return new ExcelPackage(filePath);
         }
     }

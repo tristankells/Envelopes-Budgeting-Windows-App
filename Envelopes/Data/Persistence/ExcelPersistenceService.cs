@@ -12,7 +12,7 @@ namespace Envelopes.Data.Persistence {
 
     public class ExcelPersistenceService : IPersistenceService {
         private readonly IExcelFileProcessor excelFileProcessor;
-        private bool saveInProgress = false;
+        private bool saveInProgress;
 
         public ExcelPersistenceService(IExcelFileProcessor excelFileProcessor) {
             this.excelFileProcessor = excelFileProcessor;

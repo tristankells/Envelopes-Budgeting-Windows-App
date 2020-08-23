@@ -27,10 +27,10 @@ namespace Envelopes.Data {
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
 
         public Task LoadApplicationData();
-        public Task SaveBudget();
         public decimal GetRemainingAccountBalanceToBudget();
         public decimal GetTotalBudgeted();
         public decimal GetTotalInflow();
+        decimal GetTotalBalance();
     }
 
     public class DataService : IDataService {
@@ -237,7 +237,7 @@ namespace Envelopes.Data {
         #region Account Transactions
 
         public IEnumerable<AccountTransaction> AccountTransactions() {
-            return accountTransactions;
+            return accountTransactions.OrderByDescending(a => a.Date);
         }
 
         public AccountTransaction AddAccountTransaction(Account activeAccount) {
@@ -298,6 +298,8 @@ namespace Envelopes.Data {
         }
 
         #endregion
+
+        public decimal GetTotalBalance() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - accountTransactions.Sum(accountTransaction => accountTransaction.Outflow);
 
         public decimal GetTotalInflow() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow);
 

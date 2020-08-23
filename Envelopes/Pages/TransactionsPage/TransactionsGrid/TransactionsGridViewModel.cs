@@ -31,8 +31,14 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             get => accounts;
             private set {
                 accounts = value;
-                OnPropertyChanged(nameof(Categories));
+                OnPropertyChanged(nameof(Accounts));
             }
+        }
+
+        public new void AddItem(AccountTransaction item)
+        {
+            item.PropertyChanged += OnItemPropertyChanged;
+            ItemList.Insert(0, item);
         }
     }
 }

@@ -67,6 +67,9 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
                     }
 
                     break;
+                case nameof(Category.Budgeted):
+                    gridValidator.ValidateInFieldCalculations((TextBox)e.EditingElement);
+                    break;
             }
         }
 

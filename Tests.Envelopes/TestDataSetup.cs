@@ -22,7 +22,8 @@ namespace Tests.Envelopes {
                 AccountId = 1,
                 Id = 1,
                 CategoryId = 1,
-                Inflow = 100.0M
+                Inflow = 100.0M,
+                Payee = "Aderant"
             };
         }
     }

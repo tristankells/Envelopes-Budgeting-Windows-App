@@ -60,7 +60,7 @@ namespace Tests.Envelopes.Data.Persistence {
             Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].GetValue<int>());
             Assert.AreEqual(account.AccountId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].GetValue<int>());
             Assert.AreEqual(account.Date, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].GetValue<DateTime>());
-            Assert.AreEqual(account.Payee, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].GetValue<int>());
+            Assert.AreEqual(account.Payee, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].GetValue<string>());
             Assert.AreEqual(account.CategoryId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 5].GetValue<int>());
             Assert.AreEqual(account.Memo, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 6].GetValue<string>());
             Assert.AreEqual(account.Outflow, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 7].GetValue<decimal>());

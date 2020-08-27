@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 
-namespace Envelopes.Pages.TransactionsPage.AccountsPane {
+namespace Envelopes.Common {
     public interface IView {
-        object DataContext { get; set; }
+        object DataContext { set; }
 
         public event RoutedEventHandler Loaded;
         public event RoutedEventHandler Unloaded;

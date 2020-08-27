@@ -138,7 +138,7 @@ namespace Envelopes.Data {
         /// <summary>
         ///     Attempts to save data to specified persistence service.
         /// </summary>
-        public async Task SaveBudget() {
+        private async Task SaveBudget() {
             if (ignoreApplicationSaveEvents) {
                 return;
             }
@@ -290,7 +290,7 @@ namespace Envelopes.Data {
                 AccountTransaction updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
                 if (updatedTransaction == null) return;
 
-                Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
+                Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
                 if (account == null) return;
                 account.Total -= updatedTransaction.Total;
 

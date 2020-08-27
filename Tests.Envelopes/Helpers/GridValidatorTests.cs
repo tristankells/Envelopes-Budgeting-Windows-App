@@ -1,10 +1,10 @@
-﻿using Envelopes.Helpers;
+﻿using System.Threading;
+using Envelopes.Helpers;
 using NUnit.Framework;
-using System.Threading;
 
 namespace Tests.Envelopes.Helpers {
     [Apartment(ApartmentState.STA)]
-    class GridValidatorTests {
+    internal class GridValidatorTests {
         private GridValidator gridValidator;
 
         [SetUp]

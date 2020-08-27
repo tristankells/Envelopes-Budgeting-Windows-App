@@ -1,4 +1,4 @@
-﻿using Envelopes.Pages.TransactionsPage.AccountsPane;
+﻿
 
 namespace Envelopes.Common {
     /// <summary>

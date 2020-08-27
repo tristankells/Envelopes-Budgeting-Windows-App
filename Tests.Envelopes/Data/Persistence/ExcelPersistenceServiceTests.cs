@@ -13,9 +13,9 @@ namespace Tests.Envelopes.Data.Persistence {
         private const string CategoriesWorksheetName = "Categories";
         private const string AccountTransactionsWorksheetName = "Account Transactions";
         private const string AccountsWorksheetName = "Accounts";
+        private Mock<IExcelFileProcessor> excelFileProcessor;
 
         private ExcelPersistenceService excelPersistenceService;
-        private Mock<IExcelFileProcessor> excelFileProcessor;
 
         [SetUp]
         public void Setup() {
@@ -26,15 +26,15 @@ namespace Tests.Envelopes.Data.Persistence {
         [Test]
         public async Task SaveApplicationData_TriesToSaveTheCorrectDataToFile() {
             var appData = new ApplicationData();
-            var account = TestDataSetup.CreateAccount();
-            var category = TestDataSetup.CreateCategory();
-            var accountTransaction = TestDataSetup.CreateAccountTransaction();
+            Account account = TestDataSetup.CreateAccount();
+            Category category = TestDataSetup.CreateCategory();
+            AccountTransaction accountTransaction = TestDataSetup.CreateAccountTransaction();
             appData.Accounts.Add(account);
             appData.Categories.Add(category);
             appData.AccountTransactions.Add(accountTransaction);
 
             excelFileProcessor.Setup(efp => efp.SaveAs(It.IsAny<ExcelPackage>()))
-                .Callback<ExcelPackage>((ep) => {
+                .Callback<ExcelPackage>(ep => {
                     ValidateExcelPackageContainsAccount(ep, account);
                     ValidateExcelPackageContainsCategory(ep, category);
                     ValidateExcelPackageContainsAccountTransaction(ep, accountTransaction);
@@ -69,9 +69,9 @@ namespace Tests.Envelopes.Data.Persistence {
 
         [Test]
         public async Task GetApplicationData_ConvertsExcelToTheCorrectApplicationData() {
-            var account = TestDataSetup.CreateAccount();
-            var category = TestDataSetup.CreateCategory();
-            var accountTransaction = TestDataSetup.CreateAccountTransaction();
+            Account account = TestDataSetup.CreateAccount();
+            Category category = TestDataSetup.CreateCategory();
+            AccountTransaction accountTransaction = TestDataSetup.CreateAccountTransaction();
 
             var excelPackage = new ExcelPackage();
             excelPackage.Workbook.Worksheets.Add(AccountsWorksheetName);
@@ -95,8 +95,8 @@ namespace Tests.Envelopes.Data.Persistence {
 
             excelFileProcessor.Setup(efp => efp.LoadExcelPackageFromFile())
                 .Returns(() => excelPackage);
-            
-            var applicationData = await excelPersistenceService.GetApplicationData();
+
+            ApplicationData applicationData = await excelPersistenceService.GetApplicationData();
 
             Assert.AreEqual(1, applicationData.Accounts.Count);
             Assert.AreEqual(1, applicationData.Categories.Count);
@@ -111,6 +111,7 @@ namespace Tests.Envelopes.Data.Persistence {
             Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.Name, actual.Name);
         }
+
         private static void ValidateCategoriesAreEqual(Category expected, Category actual) {
             Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.Name, actual.Name);

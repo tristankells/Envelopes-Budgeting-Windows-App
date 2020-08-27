@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -21,12 +19,10 @@ namespace Envelopes.Helpers {
             }
         }
 
-        private static bool IsPropertyUnique(string newValue, ICollection<string> existingValue) => !existingValue.Contains(newValue);
-
         public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal) {
             amountAsDecimal = 0;
 
-            var amountAsStringCleanedUp = amountAsString.Replace('(', '-')
+            string amountAsStringCleanedUp = amountAsString.Replace('(', '-')
                 .Replace(")", "")
                 .Replace("$", "");
 
@@ -70,5 +66,7 @@ namespace Envelopes.Helpers {
 
             return decimal.TryParse(amountAsStringCleanedUp.Trim(), out amountAsDecimal);
         }
+
+        private static bool IsPropertyUnique(string newValue, ICollection<string> existingValue) => !existingValue.Contains(newValue);
     }
 }

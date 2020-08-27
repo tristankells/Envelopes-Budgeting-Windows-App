@@ -6,7 +6,6 @@ using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Helpers;
 using Envelopes.Models;
-using Envelopes.Pages.TransactionsPage.AccountsPane;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
     public interface ICategoriesGridPresenter {

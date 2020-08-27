@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using Envelopes.Common;
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPaneView : IView {

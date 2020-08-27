@@ -14,10 +14,10 @@ namespace Envelopes {
     public class MainWindowPresenter : Presenter, IMainWindowPresenter {
         private readonly IBudgetPagePresenter budgetPagePresenter;
         private readonly IDataService dataService;
+        private readonly INotificationService notificationService;
         private readonly ITransactionsPagePresenter transactionsPagePresenter;
         private readonly MainWindow view;
         private readonly IMainWindowViewModel viewModel;
-        private readonly INotificationService notificationService;
 
         public MainWindowPresenter(MainWindow view,
             IMainWindowViewModel viewModel,

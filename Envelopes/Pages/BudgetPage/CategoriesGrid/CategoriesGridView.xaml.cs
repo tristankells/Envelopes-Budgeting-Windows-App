@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
-using Envelopes.Pages.TransactionsPage.AccountsPane;
+using Envelopes.Common;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
     public interface ICategoriesGridView : IView {
@@ -12,12 +12,12 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
     ///     Interaction logic for CategoriesGridView.xaml
     /// </summary>
     public partial class CategoriesGridView : ICategoriesGridView {
-        public event EventHandler<DataGridCellEditEndingEventArgs> DataGridCellEditEnding;
-
         public CategoriesGridView() {
             InitializeComponent();
             CategoriesDataGrid.CellEditEnding += OnCellEditEnding;
         }
+
+        public event EventHandler<DataGridCellEditEndingEventArgs> DataGridCellEditEnding;
 
         public DataGrid CategoriesDataGrid => categoriesDataGrid;
 

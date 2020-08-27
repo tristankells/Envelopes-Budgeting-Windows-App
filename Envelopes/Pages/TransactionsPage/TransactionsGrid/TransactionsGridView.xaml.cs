@@ -1,4 +1,4 @@
-﻿using Envelopes.Pages.TransactionsPage.AccountsPane;
+﻿using Envelopes.Common;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     /// <summary>

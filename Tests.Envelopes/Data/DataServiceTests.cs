@@ -7,11 +7,11 @@ using Moq;
 using NUnit.Framework;
 
 namespace Tests.Envelopes.Data {
-    class DataServiceTests {
+    internal class DataServiceTests {
         private DataService dataService;
-        private Mock<IPersistenceService> persistenceService;
         private Mock<IIdentifierService> identifierService;
         private Mock<INotificationService> notificationService;
+        private Mock<IPersistenceService> persistenceService;
 
         [SetUp]
         public void Setup() {
@@ -25,26 +25,26 @@ namespace Tests.Envelopes.Data {
         public async Task RemainingToBudget_IsCorrect_PositiveBalance() {
             persistenceService.Setup(ps => ps.GetApplicationData()).Returns(
                 Task.Factory.StartNew(() => {
-                    var applicationData = new ApplicationData() {
-                        Categories = new List<Category>() {
-                            new Category() {
+                    var applicationData = new ApplicationData {
+                        Categories = new List<Category> {
+                            new Category {
                                 Id = 1,
                                 Name = "Savings",
                                 Budgeted = 10.0M
                             }
                         },
-                        Accounts = new List<Account>() {
+                        Accounts = new List<Account> {
                             new Account {
                                 Id = 1,
                                 Name = "Kiwibank"
                             }
                         },
-                        AccountTransactions = new List<AccountTransaction>() {
-                            new AccountTransaction() {
+                        AccountTransactions = new List<AccountTransaction> {
+                            new AccountTransaction {
                                 Id = 1,
                                 AccountId = 1,
                                 Inflow = 15.0M,
-                                Memo = "Starting Balance",
+                                Memo = "Starting Balance"
                             }
                         }
                     };
@@ -63,27 +63,26 @@ namespace Tests.Envelopes.Data {
         public async Task RemainingToBudget_IsCorrect_NegativeBalance() {
             persistenceService.Setup(ps => ps.GetApplicationData()).Returns(
                 Task.Factory.StartNew(() => {
-                    var applicationData = new ApplicationData()
-                    {
-                        Categories = new List<Category>() {
-                            new Category() {
+                    var applicationData = new ApplicationData {
+                        Categories = new List<Category> {
+                            new Category {
                                 Id = 1,
                                 Name = "Savings",
                                 Budgeted = 10.0M
                             }
                         },
-                        Accounts = new List<Account>() {
+                        Accounts = new List<Account> {
                             new Account {
                                 Id = 1,
                                 Name = "Kiwibank"
                             }
                         },
-                        AccountTransactions = new List<AccountTransaction>() {
-                            new AccountTransaction() {
+                        AccountTransactions = new List<AccountTransaction> {
+                            new AccountTransaction {
                                 Id = 1,
                                 AccountId = 1,
                                 Inflow = 5.0M,
-                                Memo = "Starting Balance",
+                                Memo = "Starting Balance"
                             }
                         }
                     };
@@ -102,27 +101,26 @@ namespace Tests.Envelopes.Data {
         public async Task RemainingToBudget_IsCorrect_ZeroBalance() {
             persistenceService.Setup(ps => ps.GetApplicationData()).Returns(
                 Task.Factory.StartNew(() => {
-                    var applicationData = new ApplicationData()
-                    {
-                        Categories = new List<Category>() {
-                            new Category() {
+                    var applicationData = new ApplicationData {
+                        Categories = new List<Category> {
+                            new Category {
                                 Id = 1,
                                 Name = "Savings",
                                 Budgeted = 10.0M
                             }
                         },
-                        Accounts = new List<Account>() {
+                        Accounts = new List<Account> {
                             new Account {
                                 Id = 1,
                                 Name = "Kiwibank"
                             }
                         },
-                        AccountTransactions = new List<AccountTransaction>() {
-                            new AccountTransaction() {
+                        AccountTransactions = new List<AccountTransaction> {
+                            new AccountTransaction {
                                 Id = 1,
                                 AccountId = 1,
                                 Inflow = 10.0M,
-                                Memo = "Starting Balance",
+                                Memo = "Starting Balance"
                             }
                         }
                     };

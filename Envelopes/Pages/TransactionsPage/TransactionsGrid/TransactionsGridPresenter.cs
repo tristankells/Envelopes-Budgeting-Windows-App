@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using Envelopes.Common;
@@ -12,11 +13,11 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     }
 
     public class TransactionsGridPresenter : Presenter, ITransactionsGridPresenter {
-        private readonly TransactionsGridView view;
-        private readonly ITransactionsGridViewModel viewModel;
         private readonly IDataService dataService;
         private readonly INotificationService notificationService;
-        private Account activeAccount; //The ID of the currently selected Account in the AccountsPane
+        private readonly TransactionsGridView view;
+        private readonly ITransactionsGridViewModel viewModel;
+        private Account? activeAccount; //The ID of the currently selected Account in the AccountsPane
 
         public TransactionsGridPresenter(TransactionsGridView view,
             ITransactionsGridViewModel viewModel,
@@ -29,6 +30,35 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
 
             BindEvents();
             BindCommands();
+        }
+
+        public TransactionsGridView GetView() => view;
+
+        private void BindCommands() {
+            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddTransaction, CanExecuteAddTransaction);
+            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
+        }
+
+        private bool CanExecuteAddTransaction() => true;
+
+        private void ExecuteAddTransaction() {
+            AccountTransaction? newTransaction = dataService.AddAccountTransaction(activeAccount);
+            viewModel.AddItem(newTransaction);
+        }
+
+        private bool CanExecuteDeleteTransaction() => true;
+
+        private void ExecuteDeleteTransaction() {
+            AccountTransaction? selectedTransaction = viewModel.SelectedItem;
+
+            if (dataService.RemoveAccountTransaction(selectedTransaction)) {
+                viewModel.RemoveItem(selectedTransaction);
+            }
+        }
+
+        private void PopulateTransactionsList(bool isFiltered) {
+            IEnumerable<AccountTransaction>? transactions = isFiltered ? dataService.AccountTransactions().Where(at => at.AccountId == activeAccount?.Id) : dataService.AccountTransactions();
+            viewModel.AddRange(transactions);
         }
 
         #region Events
@@ -49,6 +79,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             if (sender is Account account) {
                 activeAccount = account;
             }
+
             viewModel.ItemList.Clear();
             PopulateTransactionsList(true);
         }
@@ -60,14 +91,14 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         }
 
         private void PopulateCategories() {
-            var categories = dataService.Categories();
+            IEnumerable<Category>? categories = dataService.Categories();
             foreach (var category in categories) {
                 viewModel.Categories.Add(category);
             }
         }
 
         private void PopulateAccounts() {
-            var accounts = dataService.Accounts();
+            IEnumerable<Account>? accounts = dataService.Accounts();
             foreach (var account in accounts) {
                 viewModel.Accounts.Add(account);
             }
@@ -79,34 +110,5 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         }
 
         #endregion
-
-        public TransactionsGridView GetView() => view;
-
-        private void BindCommands() {
-            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddTransaction, CanExecuteAddTransaction);
-            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
-        }
-
-        private bool CanExecuteAddTransaction() => true;
-
-        private void ExecuteAddTransaction() {
-            var newTransaction = dataService.AddAccountTransaction(activeAccount);
-            viewModel.AddItem(newTransaction);
-        }
-
-        private bool CanExecuteDeleteTransaction() => true;
-
-        private void ExecuteDeleteTransaction() {
-            var selectedTransaction = viewModel.SelectedItem;
-
-            if (dataService.RemoveAccountTransaction(selectedTransaction)) {
-                viewModel.RemoveItem(selectedTransaction);
-            }
-        }
-
-        private void PopulateTransactionsList(bool isFiltered) {
-            var transactions = isFiltered ? dataService.AccountTransactions().Where(at => at.AccountId == activeAccount.Id) : dataService.AccountTransactions();
-            viewModel.AddRange(transactions);
-        }
     }
 }

@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:envelopes="clr-namespace:Envelopes"
-        xmlns:common="clr-namespace:Envelopes.Common"
         xmlns:presentation="clr-namespace:Envelopes.Presentation"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
@@ -13,55 +12,61 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
-            <Style TargetType="TextBlock"  x:Key="TotalLabel">
+            <Style TargetType="TextBlock" x:Key="TotalLabel">
                 <Setter Property="FontSize" Value="14" />
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
-                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+                <Setter Property="TextAlignment" Value="Center" />
             </Style>
-            <Style TargetType="TextBlock"  x:Key="TotalValue">
+            <Style TargetType="TextBlock" x:Key="TotalValue">
                 <Setter Property="FontSize" Value="18" />
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="TextWrapping" Value="WrapWithOverflow" />
             </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <TextBlock FontSize="80" HorizontalAlignment="Center" Text="ENVELOPES"/>
-            <Grid >
+            <TextBlock FontSize="80" HorizontalAlignment="Center" Text="ENVELOPES" />
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button  Style="{StaticResource PageNavigationButton}" Grid.Column="0" Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions"></Button>
-                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="1" Command="{Binding NavigateToBudgetPageCommand }" Content="Budget"></Button>
+                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="0"
+                        Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions" />
+                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="1"
+                        Command="{Binding NavigateToBudgetPageCommand }" Content="Budget" />
             </Grid>
-            <Grid MaxWidth="400" >
+            <Grid MaxWidth="400">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />
-                    <ColumnDefinition  />
+                    <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="0" Text="Total Balance"/>
-                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="0" Text="{Binding TotalBalance}"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" FontSize="10" HorizontalAlignment="Center" Text=" - "/>
-                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="2" Text="Total Budgeted"/>
-                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="2" Text="{Binding TotalBudgeted}"/>
-                <TextBlock Grid.Row="1" Grid.Column="3" FontSize="10" HorizontalAlignment="Center" Text=" = "/>
-                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="4" Text="Remaining To Budget"/>
-                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="4" Text="{Binding RemainingBalanceToBudget}" Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
+                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="0" Text="Total Balance" />
+                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="0"
+                           Text="{Binding TotalBalance}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" FontSize="10" HorizontalAlignment="Center" Text=" - " />
+                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="2" Text="Total Budgeted" />
+                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="2"
+                           Text="{Binding TotalBudgeted}" />
+                <TextBlock Grid.Row="1" Grid.Column="3" FontSize="10" HorizontalAlignment="Center" Text=" = " />
+                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="4" Text="Remaining To Budget" />
+                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="4"
+                           Text="{Binding RemainingBalanceToBudget}"
+                           Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
             </Grid>
-            <ContentControl Content="{Binding CurrentPage}"/>
+            <ContentControl Content="{Binding CurrentPage}" />
         </StackPanel>
     </Grid>
 </Window>

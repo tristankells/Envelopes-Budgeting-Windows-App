@@ -51,6 +51,31 @@ namespace Envelopes.Data.Persistence {
             saveInProgress = false;
         }
 
+        public async Task<ApplicationData> GetApplicationData() {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            return await Task.Factory.StartNew(() => {
+                var applicationData = new ApplicationData();
+                using ExcelPackage package = excelFileProcessor.LoadExcelPackageFromFile();
+
+                ExcelWorksheet accountsWorksheet = package.Workbook.Worksheets["Accounts"];
+                if (accountsWorksheet != null) {
+                    applicationData.Accounts = ParseAccountsFromExcelWorkSheet(accountsWorksheet);
+                }
+
+                ExcelWorksheet categoriesWorksheet = package.Workbook.Worksheets["Categories"];
+                if (accountsWorksheet != null) {
+                    applicationData.Categories = ParseCategoriesFromExcelWorkSheet(categoriesWorksheet);
+                }
+
+                ExcelWorksheet accountTransactionsWorksheet = package.Workbook.Worksheets["Account Transactions"];
+                if (accountsWorksheet != null) {
+                    applicationData.AccountTransactions = ParseAccountTransactionFromExcelWorkSheet(accountTransactionsWorksheet);
+                }
+
+                return applicationData;
+            });
+        }
+
         private void AddApplicationDataToExcelPackage(ExcelPackage package, ApplicationData data) {
             AddAccountsWorksheetToExcelPackage(package, data.Accounts);
             AddCategoriesWorksheetToExcelPackage(package, data.Categories);
@@ -58,7 +83,7 @@ namespace Envelopes.Data.Persistence {
         }
 
         private static void AddAccountsWorksheetToExcelPackage(ExcelPackage package, IList<Account> accounts) {
-            var worksheet = package.Workbook.Worksheets.Add("Accounts");
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Accounts");
             worksheet.Cells[1, 1].Value = "Id";
             worksheet.Cells[1, 2].Value = "Name";
 
@@ -71,7 +96,7 @@ namespace Envelopes.Data.Persistence {
         }
 
         private static void AddCategoriesWorksheetToExcelPackage(ExcelPackage package, IList<Category> categories) {
-            var worksheet = package.Workbook.Worksheets.Add("Categories");
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Categories");
 
             worksheet.Cells[1, 1].Value = "Id";
             worksheet.Cells[1, 2].Value = "Name";
@@ -87,7 +112,7 @@ namespace Envelopes.Data.Persistence {
         }
 
         private static void AddAccountTransactionsWorksheetToExcelPackage(ExcelPackage package, IList<AccountTransaction> transactions) {
-            var worksheet = package.Workbook.Worksheets.Add("Account Transactions");
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Account Transactions");
 
             worksheet.Cells[1, 1].Value = "Id";
             worksheet.Cells[1, 2].Value = "Account Id";
@@ -136,38 +161,13 @@ namespace Envelopes.Data.Persistence {
             worksheet.View.PageLayoutView = true;
         }
 
-        public async Task<ApplicationData> GetApplicationData() {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            return await Task.Factory.StartNew(() => {
-                var applicationData = new ApplicationData();
-                using ExcelPackage package = excelFileProcessor.LoadExcelPackageFromFile();
-
-                ExcelWorksheet accountsWorksheet = package.Workbook.Worksheets["Accounts"];
-                if (accountsWorksheet != null) {
-                    applicationData.Accounts = ParseAccountsFromExcelWorkSheet(accountsWorksheet);
-                }
-
-                ExcelWorksheet categoriesWorksheet = package.Workbook.Worksheets["Categories"];
-                if (accountsWorksheet != null) {
-                    applicationData.Categories = ParseCategoriesFromExcelWorkSheet(categoriesWorksheet);
-                }
-
-                ExcelWorksheet accountTransactionsWorksheet = package.Workbook.Worksheets["Account Transactions"];
-                if (accountsWorksheet != null) {
-                    applicationData.AccountTransactions = ParseAccountTransactionFromExcelWorkSheet(accountTransactionsWorksheet);
-                }
-
-                return applicationData;
-            });
-        }
-
         private List<Account> ParseAccountsFromExcelWorkSheet(ExcelWorksheet worksheet) {
             var accounts = new List<Account>();
             var isAccountRowValid = true;
             for (var row = 2; isAccountRowValid; row++) {
                 if (worksheet.Cells[row, 1].Value != null) {
                     // If current row, does not have an Id (col = 1), then not a valid row.
-                    accounts.Add(new Account() {
+                    accounts.Add(new Account {
                         Id = worksheet.Cells[row, 1].GetValue<int>(),
                         Name = worksheet.Cells[row, 2].GetValue<string>()
                     });
@@ -185,10 +185,10 @@ namespace Envelopes.Data.Persistence {
             for (var row = 2; isCategoryRowValid; row++) {
                 if (worksheet.Cells[row, 1].Value != null) {
                     // If current row, does not have an Id (col = 1), then not a valid row.
-                    categories.Add(new Category() {
+                    categories.Add(new Category {
                         Id = worksheet.Cells[row, 1].GetValue<int>(),
                         Name = worksheet.Cells[row, 2].GetValue<string>(),
-                        Budgeted = worksheet.Cells[row, 3].GetValue<decimal>(),
+                        Budgeted = worksheet.Cells[row, 3].GetValue<decimal>()
                     });
                 } else {
                     isCategoryRowValid = false;
@@ -204,7 +204,7 @@ namespace Envelopes.Data.Persistence {
             for (var row = 2; isAccountTransactionRowValid; row++) {
                 if (worksheet.Cells[row, 1].Value != null) {
                     // If current row, does not have an Id (col = 1), then not a valid row.
-                    accountTransactions.Add(new AccountTransaction() {
+                    accountTransactions.Add(new AccountTransaction {
                         Id = worksheet.Cells[row, 1].GetValue<int>(),
                         AccountId = worksheet.Cells[row, 2].GetValue<int>(),
                         Date = worksheet.Cells[row, 3].GetValue<DateTime>(),
@@ -212,7 +212,7 @@ namespace Envelopes.Data.Persistence {
                         CategoryId = worksheet.Cells[row, 5].GetValue<int>(),
                         Memo = worksheet.Cells[row, 6].GetValue<string>(),
                         Outflow = worksheet.Cells[row, 7].GetValue<decimal>(),
-                        Inflow = worksheet.Cells[row, 8].GetValue<decimal>(),
+                        Inflow = worksheet.Cells[row, 8].GetValue<decimal>()
                     });
                 } else {
                     isAccountTransactionRowValid = false;

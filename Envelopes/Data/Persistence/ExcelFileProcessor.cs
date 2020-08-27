@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using OfficeOpenXml;
@@ -12,8 +11,8 @@ namespace Envelopes.Data.Persistence {
     }
 
     public class ExcelFileProcessor : IExcelFileProcessor {
-        private readonly string fileName = ConfigurationManager.AppSettings.Get("BudgetPath");
         private readonly string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private readonly string fileName = ConfigurationManager.AppSettings.Get("BudgetPath");
 
         public async Task SaveAs(ExcelPackage package) {
             var filePath = new FileInfo(Path.Combine(directoryPath, fileName));

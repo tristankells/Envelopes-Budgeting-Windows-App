@@ -7,8 +7,8 @@ using Envelopes.Pages.TransactionsPage;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
 using Envelopes.Pages.TransactionsPage.TransactionsGrid;
 using Envelopes.Presentation;
-using Ninject.Modules;
 using Ninject;
+using Ninject.Modules;
 
 namespace Envelopes {
     public class Bootstrapper : NinjectModule {
@@ -34,7 +34,8 @@ namespace Envelopes {
 
             // Budget Page
             kernel.Bind<IBudgetPagePresenter>().To<BudgetPagePresenter>();
-            kernel.Bind<ICategoriesGridViewModelBase>().To<CategoriesGridViewModel>();
+            kernel.Bind<ICategoriesGridView>().To<CategoriesGridView>();
+            kernel.Bind<ICategoriesGridViewModel>().To<CategoriesGridViewModel>();
             kernel.Bind<ICategoriesGridPresenter>().To<CategoriesGridPresenter>();
 
             // Data

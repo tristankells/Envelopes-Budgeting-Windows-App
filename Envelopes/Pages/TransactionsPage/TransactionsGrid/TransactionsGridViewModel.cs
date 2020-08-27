@@ -1,18 +1,16 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using Envelopes.Common;
 using Envelopes.Models;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
-
     public interface ITransactionsGridViewModel : IItemsViewModelBase<AccountTransaction> {
         public ObservableCollection<Category> Categories { get; }
         public ObservableCollection<Account> Accounts { get; }
     }
 
     public class TransactionsGridViewModel : ItemsViewModelBase<AccountTransaction>, ITransactionsGridViewModel {
-        private ObservableCollection<Category> categories;
         private ObservableCollection<Account> accounts;
+        private ObservableCollection<Category> categories;
 
         public TransactionsGridViewModel() {
             Categories = new ObservableCollection<Category>();
@@ -35,8 +33,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             }
         }
 
-        public new void AddItem(AccountTransaction item)
-        {
+        public new void AddItem(AccountTransaction item) {
             item.PropertyChanged += OnItemPropertyChanged;
             ItemList.Insert(0, item);
         }

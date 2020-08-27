@@ -10,8 +10,8 @@ namespace Envelopes.Data {
 
     public class IdentifierService : IIdentifierService {
         private int accountIdCounter;
-        private int categoryIdCounter;
         private int accountTransactionsIdCounter;
+        private int categoryIdCounter;
 
         public void Setup(ApplicationData applicationData) {
             accountIdCounter = applicationData.Accounts.Any()

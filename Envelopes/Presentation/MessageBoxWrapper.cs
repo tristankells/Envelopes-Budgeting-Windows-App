@@ -6,8 +6,6 @@ namespace Envelopes.Presentation {
     }
 
     public class MessageBoxWrapper : IMessageBoxWrapper {
-        public MessageBoxResult Show(string s, string deleteAccount, MessageBoxButton yesNoCancel, MessageBoxImage warning) {
-            return MessageBox.Show(s, deleteAccount, yesNoCancel, warning);
-        }
+        public MessageBoxResult Show(string s, string deleteAccount, MessageBoxButton yesNoCancel, MessageBoxImage warning) => MessageBox.Show(s, deleteAccount, yesNoCancel, warning);
     }
 }

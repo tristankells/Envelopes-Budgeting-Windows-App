@@ -3,7 +3,7 @@ using Envelopes.Models;
 
 namespace Envelopes.Data {
     /// <summary>
-    /// Data wrapper for passing application entities loaded from persistence service. 
+    ///     Data wrapper for passing application entities loaded from persistence service.
     /// </summary>
     public class ApplicationData {
         public IList<Account> Accounts;

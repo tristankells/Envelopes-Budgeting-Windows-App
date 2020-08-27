@@ -4,21 +4,12 @@ using Envelopes.Pages.TransactionsPage.AccountsPane;
 using Envelopes.Pages.TransactionsPage.TransactionsGrid;
 
 namespace Envelopes.Pages.TransactionsPage {
-    public interface ITransactionsPagePresenter  {
+    public interface ITransactionsPagePresenter {
         public TransactionsPageView GetPageView();
     }
 
     public class TransactionsPagePresenter : Presenter, ITransactionsPagePresenter {
-        #region Fields
-
-        private readonly TransactionsPageView view;
-        private ITransactionsPageViewModel viewModel;
-        private readonly IAccountsPanePresenter accountsPanePresenter;
-        private readonly ITransactionsGridPresenter transactionsGridPresenter;
-
-        #endregion
-
-        public TransactionsPagePresenter(TransactionsPageView view, 
+        public TransactionsPagePresenter(TransactionsPageView view,
             ITransactionsPageViewModel viewModel,
             IAccountsPanePresenter accountsPanePresenter,
             ITransactionsGridPresenter transactionsGridPresenter) : base(view,
@@ -31,6 +22,8 @@ namespace Envelopes.Pages.TransactionsPage {
             BindEvents();
         }
 
+        public TransactionsPageView GetPageView() => view;
+
         private void BindEvents() {
             view.Loaded += View_Loaded;
             view.Unloaded += View_Unloaded;
@@ -41,12 +34,18 @@ namespace Envelopes.Pages.TransactionsPage {
             view.TransactionsGridControl.Content = transactionsGridPresenter.GetView();
         }
 
-        public TransactionsPageView GetPageView() => view;
-
-        private void View_Unloaded(object sender, RoutedEventArgs e)
-        {
+        private void View_Unloaded(object sender, RoutedEventArgs e) {
             view.Loaded -= View_Loaded;
             view.Unloaded -= View_Unloaded;
         }
+
+        #region Fields
+
+        private readonly TransactionsPageView view;
+        private ITransactionsPageViewModel viewModel;
+        private readonly IAccountsPanePresenter accountsPanePresenter;
+        private readonly ITransactionsGridPresenter transactionsGridPresenter;
+
+        #endregion
     }
 }

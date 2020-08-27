@@ -12,24 +12,26 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     }
 
     public class AccountsPaneViewModel : ItemsViewModelBase<Account>, IAccountsPaneViewModel, IDropTarget {
-        public DelegateCommand ShowAllTransactionsCommand { get; set; }
-        public event EventHandler SelectedAccountChanged;
         private decimal accountsTotalBalance;
-        public decimal AccountsTotalBalance {
-            get => accountsTotalBalance;
-            set => SetPropertyValue(ref accountsTotalBalance, value, nameof(AccountsTotalBalance));
-        }
 
         public AccountsPaneViewModel() {
             PropertyChanged += AccountsPaneViewModel_PropertyChanged;
         }
 
+        public DelegateCommand ShowAllTransactionsCommand { get; set; }
+        public event EventHandler SelectedAccountChanged;
+
+        public decimal AccountsTotalBalance {
+            get => accountsTotalBalance;
+            set => SetPropertyValue(ref accountsTotalBalance, value, nameof(AccountsTotalBalance));
+        }
+
         public void DragOver(IDropInfo dropInfo) {
-           // throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
         }
 
         public void Drop(IDropInfo dropInfo) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         private void AccountsPaneViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e) {

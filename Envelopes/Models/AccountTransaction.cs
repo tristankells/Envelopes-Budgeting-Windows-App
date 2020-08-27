@@ -3,6 +3,11 @@ using Envelopes.Common;
 
 namespace Envelopes.Models {
     public class AccountTransaction : Model {
+        public string AccountName {
+            get => accountName;
+            set => SetPropertyValue(ref accountName, value, nameof(AccountName));
+        }
+
         #region Fields
 
         private int id;
@@ -65,11 +70,5 @@ namespace Envelopes.Models {
         }
 
         #endregion
-
-
-        public string AccountName {
-            get => accountName;
-            set => SetPropertyValue(ref accountName, value, nameof(AccountName));
-        }
     }
 }

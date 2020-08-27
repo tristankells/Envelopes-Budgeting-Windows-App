@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:categoriesGrid="clr-namespace:Envelopes.Pages.BudgetPage.CategoriesGrid"
              xmlns:presentation="clr-namespace:Envelopes.Presentation"
-             d:DataContext="{d:DesignInstance categoriesGrid:ICategoriesGridViewModelBase}"
+             d:DataContext="{d:DesignInstance categoriesGrid:ICategoriesGridViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -18,7 +18,7 @@
     </UserControl.Resources>
     <StackPanel>
         <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" Text="Categories" />
-        <DataGrid Name="CategoriesDataGrid"
+        <DataGrid Name="categoriesDataGrid"
                   CanUserAddRows="False"
                   Margin="15"
                   AutoGenerateColumns="False"

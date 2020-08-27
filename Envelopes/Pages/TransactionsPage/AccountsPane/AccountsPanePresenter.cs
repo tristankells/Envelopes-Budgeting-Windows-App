@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,18 +9,17 @@ using Envelopes.Data;
 using Envelopes.Models;
 using Envelopes.Presentation;
 
-
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPanePresenter {
         public IAccountsPaneView GetView();
     }
 
     public class AccountsPanePresenter : Presenter, IAccountsPanePresenter {
+        private readonly IDataService dataService;
+        private readonly IMessageBoxWrapper messageBoxWrapper;
+        private readonly INotificationService notificationService;
         private readonly IAccountsPaneView view;
         private readonly IAccountsPaneViewModel viewModel;
-        private readonly IDataService dataService;
-        private readonly INotificationService notificationService;
-        private readonly IMessageBoxWrapper messageBoxWrapper;
 
         public AccountsPanePresenter(IAccountsPaneView view,
             IAccountsPaneViewModel viewModel,
@@ -56,7 +56,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             viewModel.AccountsTotalBalance = dataService.GetTotalBalance();
         }
 
-        private void OnActiveAccountChanged(object? sender, System.EventArgs e) {
+        private void OnActiveAccountChanged(object? sender, EventArgs e) {
             if (sender is Account account) {
                 notificationService.NotifyActiveAccountChanged(account);
             }
@@ -81,21 +81,21 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
 
         private void ValidateAccountNameTextBoxUpdate(DataGridCellEditEndingEventArgs e) {
             var editedTextBox = (TextBox) e.EditingElement;
-            var newAccountName = editedTextBox.Text;
+            string? newAccountName = editedTextBox.Text;
             if (!IsAccountNameUnique(newAccountName)) {
                 editedTextBox.Text = (e.Row.Item as Account)?.Name ?? string.Empty;
             }
         }
 
         private bool IsAccountNameUnique(string newName) {
-            var existingNames = viewModel.ItemList.Select(account => account.Name);
+            IEnumerable<string>? existingNames = viewModel.ItemList.Select(account => account.Name);
             return !existingNames.Contains(newName);
         }
 
         private bool CanExecuteAddAccount() => true;
 
         private void ExecuteAddAccount() {
-            var newAccount = dataService.AddAccount();
+            Account? newAccount = dataService.AddAccount();
             viewModel.AddItem(newAccount);
         }
 
@@ -126,14 +126,14 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         }
 
         private void DeleteAccount() {
-            var selectedAccount = viewModel.SelectedItem;
+            Account? selectedAccount = viewModel.SelectedItem;
             dataService.RemoveAccount(selectedAccount);
             viewModel.RemoveItem(selectedAccount);
         }
 
         private void PopulateAccountsList() {
-            var accounts = dataService.Accounts();
-            
+            IEnumerable<Account>? accounts = dataService.Accounts();
+
             foreach (var account in accounts) {
                 viewModel.AddItem(account);
             }
@@ -141,7 +141,6 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             if (viewModel.ItemList.Any()) {
                 viewModel.SelectedItem = viewModel.ItemList.FirstOrDefault();
             }
-  
         }
 
         private void UpdateAccountsTotal() {

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using Envelopes.Data;
-using Envelopes.Data.Persistence;
-using Envelopes.Helpers;
+﻿using Envelopes.Helpers;
 using NUnit.Framework;
+using System.Threading;
 
 namespace Tests.Envelopes.Helpers {
     [Apartment(ApartmentState.STA)]
@@ -20,64 +13,53 @@ namespace Tests.Envelopes.Helpers {
         }
 
         [Test]
-        public void ValidateAmountField_RegularNumberIsNotChanged() {
-            var textBox = new TextBox {
-                Text = "1"
-            };
+        public void ParseAmountFromString_RegularNumberIsNotChanged() {
+            bool ableToParseAmount = gridValidator.ParseAmountFromString("1", out decimal parsedDecimalAmount);
 
-            gridValidator.ValidateInFieldCalculations(textBox);
-            Assert.AreEqual("1", textBox.Text);
+            Assert.IsTrue(ableToParseAmount);
+            Assert.AreEqual(1M, parsedDecimalAmount);
         }
 
         [Test]
-        public void ValidateAmountField_SubtractionWorks() {
-            var textBox = new TextBox {
-                Text = "$10.00 - $4.00"
-            };
-            gridValidator.ValidateInFieldCalculations(textBox);
+        public void ParseAmountFromString_SubtractionWorks() {
+            gridValidator.ParseAmountFromString("$10.00 - $4.00", out decimal parsedDecimalAmount);
+            Assert.AreEqual(6M, parsedDecimalAmount);
 
-            Assert.AreEqual("6.00", textBox.Text);
+            gridValidator.ParseAmountFromString("$1000 - 8.85", out parsedDecimalAmount);
+            Assert.AreEqual(991.15M, parsedDecimalAmount);
 
-            textBox.Text = "9 - 7";
-            gridValidator.ValidateInFieldCalculations(textBox);
+            gridValidator.ParseAmountFromString("100 - $9.12", out parsedDecimalAmount);
+            Assert.AreEqual(90.88M, parsedDecimalAmount);
 
-            Assert.AreEqual("2", textBox.Text);
+            gridValidator.ParseAmountFromString("7 - 9", out parsedDecimalAmount);
+            Assert.AreEqual(-2M, parsedDecimalAmount);
 
-            textBox.Text = "$1000 - 8.85";
-            gridValidator.ValidateInFieldCalculations(textBox);
+            gridValidator.ParseAmountFromString("-9", out parsedDecimalAmount);
+            Assert.AreEqual(-9M, parsedDecimalAmount);
 
-            Assert.AreEqual("991.15", textBox.Text);
-
-            textBox.Text = "100 - $9.12";
-            gridValidator.ValidateInFieldCalculations(textBox);
-
-            Assert.AreEqual("90.88", textBox.Text);
+            gridValidator.ParseAmountFromString("($9.00) - 9", out parsedDecimalAmount);
+            Assert.AreEqual(-18M, parsedDecimalAmount);
         }
 
         [Test]
-        public void ValidateAmountField_AdditionWorks() {
-            var textBox = new TextBox {
-                Text = "$1.00 + $1.00"
-            };
+        public void ParseAmountFromString_AdditionWorks() {
+            gridValidator.ParseAmountFromString("$1.00 + $1.00", out decimal parsedDecimalAmount);
+            Assert.AreEqual(2M, parsedDecimalAmount);
 
-            gridValidator.ValidateInFieldCalculations(textBox);
+            gridValidator.ParseAmountFromString("9 + 7", out parsedDecimalAmount);
+            Assert.AreEqual(16M, parsedDecimalAmount);
 
-            Assert.AreEqual("2.00", textBox.Text);
+            gridValidator.ParseAmountFromString("$1000 + 8.85", out parsedDecimalAmount);
+            Assert.AreEqual(1008.85M, parsedDecimalAmount);
 
-            textBox.Text = "9 + 7";
-            gridValidator.ValidateInFieldCalculations(textBox);
+            gridValidator.ParseAmountFromString("100 + $9.12", out parsedDecimalAmount);
+            Assert.AreEqual(109.12M, parsedDecimalAmount);
 
-            Assert.AreEqual("16", textBox.Text);
+            gridValidator.ParseAmountFromString("+9", out parsedDecimalAmount);
+            Assert.AreEqual(9M, parsedDecimalAmount);
 
-            textBox.Text = "$1000 + 8.85";
-            gridValidator.ValidateInFieldCalculations(textBox);
-
-            Assert.AreEqual("1008.85", textBox.Text);
-
-            textBox.Text = "100 + $9.12";
-            gridValidator.ValidateInFieldCalculations(textBox);
-
-            Assert.AreEqual("109.12", textBox.Text);
+            gridValidator.ParseAmountFromString("($9.00) + 9", out parsedDecimalAmount);
+            Assert.AreEqual(0M, parsedDecimalAmount);
         }
     }
 }

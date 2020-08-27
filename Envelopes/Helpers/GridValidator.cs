@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace Envelopes.Helpers {
@@ -7,51 +9,66 @@ namespace Envelopes.Helpers {
         public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
             string originalValue);
 
-        public void ValidateInFieldCalculations(TextBox updatedTextBox);
+        public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal);
     }
 
     public class GridValidator : IGridValidator {
         public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
             string originalValue) {
-            var newAccountName = updatedTextBox.Text;
+            string newAccountName = updatedTextBox.Text;
             if (!IsPropertyUnique(newAccountName, existingValues)) {
                 updatedTextBox.Text = originalValue ?? string.Empty;
             }
         }
 
-        public void ValidateInFieldCalculations(TextBox updatedTextBox) {
-            string newValue = updatedTextBox.Text;
-            
-            if (newValue.Contains('+')) {
-                decimal newTextBoxValue = 0;
+        private static bool IsPropertyUnique(string newValue, ICollection<string> existingValue) => !existingValue.Contains(newValue);
 
-                string[] fields = newValue.Split('+');
-                foreach (string field in fields) {
-                   decimal.TryParse(field.Trim().Trim('$'), out decimal decimalResult);
-                   newTextBoxValue += decimalResult;
+        public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal) {
+            amountAsDecimal = 0;
+
+            var amountAsStringCleanedUp = amountAsString.Replace('(', '-')
+                .Replace(")", "")
+                .Replace("$", "");
+
+            if (amountAsStringCleanedUp.Contains('-') && (!amountAsStringCleanedUp.StartsWith('-') || amountAsStringCleanedUp.Count(c => c == '-') >= 2)) {
+                string[] fields = amountAsStringCleanedUp.Split('-');
+                if (fields.Length > 2) {
+                    fields = new[] {
+                        "-" + fields[1],
+                        fields[2]
+                    };
                 }
 
-                updatedTextBox.Text = newTextBoxValue.ToString(CultureInfo.CurrentCulture);
-            }  
-            
-            if (newValue.Contains('-')) {
-                decimal newTextBoxValue = 0;
-
-                string[] fields = newValue.Split('-');
                 for (var i = 0; i < fields.Length; i++) {
-                    decimal.TryParse(fields[i].Trim().Trim('$'), out decimal decimalResult);
+                    if (!decimal.TryParse(fields[i].Trim(), out decimal decimalResult)) {
+                        return false;
+                    }
+
                     if (i == 0) {
-                        newTextBoxValue = decimalResult;
+                        amountAsDecimal = decimalResult;
                     } else {
-                        newTextBoxValue -= decimalResult;
+                        amountAsDecimal -= decimalResult;
                     }
                 }
-                updatedTextBox.Text = newTextBoxValue.ToString(CultureInfo.CurrentCulture);
-            }
-        }
 
-        private static bool IsPropertyUnique(string newValue, IList<string> existingValue) {
-            return !existingValue.Contains(newValue);
+                return true;
+            }
+
+            if (amountAsStringCleanedUp.Contains('+') && !amountAsStringCleanedUp.StartsWith('+')) {
+                string[] fields = amountAsStringCleanedUp.Split('+');
+                foreach (string field in fields) {
+                    if (!decimal.TryParse(field.Trim(), out decimal decimalResult)) {
+                        return false;
+                    }
+
+                    amountAsDecimal += decimalResult;
+                }
+
+                return true;
+            }
+
+
+            return decimal.TryParse(amountAsStringCleanedUp.Trim(), out amountAsDecimal);
         }
     }
 }

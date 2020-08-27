@@ -1,8 +1,8 @@
 ﻿#nullable enable
 using System;
+using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
-using System.Windows;
 using Envelopes.Pages.BudgetPage;
 using Envelopes.Pages.TransactionsPage;
 
@@ -12,12 +12,12 @@ namespace Envelopes {
     }
 
     public class MainWindowPresenter : Presenter, IMainWindowPresenter {
-        private readonly MainWindow view;
-        private readonly IMainWindowViewModel viewModel;
+        private readonly IBudgetPagePresenter budgetPagePresenter;
         private readonly IDataService dataService;
         private readonly ITransactionsPagePresenter transactionsPagePresenter;
-        private readonly IBudgetPagePresenter budgetPagePresenter;
-        private INotificationService notificationService;
+        private readonly MainWindow view;
+        private readonly IMainWindowViewModel viewModel;
+        private readonly INotificationService notificationService;
 
         public MainWindowPresenter(MainWindow view,
             IMainWindowViewModel viewModel,
@@ -35,6 +35,8 @@ namespace Envelopes {
             BindEvents();
             BindCommands();
         }
+
+        public Window MainWindow => view;
 
         private void UpdateBalanceHeader() {
             viewModel.TotalBalance = dataService.GetTotalInflow();
@@ -70,7 +72,7 @@ namespace Envelopes {
             UpdateBalanceHeader();
         }
 
-        private void OnCategoryBudgetedChanged(object? sender, System.EventArgs e) {
+        private void OnCategoryBudgetedChanged(object? sender, EventArgs e) {
             UpdateBalanceHeader();
         }
 
@@ -79,7 +81,5 @@ namespace Envelopes {
             viewModel.CurrentPage = transactionsPagePresenter.GetPageView();
             UpdateBalanceHeader();
         }
-
-        public Window MainWindow => view;
     }
 }

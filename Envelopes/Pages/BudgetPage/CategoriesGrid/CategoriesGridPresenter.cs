@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,27 +6,18 @@ using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Helpers;
 using Envelopes.Models;
+using Envelopes.Pages.TransactionsPage.AccountsPane;
 
 namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
-
     public interface ICategoriesGridPresenter {
-        public CategoriesGridView GetView();
+        public IView GetView();
     }
 
     public class CategoriesGridPresenter : Presenter, ICategoriesGridPresenter {
-        #region Fields
-
-        private readonly CategoriesGridView view;
-        private readonly ICategoriesGridViewModelBase viewModel;
-        private readonly IDataService dataService;
-        private readonly IGridValidator gridValidator;
-
-        #endregion
-
         #region Constructors
 
-        public CategoriesGridPresenter(CategoriesGridView view,
-            ICategoriesGridViewModelBase viewModel,
+        public CategoriesGridPresenter(ICategoriesGridView view,
+            ICategoriesGridViewModel viewModel,
             IDataService dataService,
             IGridValidator gridValidator) : base(view, viewModel) {
             this.view = view;
@@ -40,37 +31,67 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
 
         #endregion
 
+        #region Fields
+
+        private readonly ICategoriesGridView view;
+        private readonly ICategoriesGridViewModel viewModel;
+        private readonly IDataService dataService;
+        private readonly IGridValidator gridValidator;
+
+        #endregion
+
         #region Events
 
         private void BindEvents() {
             view.Loaded += View_Loaded;
-            view.CategoriesDataGrid.CellEditEnding += CategoriesDataGrid_CellEditEnding;
+            view.DataGridCellEditEnding += CategoriesDataGrid_CellEditEnding;
             view.Unloaded += View_Unloaded;
         }
 
         private void CategoriesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
-            switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
+            switch ((e.Column as DataGridTextColumn)?.Header) {
                 case nameof(Category.Name):
-                    gridValidator.ValidateNewTextBoxValueIsUniqueInColumn((TextBox) e.EditingElement,
-                        viewModel.ItemList.Select(account => account.Name).ToList(), (e.Row.Item as Account)?.Name);
+                    OnNameCellEditEnding(e);
                     break;
+
                 case nameof(Category.Available):
-                    var selectCategory = viewModel.SelectedItem;
-                    var textBoxText = ((TextBox) e.EditingElement).Text;
-
-                    decimal.TryParse(textBoxText, out decimal newValue);
-                   
-
-                    if (selectCategory.Available != newValue) {
-                        var difference = selectCategory.Available - newValue;
-                        selectCategory.Budgeted -= difference;
-                    }
-
+                    OnAvailableCellEditEnding(((TextBox) e.EditingElement).Text);
                     break;
+
                 case nameof(Category.Budgeted):
-                    gridValidator.ValidateInFieldCalculations((TextBox)e.EditingElement);
+                    OnBudgetedCellEditEnding(((TextBox) e.EditingElement).Text);
                     break;
             }
+        }
+
+        private void OnNameCellEditEnding(DataGridCellEditEndingEventArgs e) {
+            gridValidator.ValidateNewTextBoxValueIsUniqueInColumn((TextBox) e.EditingElement,
+                viewModel.ItemList.Select(account => account.Name).ToList(), (e.Row.Item as Account)?.Name);
+        }
+
+        private void OnBudgetedCellEditEnding(string text) {
+            if (gridValidator.ParseAmountFromString(text, out decimal newBudgetedAmount)) {
+                viewModel.SelectedItem.Budgeted = newBudgetedAmount;
+            } else {
+                viewModel.SelectedItem.Budgeted = 0
+                    ;
+            }
+        }
+
+        private void OnAvailableCellEditEnding(string text) {
+            if (!gridValidator.ParseAmountFromString(text, out decimal newBudgetedAmount)) {
+                return;
+            }
+
+            Category selectedCategory = viewModel.SelectedItem;
+
+            if (selectedCategory.Available == newBudgetedAmount) {
+                return;
+            }
+
+            decimal difference = selectedCategory.Available - newBudgetedAmount;
+            selectedCategory.Budgeted -= difference;
+            viewModel.SelectedItem.Available = newBudgetedAmount;
         }
 
         private void View_Unloaded(object sender, RoutedEventArgs e) {
@@ -85,14 +106,14 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
 
         #region Methods
 
-        public CategoriesGridView GetView() => view;
+        public IView GetView() => view;
 
         private void BindCommands() {
             viewModel.AddItemCommand = new DelegateCommand(ExecuteAddCategory, CanExecuteAddCategory);
             viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteCategory, CanExecuteDeleteCategory);
         }
 
-        private bool CanExecuteDeleteCategory() => true;
+        private static bool CanExecuteDeleteCategory() => true;
 
         private void ExecuteDeleteCategory() {
             //Confirm the user would like to delete the category
@@ -112,23 +133,23 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void DeleteCategory() {
-            var selectedCategory = viewModel.SelectedItem;
+            Category selectedCategory = viewModel.SelectedItem;
 
             if (dataService.RemoveCategory(selectedCategory)) {
                 viewModel.RemoveItem(selectedCategory);
             }
         }
 
-        private bool CanExecuteAddCategory() => true;
+        private static bool CanExecuteAddCategory() => true;
 
         private void ExecuteAddCategory() {
-            var newCategory = dataService.AddCategory();
+            Category newCategory = dataService.AddCategory();
             viewModel.AddItem(newCategory);
         }
 
         private void PopulateCategoriesList() {
-            var categories = dataService.Categories();
-            foreach (var category in categories) {
+            IEnumerable<Category> categories = dataService.Categories();
+            foreach (Category category in categories) {
                 viewModel.AddItem(category);
             }
         }

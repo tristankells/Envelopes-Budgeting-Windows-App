@@ -1,8 +1,7 @@
 ﻿using Envelopes.Common;
 
 namespace Envelopes.Models {
-    public class Category : Model
-    {
+    public class Category : Model {
         #region Fields
 
         private int id;
@@ -16,7 +15,7 @@ namespace Envelopes.Models {
         #region Properties
 
         /// <summary>
-        /// The unique identifier for the category
+        ///     The unique identifier for the category
         /// </summary>
         public int Id {
             get => id;
@@ -24,7 +23,7 @@ namespace Envelopes.Models {
         }
 
         /// <summary>
-        /// The name of the category. Should be unique.
+        ///     The name of the category. Should be unique.
         /// </summary>
         public string Name {
             get => name;
@@ -32,7 +31,8 @@ namespace Envelopes.Models {
         }
 
         /// <summary>
-        /// The amount of money budgeted towards a category. The balance of a category is Budgeted - the Available Sum of all accounts against that category.
+        ///     The amount of money budgeted towards a category. The balance of a category is Budgeted - the Available Sum of all
+        ///     accounts against that category.
         /// </summary>
         public decimal Budgeted {
             get => budgeted;
@@ -47,26 +47,22 @@ namespace Envelopes.Models {
         #region Calculated Properties
 
         /// <summary>
-        /// CALCULATED PROPERTY: The available of all transactions made against this category.
+        ///     CALCULATED PROPERTY: The available of all transactions made against this category.
         /// </summary>
-        public decimal Activity
-        {
+        public decimal Activity {
             get => activity;
             set => SetPropertyValue(ref activity, value, nameof(Activity));
         }
 
         /// <summary>
-        /// CALCULATED PROPERTY: The amount of money budgeted towards a category. The balance of a category is Budgeted - the Available Sum of all accounts against that category.
+        ///     CALCULATED PROPERTY: The amount of money budgeted towards a category. The balance of a category is Budgeted - the
+        ///     Available Sum of all accounts against that category.
         /// </summary>
-        public decimal Available
-        {
+        public decimal Available {
             get => budgeted + activity;
             set => SetPropertyValue(ref available, value, nameof(Available));
         }
 
         #endregion
-
-
-
     }
 }

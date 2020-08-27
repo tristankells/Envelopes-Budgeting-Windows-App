@@ -4,21 +4,11 @@ using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Envelopes.Pages.TransactionsPage;
 
 namespace Envelopes.Pages.BudgetPage {
-    public interface IBudgetPagePresenter
-    {
+    public interface IBudgetPagePresenter {
         public BudgetPageView GetPageView();
     }
 
-    public class BudgetPagePresenter : Presenter, IBudgetPagePresenter
-    {
-        #region Fields
-
-        private BudgetPageView view;
-        private ITransactionsPageViewModel viewModel;
-        private ICategoriesGridPresenter categoriesGridPresenter;
-
-        #endregion
-
+    public class BudgetPagePresenter : Presenter, IBudgetPagePresenter {
         public BudgetPagePresenter(BudgetPageView view, ITransactionsPageViewModel viewModel, ICategoriesGridPresenter categoriesGridPresenter) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
@@ -27,16 +17,22 @@ namespace Envelopes.Pages.BudgetPage {
             BindEvents();
         }
 
-        private void BindEvents()
-        {
+        public BudgetPageView GetPageView() => view;
+
+        private void BindEvents() {
             view.Loaded += View_Loaded;
         }
 
-        private void View_Loaded(object sender, RoutedEventArgs e)
-        {
+        private void View_Loaded(object sender, RoutedEventArgs e) {
             view.CategoriesGridControl.Content = categoriesGridPresenter.GetView();
         }
 
-        public BudgetPageView GetPageView() => view;
+        #region Fields
+
+        private readonly BudgetPageView view;
+        private ITransactionsPageViewModel viewModel;
+        private readonly ICategoriesGridPresenter categoriesGridPresenter;
+
+        #endregion
     }
 }

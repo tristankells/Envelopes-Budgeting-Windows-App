@@ -1,8 +1,7 @@
 ﻿using Envelopes.Common;
 
 namespace Envelopes.Models {
-    public class CategoryGroup : Model
-    {
+    public class CategoryGroup : Model {
         #region Fields
 
         private int id;

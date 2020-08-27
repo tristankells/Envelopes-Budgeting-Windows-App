@@ -34,14 +34,15 @@ namespace Envelopes.Data {
     }
 
     public class DataService : IDataService {
-        private readonly INotificationService notificationService;
-        private readonly IPersistenceService persistenceService;
-        private readonly IIdentifierService identifierService;
-
         private readonly ObservableCollection<Account> accounts = new ObservableCollection<Account>();
-        private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
+
         private readonly ObservableCollection<AccountTransaction> accountTransactions =
             new ObservableCollection<AccountTransaction>();
+
+        private readonly ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        private readonly IIdentifierService identifierService;
+        private readonly INotificationService notificationService;
+        private readonly IPersistenceService persistenceService;
 
         private bool ignoreApplicationSaveEvents;
 
@@ -57,7 +58,7 @@ namespace Envelopes.Data {
             ignoreApplicationSaveEvents = true;
 
             ApplicationData applicationData = await persistenceService.GetApplicationData();
-            
+
             identifierService.Setup(applicationData);
 
             LoadAccountTransaction(applicationData.AccountTransactions);
@@ -75,22 +76,31 @@ namespace Envelopes.Data {
             ignoreApplicationSaveEvents = false;
         }
 
+        public decimal GetTotalBalance() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - accountTransactions.Sum(accountTransaction => accountTransaction.Outflow);
+
+        public decimal GetTotalInflow() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow);
+
+        public decimal GetTotalBudgeted() => categories.Sum(category => category.Budgeted);
+
+        public decimal GetRemainingAccountBalanceToBudget() =>
+            accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - categories.Sum(category => category.Budgeted);
+
         private void SetAccountsTotals() {
-            foreach (var account in accounts) {
+            foreach (Account account in accounts) {
                 account.Total = accountTransactions.Where(transaction => transaction.AccountId == account.Id)
                     .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
             }
         }
 
         private void SetCategoriesActivityAmount() {
-            foreach (var category in categories) {
+            foreach (Category category in categories) {
                 category.Activity = accountTransactions.Where(transaction => transaction.CategoryId == category.Id)
                     .Select(transaction => transaction.Inflow - transaction.Outflow).Sum();
             }
         }
 
         private void LoadCategories(IList<Category> categoryList) {
-            foreach (var category in categoryList) {
+            foreach (Category category in categoryList) {
                 category.PropertyChanged += OnCategoryPropertyChanged;
                 categories.Add(category);
             }
@@ -99,7 +109,7 @@ namespace Envelopes.Data {
         }
 
         private void LoadAccount(IList<Account> accountList) {
-            foreach (var account in accountList) {
+            foreach (Account account in accountList) {
                 account.PropertyChanged += Account_PropertyChanged;
                 accounts.Add(account);
             }
@@ -108,7 +118,7 @@ namespace Envelopes.Data {
         }
 
         private void LoadAccountTransaction(IList<AccountTransaction> accountTransactionList) {
-            foreach (var transaction in accountTransactionList) {
+            foreach (AccountTransaction transaction in accountTransactionList) {
                 transaction.PropertyChanged += OnTransactionPropertyChanged;
                 accountTransactions.Add(transaction);
             }
@@ -126,14 +136,14 @@ namespace Envelopes.Data {
 
 
         /// <summary>
-        /// Attempts to save data to specified persistence service.
+        ///     Attempts to save data to specified persistence service.
         /// </summary>
         public async Task SaveBudget() {
             if (ignoreApplicationSaveEvents) {
                 return;
             }
 
-            var applicationData = new ApplicationData() {
+            var applicationData = new ApplicationData {
                 Accounts = accounts.ToList(),
                 Categories = categories.ToList(),
                 AccountTransactions = accountTransactions.ToList()
@@ -143,12 +153,10 @@ namespace Envelopes.Data {
 
         #region Accounts
 
-        public IEnumerable<Account> Accounts() {
-            return accounts;
-        }
+        public IEnumerable<Account> Accounts() => accounts;
 
         public Account AddAccount() {
-            var account = new Account() {
+            var account = new Account {
                 Id = identifierService.GetNewAccountId()
             };
             accounts.Add(account);
@@ -165,13 +173,12 @@ namespace Envelopes.Data {
             RemoveAllAccountTransactionsForAccount(account.Id);
 
 
-
             return accounts.Remove(account);
         }
 
         private void RemoveAllAccountTransactionsForAccount(int accountId) {
-            var accountTransactionToRemove = accountTransactions.Where(accountTransaction => accountTransaction.AccountId == accountId).ToList();
-            foreach (var accountTransaction in accountTransactionToRemove) {
+            List<AccountTransaction> accountTransactionToRemove = accountTransactions.Where(accountTransaction => accountTransaction.AccountId == accountId).ToList();
+            foreach (AccountTransaction accountTransaction in accountTransactionToRemove) {
                 accountTransactions.Remove(accountTransaction);
             }
         }
@@ -193,7 +200,7 @@ namespace Envelopes.Data {
         }
 
         public Category AddCategory() {
-            var category = new Category() {
+            var category = new Category {
                 Id = identifierService.GetNewCategoryId()
             };
             category.PropertyChanged += OnCategoryPropertyChanged;
@@ -225,8 +232,8 @@ namespace Envelopes.Data {
         }
 
         private void ResetCategoryForCategoriesAccountTransactions(int categoryId) {
-            var categoriesAccountTransactions = accountTransactions.Where(at => at.CategoryId == categoryId);
-            foreach (var accountTransaction in categoriesAccountTransactions) {
+            IEnumerable<AccountTransaction> categoriesAccountTransactions = accountTransactions.Where(at => at.CategoryId == categoryId);
+            foreach (AccountTransaction accountTransaction in categoriesAccountTransactions) {
                 accountTransaction.CategoryId = 0;
             }
         }
@@ -241,7 +248,7 @@ namespace Envelopes.Data {
         }
 
         public AccountTransaction AddAccountTransaction(Account activeAccount) {
-            var transaction = new AccountTransaction() {
+            var transaction = new AccountTransaction {
                 Id = identifierService.GetNewTransactionId(),
                 AccountId = activeAccount.Id,
                 AccountName = activeAccount.Name,
@@ -280,7 +287,7 @@ namespace Envelopes.Data {
         private async void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             // Deduct the transaction total from the transaction account balance.
             if (e.Action == NotifyCollectionChangedAction.Remove) {
-                var updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
+                AccountTransaction updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
                 if (updatedTransaction == null) return;
 
                 Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction?.AccountId);
@@ -293,21 +300,8 @@ namespace Envelopes.Data {
             await SaveBudget();
         }
 
-        public bool RemoveAccountTransaction(AccountTransaction transaction) {
-            return accountTransactions.Remove(transaction);
-        }
+        public bool RemoveAccountTransaction(AccountTransaction transaction) => accountTransactions.Remove(transaction);
 
         #endregion
-
-        public decimal GetTotalBalance() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - accountTransactions.Sum(accountTransaction => accountTransaction.Outflow);
-
-        public decimal GetTotalInflow() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow);
-
-        public decimal GetTotalBudgeted() => categories.Sum(category => category.Budgeted);
-
-        public decimal GetRemainingAccountBalanceToBudget() =>
-            accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - categories.Sum(category => category.Budgeted);
-
-
     }
 }

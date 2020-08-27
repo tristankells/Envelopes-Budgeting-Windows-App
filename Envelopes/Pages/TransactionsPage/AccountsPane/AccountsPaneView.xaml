@@ -13,14 +13,15 @@
         <ResourceDictionary>
             <presentation:DecimalToBackgroundColourConverter x:Key="DecimalToBackgroundColourConverter" />
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Presentation/CustomStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
-        <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" >
+        <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}">
             <Run Text="Accounts" />
-            <Run Text="{Binding AccountsTotalBalance, StringFormat='C'}" Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}"/>
+            <Run Text="{Binding AccountsTotalBalance, StringFormat='C'}"
+                 Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
         </TextBlock>
         <DataGrid Name="accountsDataGrid"
                   dd:DragDrop.IsDragSource="True"

@@ -1,7 +1,6 @@
-﻿using Envelopes.Common;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-
+using Envelopes.Common;
 
 namespace Envelopes {
     public interface IMainWindowViewModel : IViewModelBase {
@@ -14,15 +13,6 @@ namespace Envelopes {
     }
 
     public class MainWindowViewModel : NotifyPropertyChanged, IMainWindowViewModel {
-        #region Fields
-
-        private FrameworkElement currentPage;
-        private decimal remainingBalanceToBudget;
-        private decimal balanceOfAllAccounts;
-        private decimal totalBudgeted;
-
-        #endregion
-
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
 
@@ -45,5 +35,14 @@ namespace Envelopes {
             get => currentPage;
             set => SetPropertyValue(ref currentPage, value, nameof(CurrentPage));
         }
+
+        #region Fields
+
+        private FrameworkElement currentPage;
+        private decimal remainingBalanceToBudget;
+        private decimal balanceOfAllAccounts;
+        private decimal totalBudgeted;
+
+        #endregion
     }
 }

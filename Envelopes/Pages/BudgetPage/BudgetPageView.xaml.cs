@@ -1,14 +1,11 @@
 ﻿using Envelopes.Pages.TransactionsPage.AccountsPane;
 
-namespace Envelopes.Pages.BudgetPage
-{
+namespace Envelopes.Pages.BudgetPage {
     /// <summary>
-    /// Interaction logic for CategoriesPageView.xaml
+    ///     Interaction logic for CategoriesPageView.xaml
     /// </summary>
-    public partial class BudgetPageView : IView
-    {
-        public BudgetPageView()
-        {
+    public partial class BudgetPageView : IView {
+        public BudgetPageView() {
             InitializeComponent();
         }
     }

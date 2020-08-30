@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:envelopes="clr-namespace:Envelopes"
         xmlns:presentation="clr-namespace:Envelopes.Presentation"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
         Background="AliceBlue"
@@ -55,15 +57,15 @@
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="0" Text="Total Balance" />
                 <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="0"
-                           Text="{Binding TotalBalance}" />
+                           Text="{Binding TotalBalance, StringFormat=C}" />
                 <TextBlock Grid.Row="1" Grid.Column="1" FontSize="10" HorizontalAlignment="Center" Text=" - " />
                 <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="2" Text="Total Budgeted" />
                 <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="2"
-                           Text="{Binding TotalBudgeted}" />
+                           Text="{Binding TotalBudgeted, StringFormat=C}" />
                 <TextBlock Grid.Row="1" Grid.Column="3" FontSize="10" HorizontalAlignment="Center" Text=" = " />
                 <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="4" Text="Remaining To Budget" />
                 <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="4"
-                           Text="{Binding RemainingBalanceToBudget}"
+                           Text="{Binding RemainingBalanceToBudget, StringFormat=C}"
                            Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
             </Grid>
             <ContentControl Content="{Binding CurrentPage}" />

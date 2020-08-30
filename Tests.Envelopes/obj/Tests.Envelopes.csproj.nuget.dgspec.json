@@ -42,6 +42,10 @@
               "target": "Package",
               "version": "[5.1.0, )"
             },
+            "ModernWpfUI": {
+              "target": "Package",
+              "version": "[0.9.1, )"
+            },
             "Ninject": {
               "target": "Package",
               "version": "[3.3.4, )"

@@ -32,10 +32,6 @@
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id"
-                                    Width="*"
-                                    Binding="{Binding Id}"
-                                    FontSize="15" />
                 <DataGridTextColumn Header="Account"
                                     Width="3*"
                                     Binding="{Binding Name}"
@@ -44,7 +40,14 @@
                                     Width="3*"
                                     IsReadOnly="True"
                                     Binding="{Binding Total, StringFormat='C'}"
-                                    FontSize="15" />
+                                    FontSize="15">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

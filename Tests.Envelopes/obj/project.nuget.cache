@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YoIGQR9RLcRDgmPsjCUH+8LSms34UR+6CjFnEtnID8bVc3NIcr/4LdRX0hym4zZG0tlnTDTZ9r2gDPGpeceM/Q==",
+  "dgSpecHash": "g1ghUUSLnnN3kZ6YzxKuHu8zlQvO4xQUKtJmV5Z7jUgQzil3Sk/uN5uJKYOpRRWzy+tU/ZmC4n+5YZvpE6Km7Q==",
   "success": true,
   "projectFilePath": "C:\\Projects\\Envelopes\\Tests.Envelopes\\Tests.Envelopes.csproj",
   "expectedPackageFiles": [
@@ -27,6 +27,7 @@
     "C:\\Users\\trist\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\microsoft.win32.registry\\4.3.0\\microsoft.win32.registry.4.3.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\trist\\.nuget\\packages\\modernwpfui\\0.9.1\\modernwpfui.0.9.1.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\moq\\4.14.1\\moq.4.14.1.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\mstest.testadapter\\2.1.0\\mstest.testadapter.2.1.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\mstest.testframework\\2.1.0\\mstest.testframework.2.1.0.nupkg.sha512",
@@ -93,6 +94,7 @@
     "C:\\Users\\trist\\.nuget\\packages\\system.runtime.interopservices.runtimeinformation\\4.3.0\\system.runtime.interopservices.runtimeinformation.4.3.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\system.runtime.numerics\\4.3.0\\system.runtime.numerics.4.3.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\system.runtime.serialization.primitives\\4.1.1\\system.runtime.serialization.primitives.4.1.1.nupkg.sha512",
+    "C:\\Users\\trist\\.nuget\\packages\\system.runtime.windowsruntime\\4.7.0\\system.runtime.windowsruntime.4.7.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\system.security.claims\\4.3.0\\system.security.claims.4.3.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\system.security.cryptography.algorithms\\4.3.0\\system.security.cryptography.algorithms.4.3.0.nupkg.sha512",
     "C:\\Users\\trist\\.nuget\\packages\\system.security.cryptography.cng\\4.7.0\\system.security.cryptography.cng.4.7.0.nupkg.sha512",

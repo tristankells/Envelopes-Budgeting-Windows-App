@@ -48,9 +48,9 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void CategoriesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
-            switch ((e.Column as DataGridTextColumn)?.Header) {
+            switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
                 case nameof(Category.Name):
-                    OnNameCellEditEnding(e);
+                    OnNameCellEditEnding(((TextBox)e.EditingElement).Text);
                     break;
 
                 case nameof(Category.Available):
@@ -63,35 +63,27 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
             }
         }
 
-        private void OnNameCellEditEnding(DataGridCellEditEndingEventArgs e) {
-            gridValidator.ValidateNewTextBoxValueIsUniqueInColumn((TextBox) e.EditingElement,
-                viewModel.ItemList.Select(account => account.Name).ToList(), (e.Row.Item as Account)?.Name);
+        private void OnNameCellEditEnding(string newText) {
+            SelectedCategory.Name = gridValidator.ValidateNewStringIsUniqueFromExistingStrings(newText, viewModel.ItemList.Select(account => account.Name).ToList(), SelectedCategory.Name);
         }
 
-        private void OnBudgetedCellEditEnding(string text) {
-            if (gridValidator.ParseAmountFromString(text, out decimal newBudgetedAmount)) {
+        private void OnAvailableCellEditEnding(string newText) {
+            if (!gridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount)) {
+                return;
+            }
+
+            decimal difference = SelectedCategory.Available - newBudgetedAmount;
+            SelectedCategory.Budgeted -= difference;
+        }
+
+        private void OnBudgetedCellEditEnding(string newText) {
+            if (gridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount)) {
                 viewModel.SelectedItem.Budgeted = newBudgetedAmount;
             } else {
-                viewModel.SelectedItem.Budgeted = 0
-                    ;
+                viewModel.SelectedItem.Budgeted = 0;
             }
         }
 
-        private void OnAvailableCellEditEnding(string text) {
-            if (!gridValidator.ParseAmountFromString(text, out decimal newBudgetedAmount)) {
-                return;
-            }
-
-            Category selectedCategory = viewModel.SelectedItem;
-
-            if (selectedCategory.Available == newBudgetedAmount) {
-                return;
-            }
-
-            decimal difference = selectedCategory.Available - newBudgetedAmount;
-            selectedCategory.Budgeted -= difference;
-            viewModel.SelectedItem.Available = newBudgetedAmount;
-        }
 
         private void View_Unloaded(object sender, RoutedEventArgs e) {
             viewModel.ItemList.Clear();
@@ -132,10 +124,8 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void DeleteCategory() {
-            Category selectedCategory = viewModel.SelectedItem;
-
-            if (dataService.RemoveCategory(selectedCategory)) {
-                viewModel.RemoveItem(selectedCategory);
+            if (dataService.RemoveCategory(SelectedCategory)) {
+                viewModel.RemoveItem(SelectedCategory);
             }
         }
 
@@ -152,6 +142,8 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
                 viewModel.AddItem(category);
             }
         }
+
+        private Category SelectedCategory => viewModel.SelectedItem;
 
         #endregion
     }

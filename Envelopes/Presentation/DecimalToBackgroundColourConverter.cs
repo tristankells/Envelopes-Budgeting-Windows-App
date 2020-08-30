@@ -16,7 +16,7 @@ namespace Envelopes.Presentation {
                 return "#f49e8b";
             }
 
-            if (input > 0) {
+            if (input >= 0) {
                 return "#b5e08a";
             }
 

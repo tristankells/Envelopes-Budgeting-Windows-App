@@ -24,7 +24,6 @@
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
-
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"
                                     Width="7*"

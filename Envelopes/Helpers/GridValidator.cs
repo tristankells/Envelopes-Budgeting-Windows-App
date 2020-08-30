@@ -4,23 +4,23 @@ using System.Windows.Controls;
 
 namespace Envelopes.Helpers {
     public interface IGridValidator {
-        public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
+        public string ValidateNewStringIsUniqueFromExistingStrings(string newText, IList<string> existingValues,
             string originalValue);
 
         public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal);
     }
 
     public class GridValidator : IGridValidator {
-        public void ValidateNewTextBoxValueIsUniqueInColumn(TextBox updatedTextBox, IList<string> existingValues,
-            string originalValue) {
-            string newAccountName = updatedTextBox.Text;
-            if (!IsPropertyUnique(newAccountName, existingValues)) {
-                updatedTextBox.Text = originalValue ?? string.Empty;
-            }
+        public string ValidateNewStringIsUniqueFromExistingStrings(string newText, IList<string> existingValues, string originalValue) {
+            return existingValues.Contains(newText) ? originalValue ?? string.Empty : newText;
         }
 
         public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal) {
             amountAsDecimal = 0;
+
+            if (string.IsNullOrWhiteSpace(amountAsString)) {
+                return true; // Empty string should be parsed as $0.00
+            }
 
             string amountAsStringCleanedUp = amountAsString.Replace('(', '-')
                 .Replace(")", "")
@@ -66,7 +66,5 @@ namespace Envelopes.Helpers {
 
             return decimal.TryParse(amountAsStringCleanedUp.Trim(), out amountAsDecimal);
         }
-
-        private static bool IsPropertyUnique(string newValue, ICollection<string> existingValue) => !existingValue.Contains(newValue);
     }
 }

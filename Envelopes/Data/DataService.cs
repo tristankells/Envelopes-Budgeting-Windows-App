@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Envelopes.Common;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
 using Envelopes.Models.Models;
@@ -24,7 +23,7 @@ namespace Envelopes.Data {
 
         // Account Transactions
         public IEnumerable<AccountTransaction> AccountTransactions();
-        public AccountTransaction AddAccountTransaction(Account activeAccountId);
+        public Task<AccountTransaction> AddAccountTransaction(Account activeAccountId);
         public void AddAccountTransaction(AccountTransaction transaction);
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
 
@@ -33,6 +32,8 @@ namespace Envelopes.Data {
         public decimal GetTotalBudgeted();
         public decimal GetTotalInflow();
         decimal GetTotalBalance();
+        public Task SaveBudget();
+        public bool IgnoreApplicationSaveEvents { get; set; }
     }
 
     public class DataService : IDataService {
@@ -46,7 +47,7 @@ namespace Envelopes.Data {
         private readonly INotificationService notificationService;
         private readonly IPersistenceService persistenceService;
 
-        private bool ignoreApplicationSaveEvents;
+        public bool IgnoreApplicationSaveEvents { get;  set; }
 
         public DataService(IPersistenceService persistenceService,
             IIdentifierService identifierService,
@@ -57,7 +58,7 @@ namespace Envelopes.Data {
         }
 
         public async Task LoadApplicationData() {
-            ignoreApplicationSaveEvents = true;
+            IgnoreApplicationSaveEvents = true;
 
             ApplicationData applicationData = await persistenceService.GetApplicationData();
 
@@ -75,7 +76,7 @@ namespace Envelopes.Data {
                 SetCategoriesActivityAmount();
             }
 
-            ignoreApplicationSaveEvents = false;
+            IgnoreApplicationSaveEvents = false;
         }
 
         public decimal GetTotalBalance() => accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - accountTransactions.Sum(accountTransaction => accountTransaction.Outflow);
@@ -133,15 +134,21 @@ namespace Envelopes.Data {
         }
 
         private async void Account_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-            await SaveBudget();
+            switch (e.PropertyName) {
+                case nameof(Account.Name):
+                case nameof(Account.Id):
+                    await SaveBudget();
+                    break;
+            }
+            
         }
 
 
         /// <summary>
         ///     Attempts to save data to specified persistence service.
         /// </summary>
-        private async Task SaveBudget() {
-            if (ignoreApplicationSaveEvents) {
+        public async Task SaveBudget() {
+            if (IgnoreApplicationSaveEvents) {
                 return;
             }
 
@@ -249,7 +256,7 @@ namespace Envelopes.Data {
             return accountTransactions.OrderByDescending(a => a.Date);
         }
 
-        public AccountTransaction AddAccountTransaction(Account activeAccount) {
+        public async Task<AccountTransaction> AddAccountTransaction(Account activeAccount) {
             var transaction = new AccountTransaction {
                 Id = identifierService.GetNewTransactionId(),
                 AccountId = activeAccount.Id,
@@ -258,10 +265,12 @@ namespace Envelopes.Data {
             };
             transaction.PropertyChanged += OnTransactionPropertyChanged;
             accountTransactions.Add(transaction);
+            await SaveBudget();
             return transaction;
         }
 
         public void AddAccountTransaction(AccountTransaction transaction) {
+            transaction.Id = identifierService.GetNewTransactionId();
             transaction.PropertyChanged += OnTransactionPropertyChanged;
             accountTransactions.Add(transaction);
         }
@@ -291,23 +300,41 @@ namespace Envelopes.Data {
             await SaveBudget();
         }
 
-        private async void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            // Deduct the transaction total from the transaction account balance.
-            if (e.Action == NotifyCollectionChangedAction.Remove) {
-                AccountTransaction updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
-                if (updatedTransaction == null) return;
+        private void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            switch (e.Action) {
+                // Deduct the transaction total from the transaction account balance.
+                case NotifyCollectionChangedAction.Remove: {
+                    AccountTransaction updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
+                    if (updatedTransaction == null) return;
 
-                Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
-                if (account == null) return;
-                account.Total -= updatedTransaction.Total;
+                    Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
+                    if (account == null) return;
+                    account.Total -= updatedTransaction.Total;
 
-                notificationService.NotifyTransactionBalanceChanged();
+                    notificationService.NotifyTransactionBalanceChanged();
+                    break;
+                }
+
+                case NotifyCollectionChangedAction.Add: {
+                    AccountTransaction updatedTransaction = e.NewItems.OfType<AccountTransaction>().FirstOrDefault();
+                    if (updatedTransaction == null) {
+                        return;
+                    }
+
+                    Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
+                    if (account == null) {
+                        return;
+                    }
+                    account.Total += updatedTransaction.Total;
+
+                    notificationService.NotifyTransactionBalanceChanged();
+                    break;
+                }
             }
-
-            await SaveBudget();
         }
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) => accountTransactions.Remove(transaction);
+
 
         #endregion
     }

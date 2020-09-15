@@ -43,42 +43,45 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         public ITransactionsGridView GetView() => view;
 
         private void BindCommands() {
-            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddTransaction, CanExecuteAddTransaction);
-            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
+            viewModel.AddItemCommand = new AsyncCommand(ExecuteAddTransaction, CanExecuteAddTransaction);
+            viewModel.DeleteItemCommand = new AsyncCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
             viewModel.ImportTransactionsCommand = new AsyncCommand(ExecuteImportTransactions, CanImportTransactions);
         }
 
         private bool CanExecuteAddTransaction() => true;
 
-        private void ExecuteAddTransaction() {
-            AccountTransaction? newTransaction = dataService.AddAccountTransaction(activeAccount);
+        private async Task ExecuteAddTransaction() {
+            AccountTransaction? newTransaction = await dataService.AddAccountTransaction(activeAccount);
             viewModel.AddItem(newTransaction);
         }
 
         private bool CanExecuteDeleteTransaction() => true;
 
-        private void ExecuteDeleteTransaction() {
-            AccountTransaction? selectedTransaction = viewModel.SelectedItem;
+        private async Task ExecuteDeleteTransaction() {
+            await Task.Run(() => {
+                AccountTransaction? selectedTransaction = viewModel.SelectedItem;
 
-            if (dataService.RemoveAccountTransaction(selectedTransaction)) {
-                viewModel.RemoveItem(selectedTransaction);
-            }
+                if (dataService.RemoveAccountTransaction(selectedTransaction)) {
+                    viewModel.RemoveItem(selectedTransaction);
+                }
+            });
         }
 
         private bool CanImportTransactions() => true;
 
         private async Task ExecuteImportTransactions() {
             IEnumerable<AccountTransaction>? transactions = await transactionsImporter.Import("", new AccountTransactionColumnMap()); // Passing blank values as using a proxy for now that has hard coded bank maps and file locations
-
+        
             foreach (AccountTransaction transaction in transactions) {
                 bool isTransactionDuplicate = viewModel.AccountTransactions.Any(at => at.AccountId == transaction.AccountId
-                                                                                     && at.Date == transaction.Date
-                                                                                     && at.Total == transaction.Total);
+                                                                                     && at.Date == transaction.Date && at.Total == transaction.Total);
                 if (!isTransactionDuplicate) {
                     viewModel.AddItem(transaction);
                     dataService.AddAccountTransaction(transaction);
                 }
             }
+
+            await dataService.SaveBudget();
         }
 
         private void PopulateTransactionsList(bool isFiltered) {

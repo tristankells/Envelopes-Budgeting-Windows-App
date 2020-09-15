@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Envelopes.Common;
@@ -93,27 +94,30 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         public IView GetView() => view;
 
         private void BindCommands() {
-            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddCategory, CanExecuteAddCategory);
-            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteCategory, CanExecuteDeleteCategory);
+            viewModel.AddItemCommand = new AsyncCommand(ExecuteAddCategory, CanExecuteAddCategory);
+            viewModel.DeleteItemCommand = new AsyncCommand(ExecuteDeleteCategory, CanExecuteDeleteCategory);
         }
 
         private static bool CanExecuteDeleteCategory() => true;
 
-        private void ExecuteDeleteCategory() {
-            //Confirm the user would like to delete the category
-            MessageBoxResult result =
-                MessageBox.Show(
-                    "Are you sure you would like to delete your category? This will reset the category of all the account transactions.",
-                    "Delete Account", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-            switch (result) {
-                case MessageBoxResult.No:
-                case MessageBoxResult.Cancel:
-                    // Don't delete category
-                    break;
-                case MessageBoxResult.Yes: // Attempt to delete category
-                    DeleteCategory();
-                    break;
-            }
+        private async Task ExecuteDeleteCategory() {
+            await Task.Factory.StartNew(() => {
+                //Confirm the user would like to delete the category
+                MessageBoxResult result =
+                    MessageBox.Show(
+                        "Are you sure you would like to delete your category? This will reset the category of all the account transactions.",
+                        "Delete Account", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (result) {
+                    case MessageBoxResult.No:
+                    case MessageBoxResult.Cancel:
+                        // Don't delete category
+                        break;
+                    case MessageBoxResult.Yes: // Attempt to delete category
+                        DeleteCategory();
+                        break;
+                }
+            });
+           
         }
 
         private void DeleteCategory() {
@@ -124,9 +128,11 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
 
         private static bool CanExecuteAddCategory() => true;
 
-        private void ExecuteAddCategory() {
-            Category newCategory = dataService.AddCategory();
-            viewModel.AddItem(newCategory);
+        private async Task ExecuteAddCategory() {
+            await Task.Factory.StartNew(() => {
+                Category newCategory = dataService.AddCategory();
+                viewModel.AddItem(newCategory);
+            });
         }
 
         private void PopulateCategoriesList() {

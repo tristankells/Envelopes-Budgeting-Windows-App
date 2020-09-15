@@ -1,21 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Controls;
 
 namespace Envelopes.Helpers {
-    public interface IGridValidator {
-        public string ValidateNewStringIsUniqueFromExistingStrings(string newText, IList<string> existingValues,
-            string originalValue);
+    public static class GridValidator {
+        public static string ValidateNewStringIsUniqueFromExistingStrings(string newText, IList<string> existingValues, string originalValue) => existingValues.Contains(newText) ? originalValue ?? string.Empty : newText;
 
-        public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal);
-    }
-
-    public class GridValidator : IGridValidator {
-        public string ValidateNewStringIsUniqueFromExistingStrings(string newText, IList<string> existingValues, string originalValue) {
-            return existingValues.Contains(newText) ? originalValue ?? string.Empty : newText;
-        }
-
-        public bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal) {
+        public static bool ParseAmountFromString(string amountAsString, out decimal amountAsDecimal) {
             amountAsDecimal = 0;
 
             if (string.IsNullOrWhiteSpace(amountAsString)) {
@@ -35,7 +25,7 @@ namespace Envelopes.Helpers {
                     };
                 }
 
-                for (var i = 0; i < fields.Length; i++) {
+                for (int i = 0; i < fields.Length; i++) {
                     if (!decimal.TryParse(fields[i].Trim(), out decimal decimalResult)) {
                         return false;
                     }

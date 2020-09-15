@@ -37,10 +37,13 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Style="{StaticResource PageNavigationButton}" Grid.Column="0"
                         Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions" />
                 <Button Style="{StaticResource PageNavigationButton}" Grid.Column="1"
+                        Command="{Binding ImportTransactionsCommand }" Content="Import" />
+                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="2"
                         Command="{Binding NavigateToBudgetPageCommand }" Content="Budget" />
             </Grid>
             <Grid MaxWidth="400">

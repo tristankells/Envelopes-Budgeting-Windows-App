@@ -7,10 +7,12 @@ namespace Envelopes.Data {
         public event EventHandler OnTransactionBalanceChanged;
         public event EventHandler OnActiveAccountChanged;
         public event EventHandler OnShowAllTransactionsExecuted;
+        public event EventHandler OnTransactionsImportCompleted;
         void NotifyActiveAccountChanged(Account account);
         void NotifyCategoryBudgetedChanged();
         void NotifyTransactionBalanceChanged();
         void NotifyShowAllTransactionsExecuted();
+        void NotifyTransactionsImportCompleted();
     }
 
     public class NotificationService : INotificationService {
@@ -18,21 +20,26 @@ namespace Envelopes.Data {
         public event EventHandler OnTransactionBalanceChanged;
         public event EventHandler OnActiveAccountChanged;
         public event EventHandler OnShowAllTransactionsExecuted;
+        public event EventHandler OnTransactionsImportCompleted;
 
         public void NotifyActiveAccountChanged(Account account) {
-            OnActiveAccountChanged?.Invoke(account, null);
+            OnActiveAccountChanged?.Invoke(account, new EventArgs());
         }
 
         public void NotifyCategoryBudgetedChanged() {
-            OnCategoryBudgetedChanged?.Invoke(null, null);
+            OnCategoryBudgetedChanged?.Invoke(null, new EventArgs());
         }
 
         public void NotifyTransactionBalanceChanged() {
-            OnTransactionBalanceChanged?.Invoke(null, null);
+            OnTransactionBalanceChanged?.Invoke(null, new EventArgs());
         }
 
         public void NotifyShowAllTransactionsExecuted() {
-            OnShowAllTransactionsExecuted?.Invoke(null, null);
+            OnShowAllTransactionsExecuted?.Invoke(null, new EventArgs());
+        }
+
+        public void NotifyTransactionsImportCompleted() {
+            OnShowAllTransactionsExecuted?.Invoke(null, new EventArgs());
         }
     }
 }

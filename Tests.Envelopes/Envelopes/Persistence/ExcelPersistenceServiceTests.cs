@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Envelopes.Data;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
+using Envelopes.Models.Models;
 using Moq;
 using NUnit.Framework;
 using OfficeOpenXml;
@@ -13,13 +14,13 @@ namespace Tests.Envelopes.Data.Persistence {
         private const string CategoriesWorksheetName = "Categories";
         private const string AccountTransactionsWorksheetName = "Account Transactions";
         private const string AccountsWorksheetName = "Accounts";
-        private Mock<IExcelFileProcessor> excelFileProcessor;
+        private Mock<IFileProcessor> excelFileProcessor;
 
         private ExcelPersistenceService excelPersistenceService;
 
         [SetUp]
         public void Setup() {
-            excelFileProcessor = new Mock<IExcelFileProcessor>();
+            excelFileProcessor = new Mock<IFileProcessor>();
             excelPersistenceService = new ExcelPersistenceService(excelFileProcessor.Object);
         }
 
@@ -102,32 +103,9 @@ namespace Tests.Envelopes.Data.Persistence {
             Assert.AreEqual(1, applicationData.Categories.Count);
             Assert.AreEqual(1, applicationData.AccountTransactions.Count);
 
-            ValidateAccountsAreEqual(account, applicationData.Accounts.FirstOrDefault());
-            ValidateCategoriesAreEqual(category, applicationData.Categories.FirstOrDefault());
-            ValidateAccountTransactionsAreEqual(accountTransaction, applicationData.AccountTransactions.FirstOrDefault());
-        }
-
-        private static void ValidateAccountsAreEqual(Account expected, Account actual) {
-            Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.Name, actual.Name);
-        }
-
-        private static void ValidateCategoriesAreEqual(Category expected, Category actual) {
-            Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.Name, actual.Name);
-            Assert.AreEqual(expected.Budgeted, actual.Budgeted);
-        }
-
-        private static void ValidateAccountTransactionsAreEqual(AccountTransaction expected, AccountTransaction actual) {
-            Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.AccountId, actual.AccountId);
-            Assert.AreEqual(expected.Date, actual.Date);
-            Assert.AreEqual(expected.Payee, actual.Payee);
-            Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.CategoryId, actual.CategoryId);
-            Assert.AreEqual(expected.Memo, actual.Memo);
-            Assert.AreEqual(expected.Outflow, actual.Outflow);
-            Assert.AreEqual(expected.Inflow, actual.Inflow);
+            TestValidationHelper.ValidateAccountsAreEqual(account, applicationData.Accounts.FirstOrDefault());
+            TestValidationHelper.ValidateCategoriesAreEqual(category, applicationData.Categories.FirstOrDefault());
+            TestValidationHelper.ValidateAccountTransactionsAreEqual(accountTransaction, applicationData.AccountTransactions.FirstOrDefault());
         }
     }
 }

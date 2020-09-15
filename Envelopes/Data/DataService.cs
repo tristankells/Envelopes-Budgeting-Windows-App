@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Envelopes.Common;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
+using Envelopes.Models.Models;
 
 namespace Envelopes.Data {
     public interface IDataService {
@@ -23,7 +24,8 @@ namespace Envelopes.Data {
 
         // Account Transactions
         public IEnumerable<AccountTransaction> AccountTransactions();
-        AccountTransaction AddAccountTransaction(Account activeAccountId);
+        public AccountTransaction AddAccountTransaction(Account activeAccountId);
+        public void AddAccountTransaction(AccountTransaction transaction);
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
 
         public Task LoadApplicationData();
@@ -259,8 +261,13 @@ namespace Envelopes.Data {
             return transaction;
         }
 
+        public void AddAccountTransaction(AccountTransaction transaction) {
+            transaction.PropertyChanged += OnTransactionPropertyChanged;
+            accountTransactions.Add(transaction);
+        }
+
         private async void OnTransactionPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if (e is PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
+            if (e is Common.PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
                 decimal difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
                 var transaction = sender as AccountTransaction;
 

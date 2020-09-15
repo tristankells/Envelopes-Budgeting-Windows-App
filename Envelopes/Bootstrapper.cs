@@ -1,11 +1,11 @@
 ﻿using Envelopes.Data;
 using Envelopes.Data.Persistence;
-using Envelopes.Helpers;
 using Envelopes.Pages.BudgetPage;
 using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Envelopes.Pages.TransactionsPage;
 using Envelopes.Pages.TransactionsPage.AccountsPane;
 using Envelopes.Pages.TransactionsPage.TransactionsGrid;
+using Envelopes.Persistence.Importer;
 using Envelopes.Presentation;
 using Ninject;
 using Ninject.Modules;
@@ -29,6 +29,7 @@ namespace Envelopes {
             kernel.Bind<IAccountsPaneView>().To<AccountsPaneView>();
             kernel.Bind<IAccountsPanePresenter>().To<AccountsPanePresenter>();
             kernel.Bind<IAccountsPaneViewModel>().To<AccountsPaneViewModel>();
+            kernel.Bind<ITransactionsGridView>().To<TransactionsGridView>();
             kernel.Bind<ITransactionsGridPresenter>().To<TransactionsGridPresenter>();
             kernel.Bind<ITransactionsGridViewModel>().To<TransactionsGridViewModel>();
 
@@ -40,12 +41,13 @@ namespace Envelopes {
 
             // Data
             kernel.Bind<IPersistenceService>().To<ExcelPersistenceService>();
-            kernel.Bind<IGridValidator>().To<GridValidator>();
+
+            kernel.Bind<ITransactionsImporter>().To<ProxyTransactionImporter>();
             kernel.Bind<IIdentifierService>().To<IdentifierService>().InSingletonScope();
             kernel.Bind<IDataService>().To<DataService>().InSingletonScope();
             kernel.Bind<INotificationService>().To<NotificationService>().InSingletonScope();
             kernel.Bind<IMessageBoxWrapper>().To<MessageBoxWrapper>().InSingletonScope();
-            kernel.Bind<IExcelFileProcessor>().To<ExcelFileProcessor>().InSingletonScope();
+            kernel.Bind<IFileProcessor>().To<ExcelFileProcessor>().InSingletonScope();
         }
     }
 }

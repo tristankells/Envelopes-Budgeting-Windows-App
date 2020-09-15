@@ -1,6 +1,4 @@
-﻿
-
-namespace Envelopes.Common {
+﻿namespace Envelopes.Common {
     /// <summary>
     ///     Simple base class for presenters that connects the DataContext of a View object to a IViewModelBase replacing three
     ///     lines with a call to base class constructor.

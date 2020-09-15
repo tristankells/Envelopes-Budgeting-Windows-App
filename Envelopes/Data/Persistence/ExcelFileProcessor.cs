@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using OfficeOpenXml;
 
 namespace Envelopes.Data.Persistence {
-    public interface IExcelFileProcessor {
+    public interface IFileProcessor {
         public Task SaveAs(ExcelPackage package);
         public ExcelPackage LoadExcelPackageFromFile();
     }
 
-    public class ExcelFileProcessor : IExcelFileProcessor {
+    public class ExcelFileProcessor : IFileProcessor {
         private readonly string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         private readonly string fileName = ConfigurationManager.AppSettings.Get("BudgetPath");
 
@@ -26,6 +26,11 @@ namespace Envelopes.Data.Persistence {
         }
 
         public ExcelPackage LoadExcelPackageFromFile() {
+            var filePath = new FileInfo(Path.Combine(directoryPath, fileName));
+            return new ExcelPackage(filePath);
+        }
+
+        public ExcelPackage LoadExcelPackageFromFile(string fileLocation) {
             var filePath = new FileInfo(Path.Combine(directoryPath, fileName));
             return new ExcelPackage(filePath);
         }

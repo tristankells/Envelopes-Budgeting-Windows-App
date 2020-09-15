@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Envelopes.Excel\Envelopes.Persistence.csproj" />
     <ProjectReference Include="..\Envelopes\Envelopes.csproj" />
   </ItemGroup>
 

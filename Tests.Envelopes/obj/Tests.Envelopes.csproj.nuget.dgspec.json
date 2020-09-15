@@ -4,14 +4,80 @@
     "C:\\Projects\\Envelopes\\Tests.Envelopes\\Tests.Envelopes.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj": {
+    "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj",
-        "projectName": "Envelopes",
-        "projectPath": "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj",
+        "projectUniqueName": "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj",
+        "projectName": "Envelopes.Persistence",
+        "projectPath": "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj",
         "packagesPath": "C:\\Users\\trist\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\Envelopes\\Envelopes\\obj\\",
+        "outputPath": "C:\\Projects\\Envelopes\\Envelopes.Excel\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\trist\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj": {
+                "projectPath": "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "CsvHelper": {
+              "target": "Package",
+              "version": "[15.0.5, )"
+            },
+            "EPPlus": {
+              "target": "Package",
+              "version": "[5.3.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj",
+        "projectName": "Envelopes.Models",
+        "projectPath": "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj",
+        "packagesPath": "C:\\Users\\trist\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\Envelopes\\Envelopes.Models\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\trist\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -37,10 +103,69 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj",
+        "projectName": "Envelopes",
+        "projectPath": "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj",
+        "packagesPath": "C:\\Users\\trist\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\Envelopes\\Envelopes\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\trist\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj": {
+                "projectPath": "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj"
+              },
+              "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj": {
+                "projectPath": "C:\\Projects\\Envelopes\\Envelopes.Models\\Envelopes.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
           "dependencies": {
             "EPPlus": {
               "target": "Package",
-              "version": "[5.1.0, )"
+              "version": "[5.3.1, )"
             },
             "ModernWpfUI": {
               "target": "Package",
@@ -73,7 +198,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
         }
       }
     },
@@ -100,6 +225,9 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
+              "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj": {
+                "projectPath": "C:\\Projects\\Envelopes\\Envelopes.Excel\\Envelopes.Persistence.csproj"
+              },
               "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj": {
                 "projectPath": "C:\\Projects\\Envelopes\\Envelopes\\Envelopes.csproj"
               }
@@ -164,7 +292,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
         }
       }
     }

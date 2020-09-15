@@ -8,10 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="5.1.0" />
+    <PackageReference Include="EPPlus" Version="5.3.1" />
     <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
     <PackageReference Include="ModernWpfUI" Version="0.9.1" />
     <PackageReference Include="Ninject" Version="3.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Envelopes.Excel\Envelopes.Persistence.csproj" />
+    <ProjectReference Include="..\Envelopes.Models\Envelopes.Models.csproj" />
   </ItemGroup>
 
 </Project>

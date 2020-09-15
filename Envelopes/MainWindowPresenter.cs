@@ -5,6 +5,7 @@ using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Pages.BudgetPage;
 using Envelopes.Pages.TransactionsPage;
+using Envelopes.Persistence.Importer;
 
 namespace Envelopes {
     public interface IMainWindowPresenter {
@@ -31,6 +32,7 @@ namespace Envelopes {
             this.budgetPagePresenter = budgetPagePresenter;
             this.dataService = dataService;
             this.notificationService = notificationService;
+         
 
             BindEvents();
             BindCommands();
@@ -50,7 +52,6 @@ namespace Envelopes {
         }
 
         private bool CanNavigateToTransactionsPage() => !(viewModel.CurrentPage is TransactionsPageView);
-
 
         private void ExecuteNavigateTransactionsPage() {
             viewModel.CurrentPage = transactionsPagePresenter.GetPageView();

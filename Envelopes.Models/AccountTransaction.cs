@@ -1,7 +1,6 @@
 ﻿using System;
-using Envelopes.Common;
 
-namespace Envelopes.Models {
+namespace Envelopes.Models.Models {
     public class AccountTransaction : Model {
         public string AccountName {
             get => accountName;

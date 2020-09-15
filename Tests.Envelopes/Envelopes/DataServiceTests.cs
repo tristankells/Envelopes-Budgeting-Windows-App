@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Envelopes.Data;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
+using Envelopes.Models.Models;
 using Moq;
 using NUnit.Framework;
 
-namespace Tests.Envelopes.Data {
+namespace Tests.Envelopes {
     internal class DataServiceTests {
         private DataService dataService;
         private Mock<IIdentifierService> identifierService;

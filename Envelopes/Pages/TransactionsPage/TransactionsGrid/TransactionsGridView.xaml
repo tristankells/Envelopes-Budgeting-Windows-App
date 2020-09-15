@@ -107,5 +107,6 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button Command="{Binding AddItemCommand}" Content="Add Transaction" />
+        <Button Name="importTransactionButton" Command="{Binding ImportTransactionsCommand}" Content="Import Transactions" />
     </StackPanel>
 </UserControl>

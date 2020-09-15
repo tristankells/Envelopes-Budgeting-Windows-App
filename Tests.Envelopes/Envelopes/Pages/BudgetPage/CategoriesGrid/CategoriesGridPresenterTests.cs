@@ -1,155 +1,140 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
 using Envelopes.Data;
-using Envelopes.Helpers;
 using Envelopes.Models;
 using Envelopes.Pages.BudgetPage.CategoriesGrid;
 using Moq;
 using NUnit.Framework;
 
-namespace Tests.Envelopes.Pages.BudgetPage.CategoriesGrid {
+namespace Tests.Envelopes.Envelopes.Pages.BudgetPage.CategoriesGrid {
     [Apartment(ApartmentState.STA)]
     internal class CategoriesGridPresenterTests {
         private CategoriesGridPresenter categoriesGridPresenter;
         private Mock<ICategoriesGridView> categoriesGridViewMock;
         private Mock<ICategoriesGridViewModel> categoriesGridViewModelMock;
         private Mock<IDataService> dataServiceMock;
-        private Mock<IGridValidator> gridValidatorMock;
-        private Category SelectedCategory;
+        private Category selectedCategory;
 
 
         [SetUp]
         public void Setup() {
             categoriesGridViewModelMock = new Mock<ICategoriesGridViewModel>();
             dataServiceMock = new Mock<IDataService>();
-            gridValidatorMock = new Mock<IGridValidator>();
             categoriesGridViewMock = new Mock<ICategoriesGridView>();
-            SelectedCategory = new Category();
+            selectedCategory = new Category();
 
             categoriesGridViewMock.Setup(cgvm => cgvm.CategoriesDataGrid).Returns(new DataGrid());
-            categoriesGridViewModelMock.Setup(cgvmm => cgvmm.SelectedItem).Returns(SelectedCategory);
+            categoriesGridViewModelMock.Setup(cgvmm => cgvmm.SelectedItem).Returns(selectedCategory);
             categoriesGridViewModelMock.Setup(cgvmm => cgvmm.ItemList).Returns(new ObservableCollection<Category>());
 
-            categoriesGridPresenter = new CategoriesGridPresenter(categoriesGridViewMock.Object, categoriesGridViewModelMock.Object, dataServiceMock.Object, gridValidatorMock.Object);
+            categoriesGridPresenter = new CategoriesGridPresenter(categoriesGridViewMock.Object, categoriesGridViewModelMock.Object, dataServiceMock.Object);
         }
 
         [Test]
         public void OnNameCellEditEnding_CorrectlyUpdatesCategoryName() {
-            // Setup
+            // Arrange
             const string initialName = "Old Name";
             const string newName = "New Name";
 
-            SelectedCategory.Name = initialName;
-
-            gridValidatorMock.Setup(gvm => gvm.ValidateNewStringIsUniqueFromExistingStrings(newName, It.IsAny<List<string>>(), SelectedCategory.Name)).Returns(newName);
+            selectedCategory.Name = initialName;
 
             // Act
             RaiseCellEditEndingEvent(newName, nameof(Category.Name));
 
             // Assert
-            Assert.AreEqual(newName, SelectedCategory.Name);
+            Assert.AreEqual(newName, selectedCategory.Name);
         }
 
         [Test]
         public void OnAvailableCellEditEnding_CorrectlyUpdatesCategoryAvailable_AndDecreasesBudgeted() {
-            // Setup
-            decimal newAvailable = 40M;
+            // Arrange
+            const decimal newAvailable = 40M;
             const string newAvailableAsString = "$40";
 
             const decimal activity = -50M;
             const decimal initialBudgeted = 100;
-            const decimal expectedBudgeted = 90; 
+            const decimal expectedBudgeted = 90;
 
-            SelectedCategory.Activity = activity;
-            SelectedCategory.Budgeted = initialBudgeted;
+            selectedCategory.Activity = activity;
+            selectedCategory.Budgeted = initialBudgeted;
 
-            Assert.AreEqual(50M, SelectedCategory.Available);
-
-            gridValidatorMock.Setup(gvm => gvm.ParseAmountFromString(newAvailableAsString, out newAvailable)).Returns(true);
+            Assert.AreEqual(50M, selectedCategory.Available);
 
             // Act
             RaiseCellEditEndingEvent(newAvailableAsString, nameof(Category.Available));
 
             // Assert
-            Assert.AreEqual(newAvailable, SelectedCategory.Available);
-            Assert.AreEqual(expectedBudgeted, SelectedCategory.Budgeted);
+            Assert.AreEqual(newAvailable, selectedCategory.Available);
+            Assert.AreEqual(expectedBudgeted, selectedCategory.Budgeted);
         }
 
         [Test]
         public void OnAvailableCellEditEnding_CorrectlyUpdatesCategoryAvailable_AndIncreasesBudgeted() {
-            // Setup
-            decimal newAvailable = 200.89M;
+            // Arrange
+            const decimal newAvailable = 200.89M;
             const string newAvailableAsString = "200.89";
 
             const decimal activity = -50M;
             const decimal initialBudgeted = 150;
             const decimal expectedBudgeted = 250.89M;
 
-            SelectedCategory.Activity = activity;
-            SelectedCategory.Budgeted = initialBudgeted;
+            selectedCategory.Activity = activity;
+            selectedCategory.Budgeted = initialBudgeted;
 
-            Assert.AreEqual(100M, SelectedCategory.Available);
-
-            gridValidatorMock.Setup(gvm => gvm.ParseAmountFromString(newAvailableAsString, out newAvailable)).Returns(true);
+            Assert.AreEqual(100M, selectedCategory.Available);
 
             // Act
             RaiseCellEditEndingEvent(newAvailableAsString, nameof(Category.Available));
 
             // Assert
-            Assert.AreEqual(newAvailable, SelectedCategory.Available);
-            Assert.AreEqual(expectedBudgeted, SelectedCategory.Budgeted);
+            Assert.AreEqual(newAvailable, selectedCategory.Available);
+            Assert.AreEqual(expectedBudgeted, selectedCategory.Budgeted);
         }
 
         [Test]
         public void OnAvailableCellEditEnding_CorrectlyUpdatesCategoryAvailable_AndDoesNotChangeBudgeted() {
-            // Setup
-            decimal newAvailable = 100M;
+            // Arrange
+            const decimal newAvailable = 100M;
             const string newAvailableAsString = "$100.00";
 
             const decimal activity = -40M;
             const decimal initialBudgeted = 140;
 
-            SelectedCategory.Activity = activity;
-            SelectedCategory.Budgeted = initialBudgeted;
+            selectedCategory.Activity = activity;
+            selectedCategory.Budgeted = initialBudgeted;
 
-            Assert.AreEqual(100M, SelectedCategory.Available);
-
-            gridValidatorMock.Setup(gvm => gvm.ParseAmountFromString(newAvailableAsString, out newAvailable)).Returns(true);
+            Assert.AreEqual(100M, selectedCategory.Available);
 
             // Act
             RaiseCellEditEndingEvent(newAvailableAsString, nameof(Category.Available));
 
             // Assert
-            Assert.AreEqual(newAvailable, SelectedCategory.Available);
-            Assert.AreEqual(initialBudgeted, SelectedCategory.Budgeted);
+            Assert.AreEqual(newAvailable, selectedCategory.Available);
+            Assert.AreEqual(initialBudgeted, selectedCategory.Budgeted);
         }
 
         [Test]
         public void OnBudgetedCellEditEnding_CorrectlyBudgetedCategoryName() {
-            // Setup
+            // Arrange
             const decimal initialBudgeted = 10;
             const string newBudgetedAsString = "20.00";
-            decimal newBudgeted = 20M;
+            const decimal newBudgeted = 20M;
 
-            SelectedCategory.Budgeted = initialBudgeted;
-
-            gridValidatorMock.Setup(gvm => gvm.ParseAmountFromString(newBudgetedAsString, out newBudgeted)).Returns(true);
+            selectedCategory.Budgeted = initialBudgeted;
 
             // Act
             RaiseCellEditEndingEvent(newBudgetedAsString, nameof(Category.Budgeted));
 
             // Assert
-            Assert.AreEqual(newBudgeted, SelectedCategory.Budgeted);
+            Assert.AreEqual(newBudgeted, selectedCategory.Budgeted);
         }
 
         private void RaiseCellEditEndingEvent(string newText, string propertyName) {
             var dataGridColumn = new DataGridTextColumn {
                 SortMemberPath = propertyName
             };
-            var textBox = new TextBox() {
+            var textBox = new TextBox {
                 Text = newText
             };
 

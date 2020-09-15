@@ -1,4 +1,4 @@
-﻿namespace Envelopes.Common {
+﻿namespace Envelopes.Models {
     /// <summary>
     ///     Base class for our models. A intermediary class used to apply NotifyPropertyChanged to all our model classes.
     /// </summary>

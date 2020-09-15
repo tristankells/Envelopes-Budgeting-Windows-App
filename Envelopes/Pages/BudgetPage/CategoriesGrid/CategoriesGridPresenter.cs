@@ -17,12 +17,10 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
 
         public CategoriesGridPresenter(ICategoriesGridView view,
             ICategoriesGridViewModel viewModel,
-            IDataService dataService,
-            IGridValidator gridValidator) : base(view, viewModel) {
+            IDataService dataService) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
-            this.gridValidator = gridValidator;
 
             BindEvents();
             BindCommands();
@@ -35,7 +33,6 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         private readonly ICategoriesGridView view;
         private readonly ICategoriesGridViewModel viewModel;
         private readonly IDataService dataService;
-        private readonly IGridValidator gridValidator;
 
         #endregion
 
@@ -50,7 +47,7 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         private void CategoriesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
             switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
                 case nameof(Category.Name):
-                    OnNameCellEditEnding(((TextBox)e.EditingElement).Text);
+                    OnNameCellEditEnding(((TextBox) e.EditingElement).Text);
                     break;
 
                 case nameof(Category.Available):
@@ -64,11 +61,11 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void OnNameCellEditEnding(string newText) {
-            SelectedCategory.Name = gridValidator.ValidateNewStringIsUniqueFromExistingStrings(newText, viewModel.ItemList.Select(account => account.Name).ToList(), SelectedCategory.Name);
+            SelectedCategory.Name = GridValidator.ValidateNewStringIsUniqueFromExistingStrings(newText, viewModel.ItemList.Select(account => account.Name).ToList(), SelectedCategory.Name);
         }
 
         private void OnAvailableCellEditEnding(string newText) {
-            if (!gridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount)) {
+            if (!GridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount)) {
                 return;
             }
 
@@ -77,11 +74,7 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         }
 
         private void OnBudgetedCellEditEnding(string newText) {
-            if (gridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount)) {
-                viewModel.SelectedItem.Budgeted = newBudgetedAmount;
-            } else {
-                viewModel.SelectedItem.Budgeted = 0;
-            }
+            viewModel.SelectedItem.Budgeted = GridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount) ? newBudgetedAmount : 0;
         }
 
 

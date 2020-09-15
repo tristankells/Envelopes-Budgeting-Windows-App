@@ -1,6 +1,4 @@
-﻿using Envelopes.Common;
-
-namespace Envelopes.Models {
+﻿namespace Envelopes.Models {
     public class Category : Model {
         #region Fields
 

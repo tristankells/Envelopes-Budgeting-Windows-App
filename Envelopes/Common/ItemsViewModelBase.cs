@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
+using Envelopes.Models;
 
 namespace Envelopes.Common {
     /// <summary>

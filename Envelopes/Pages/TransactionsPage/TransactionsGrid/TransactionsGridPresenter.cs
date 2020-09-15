@@ -1,42 +1,51 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Models;
+using Envelopes.Models.Models;
+using Envelopes.Persistence.Importer;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public interface ITransactionsGridPresenter {
-        TransactionsGridView GetView();
+        ITransactionsGridView GetView();
     }
 
     public class TransactionsGridPresenter : Presenter, ITransactionsGridPresenter {
         private readonly IDataService dataService;
         private readonly INotificationService notificationService;
-        private readonly TransactionsGridView view;
+        private readonly ITransactionsGridView view;
         private readonly ITransactionsGridViewModel viewModel;
-        private Account? activeAccount; //The ID of the currently selected Account in the AccountsPane
+        private readonly ITransactionsImporter transactionsImporter;
+        private Account? activeAccount; //The currently selected Account in the AccountsPane
 
-        public TransactionsGridPresenter(TransactionsGridView view,
+
+        public TransactionsGridPresenter(ITransactionsGridView view,
             ITransactionsGridViewModel viewModel,
             IDataService dataService,
-            INotificationService notificationService) : base(view, viewModel) {
+            INotificationService notificationService,
+            ITransactionsImporter transactionsImporter) : base(view, viewModel) {
             this.view = view;
             this.viewModel = viewModel;
             this.dataService = dataService;
             this.notificationService = notificationService;
+            this.transactionsImporter = transactionsImporter;
 
             BindEvents();
             BindCommands();
         }
 
-        public TransactionsGridView GetView() => view;
+        public ITransactionsGridView GetView() => view;
 
         private void BindCommands() {
             viewModel.AddItemCommand = new DelegateCommand(ExecuteAddTransaction, CanExecuteAddTransaction);
             viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
+            viewModel.ImportTransactionsCommand = new AsyncCommand(ExecuteImportTransactions, CanImportTransactions);
         }
 
         private bool CanExecuteAddTransaction() => true;
@@ -53,6 +62,22 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
 
             if (dataService.RemoveAccountTransaction(selectedTransaction)) {
                 viewModel.RemoveItem(selectedTransaction);
+            }
+        }
+
+        private bool CanImportTransactions() => true;
+
+        private async Task ExecuteImportTransactions() {
+            IEnumerable<AccountTransaction>? transactions = await transactionsImporter.Import("", new AccountTransactionColumnMap()); // Passing blank values as using a proxy for now that has hard coded bank maps and file locations
+
+            foreach (AccountTransaction transaction in transactions) {
+                bool isTransactionDuplicate = viewModel.AccountTransactions.Any(at => at.AccountId == transaction.AccountId
+                                                                                     && at.Date == transaction.Date
+                                                                                     && at.Total == transaction.Total);
+                if (!isTransactionDuplicate) {
+                    viewModel.AddItem(transaction);
+                    dataService.AddAccountTransaction(transaction);
+                }
             }
         }
 

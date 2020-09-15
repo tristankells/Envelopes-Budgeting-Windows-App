@@ -7,6 +7,7 @@ namespace Envelopes {
         public FrameworkElement CurrentPage { get; set; }
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
+        public ICommand ImportTransactionsCommand { get; set; }
         public decimal TotalBalance { get; set; }
         public decimal TotalBudgeted { get; set; }
         public decimal RemainingBalanceToBudget { get; set; }
@@ -15,6 +16,7 @@ namespace Envelopes {
     public class MainWindowViewModel : NotifyPropertyChanged, IMainWindowViewModel {
         public ICommand NavigateToTransactionsPageCommand { get; set; }
         public ICommand NavigateToBudgetPageCommand { get; set; }
+        public ICommand ImportTransactionsCommand { get; set; }
 
         public decimal TotalBalance {
             get => balanceOfAllAccounts;

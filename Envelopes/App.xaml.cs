@@ -6,7 +6,7 @@ namespace Envelopes {
     /// <summary>
     ///     Interaction logic for App.xaml
     /// </summary>
-    public partial class App  {
+    public partial class App {
         protected override void OnStartup(StartupEventArgs e) {
             var kernel = new StandardKernel();
             new Bootstrapper(kernel).Load();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Envelopes.Models;
+using Envelopes.Models.Models;
 using OfficeOpenXml;
 
 namespace Envelopes.Data.Persistence {
@@ -11,11 +12,11 @@ namespace Envelopes.Data.Persistence {
     }
 
     public class ExcelPersistenceService : IPersistenceService {
-        private readonly IExcelFileProcessor excelFileProcessor;
+        private readonly IFileProcessor fileProcessor;
         private bool saveInProgress;
 
-        public ExcelPersistenceService(IExcelFileProcessor excelFileProcessor) {
-            this.excelFileProcessor = excelFileProcessor;
+        public ExcelPersistenceService(IFileProcessor fileProcessor) {
+            this.fileProcessor = fileProcessor;
         }
 
         public async Task SaveApplicationData(ApplicationData data) {
@@ -45,7 +46,7 @@ namespace Envelopes.Data.Persistence {
                 package.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
 
                 // Save our new workbook in the output directory and we are done!
-                await excelFileProcessor.SaveAs(package);
+                await fileProcessor.SaveAs(package);
             });
 
             saveInProgress = false;
@@ -55,7 +56,7 @@ namespace Envelopes.Data.Persistence {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             return await Task.Factory.StartNew(() => {
                 var applicationData = new ApplicationData();
-                using ExcelPackage package = excelFileProcessor.LoadExcelPackageFromFile();
+                using ExcelPackage package = fileProcessor.LoadExcelPackageFromFile();
 
                 ExcelWorksheet accountsWorksheet = package.Workbook.Worksheets["Accounts"];
                 if (accountsWorksheet != null) {
@@ -87,7 +88,7 @@ namespace Envelopes.Data.Persistence {
             worksheet.Cells[1, 1].Value = "Id";
             worksheet.Cells[1, 2].Value = "Name";
 
-            for (var i = 0; i < accounts.Count; i++) {
+            for (int i = 0; i < accounts.Count; i++) {
                 worksheet.Cells["A" + (i + 2)].Value = accounts[i].Id;
                 worksheet.Cells["B" + (i + 2)].Value = accounts[i].Name;
             }
@@ -102,7 +103,7 @@ namespace Envelopes.Data.Persistence {
             worksheet.Cells[1, 2].Value = "Name";
             worksheet.Cells[1, 3].Value = "Budgeted";
 
-            for (var i = 0; i < categories.Count; i++) {
+            for (int i = 0; i < categories.Count; i++) {
                 worksheet.Cells["A" + (i + 2)].Value = categories[i].Id;
                 worksheet.Cells["B" + (i + 2)].Value = categories[i].Name;
                 worksheet.Cells["c" + (i + 2)].Value = categories[i].Budgeted;
@@ -123,7 +124,7 @@ namespace Envelopes.Data.Persistence {
             worksheet.Cells[1, 7].Value = "Outflow";
             worksheet.Cells[1, 8].Value = "Inflow";
 
-            for (var i = 0; i < transactions.Count; i++) {
+            for (int i = 0; i < transactions.Count; i++) {
                 worksheet.Cells["A" + (i + 2)].Value = transactions[i].Id;
                 worksheet.Cells["B" + (i + 2)].Value = transactions[i].AccountId;
                 worksheet.Cells["C" + (i + 2)].Value = transactions[i].Date;
@@ -163,8 +164,8 @@ namespace Envelopes.Data.Persistence {
 
         private List<Account> ParseAccountsFromExcelWorkSheet(ExcelWorksheet worksheet) {
             var accounts = new List<Account>();
-            var isAccountRowValid = true;
-            for (var row = 2; isAccountRowValid; row++) {
+            bool isAccountRowValid = true;
+            for (int row = 2; isAccountRowValid; row++) {
                 if (worksheet.Cells[row, 1].Value != null) {
                     // If current row, does not have an Id (col = 1), then not a valid row.
                     accounts.Add(new Account {
@@ -181,8 +182,8 @@ namespace Envelopes.Data.Persistence {
 
         private List<Category> ParseCategoriesFromExcelWorkSheet(ExcelWorksheet worksheet) {
             var categories = new List<Category>();
-            var isCategoryRowValid = true;
-            for (var row = 2; isCategoryRowValid; row++) {
+            bool isCategoryRowValid = true;
+            for (int row = 2; isCategoryRowValid; row++) {
                 if (worksheet.Cells[row, 1].Value != null) {
                     // If current row, does not have an Id (col = 1), then not a valid row.
                     categories.Add(new Category {
@@ -200,8 +201,8 @@ namespace Envelopes.Data.Persistence {
 
         private List<AccountTransaction> ParseAccountTransactionFromExcelWorkSheet(ExcelWorksheet worksheet) {
             var accountTransactions = new List<AccountTransaction>();
-            var isAccountTransactionRowValid = true;
-            for (var row = 2; isAccountTransactionRowValid; row++) {
+            bool isAccountTransactionRowValid = true;
+            for (int row = 2; isAccountTransactionRowValid; row++) {
                 if (worksheet.Cells[row, 1].Value != null) {
                     // If current row, does not have an Id (col = 1), then not a valid row.
                     accountTransactions.Add(new AccountTransaction {

@@ -53,18 +53,25 @@ namespace Tests.Envelopes.Envelopes.Pages.TransactionPage {
 
         [Test]
         public async Task OnTransactionImport_WillNotDuplicateTransactions_WithMatchingAmountsAndAccountsAndDates() {
-            transactionsGridViewModel.AccountTransactions.Add(new AccountTransaction {
-                AccountId = 1,
-                Date = DateTime.Today,
-                Outflow = 20
-            });
+            TransactionsImporter.Setup(importer => importer.Import(It.IsAny<string>(), It.IsAny<AccountTransactionColumnMap>())).ReturnsAsync(
+                new List<AccountTransaction> {
+                    new AccountTransaction {
+                        AccountId = 1,
+                        Date = DateTime.Today,
+                        Outflow = 20,
+                    }
+                }
+            );
+
+            await transactionsGridViewModel.ImportTransactionsCommand.ExecuteAsync();
 
             TransactionsImporter.Setup(importer => importer.Import(It.IsAny<string>(), It.IsAny<AccountTransactionColumnMap>())).ReturnsAsync(
                 new List<AccountTransaction> {
                     new AccountTransaction {
                         AccountId = 1,
                         Date = DateTime.Today,
-                        Outflow = 20
+                        Outflow = 20,
+                        Memo = "The cheeky duplicate"
                     },
                     new AccountTransaction {
                         AccountId = 2,

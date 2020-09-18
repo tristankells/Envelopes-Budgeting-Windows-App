@@ -10,7 +10,6 @@ using Envelopes.Models;
 
 namespace Envelopes.Data {
     public interface IDataService {
-        public bool IgnoreApplicationSaveEvents { get; set; }
 
         // Accounts
         public IEnumerable<Account> Accounts();

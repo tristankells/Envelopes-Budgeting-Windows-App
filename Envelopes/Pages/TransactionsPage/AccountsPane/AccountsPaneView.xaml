@@ -24,6 +24,7 @@
                  Background="{Binding AccountsTotalBalance, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
         </TextBlock>
         <DataGrid Name="accountsDataGrid"
+                  HeadersVisibility="Column"
                   dd:DragDrop.IsDragSource="True"
                   dd:DragDrop.IsDropTarget="True"
                   dd:DragDrop.DropHandler="{Binding}"

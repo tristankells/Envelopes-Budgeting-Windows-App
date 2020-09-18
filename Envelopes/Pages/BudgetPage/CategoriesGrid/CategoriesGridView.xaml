@@ -26,6 +26,7 @@
         <DataGrid Grid.Row="1" Name="categoriesDataGrid"
                   CanUserAddRows="False"
                   Margin="10"
+                  HeadersVisibility="Column"
                   RowDetailsVisibilityMode="Collapsed"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"

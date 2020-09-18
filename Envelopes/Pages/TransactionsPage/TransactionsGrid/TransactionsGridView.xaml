@@ -25,6 +25,7 @@
                   Name="TransactionsDataGrid"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
+                  HeadersVisibility="Column"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding AccountTransactions}">
             <DataGrid.Columns>

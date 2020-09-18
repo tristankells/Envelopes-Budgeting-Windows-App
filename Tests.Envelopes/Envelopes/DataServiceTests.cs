@@ -3,11 +3,10 @@ using System.Threading.Tasks;
 using Envelopes.Data;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
-using Envelopes.Models.Models;
 using Moq;
 using NUnit.Framework;
 
-namespace Tests.Envelopes {
+namespace Tests.Envelopes.Envelopes {
     internal class DataServiceTests {
         private DataService dataService;
         private Mock<IIdentifierService> identifierService;
@@ -42,7 +41,6 @@ namespace Tests.Envelopes {
                         },
                         AccountTransactions = new List<AccountTransaction> {
                             new AccountTransaction {
-                                Id = 1,
                                 AccountId = 1,
                                 Inflow = 15.0M,
                                 Memo = "Starting Balance"
@@ -80,7 +78,6 @@ namespace Tests.Envelopes {
                         },
                         AccountTransactions = new List<AccountTransaction> {
                             new AccountTransaction {
-                                Id = 1,
                                 AccountId = 1,
                                 Inflow = 5.0M,
                                 Memo = "Starting Balance"
@@ -118,7 +115,6 @@ namespace Tests.Envelopes {
                         },
                         AccountTransactions = new List<AccountTransaction> {
                             new AccountTransaction {
-                                Id = 1,
                                 AccountId = 1,
                                 Inflow = 10.0M,
                                 Memo = "Starting Balance"

@@ -1,5 +1,4 @@
 ﻿using Envelopes.Models;
-using Envelopes.Models.Models;
 using NUnit.Framework;
 
 namespace Tests.Envelopes {
@@ -16,11 +15,9 @@ namespace Tests.Envelopes {
         }
 
         public static void ValidateAccountTransactionsAreEqual(AccountTransaction expected, AccountTransaction actual) {
-            Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.AccountId, actual.AccountId);
             Assert.AreEqual(expected.Date, actual.Date);
             Assert.AreEqual(expected.Payee, actual.Payee);
-            Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.CategoryId, actual.CategoryId);
             Assert.AreEqual(expected.Memo, actual.Memo);
             Assert.AreEqual(expected.Outflow, actual.Outflow);

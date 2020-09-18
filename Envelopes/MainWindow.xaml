@@ -31,47 +31,50 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <TextBlock FontSize="80" HorizontalAlignment="Center" Text="ENVELOPES" />
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="0"
-                        Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions" />
-                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="1"
-                        Command="{Binding ImportTransactionsCommand }" Content="Import" />
-                <Button Style="{StaticResource PageNavigationButton}" Grid.Column="2"
-                        Command="{Binding NavigateToBudgetPageCommand }" Content="Budget" />
-            </Grid>
-            <Grid MaxWidth="400">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="0" Text="Total Balance" />
-                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="0"
-                           Text="{Binding TotalBalance, StringFormat=C}" />
-                <TextBlock Grid.Row="1" Grid.Column="1" FontSize="10" HorizontalAlignment="Center" Text=" - " />
-                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="2" Text="Total Budgeted" />
-                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="2"
-                           Text="{Binding TotalBudgeted, StringFormat=C}" />
-                <TextBlock Grid.Row="1" Grid.Column="3" FontSize="10" HorizontalAlignment="Center" Text=" = " />
-                <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="4" Text="Remaining To Budget" />
-                <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="4"
-                           Text="{Binding RemainingBalanceToBudget, StringFormat=C}"
-                           Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
-            </Grid>
-            <ContentControl Content="{Binding CurrentPage}" />
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="7*" />
+        </Grid.RowDefinitions>
+        <TextBlock FontSize="80" HorizontalAlignment="Center" Text="ENVELOPES" />
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Style="{StaticResource PageNavigationButton}" Grid.Column="0"
+                    Command="{Binding NavigateToTransactionsPageCommand }" Content="Transactions" />
+            <Button Style="{StaticResource PageNavigationButton}" Grid.Column="1"
+                    Command="{Binding ImportTransactionsCommand }" Content="Import" />
+            <Button Style="{StaticResource PageNavigationButton}" Grid.Column="2"
+                    Command="{Binding NavigateToBudgetPageCommand }" Content="Budget" />
+        </Grid>
+        <Grid MaxWidth="400" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="0" Text="Total Balance" />
+            <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="0"
+                       Text="{Binding TotalBalance, StringFormat=C}" />
+            <TextBlock Grid.Row="1" Grid.Column="1" FontSize="10" HorizontalAlignment="Center" Text=" - " />
+            <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="2" Text="Total Budgeted" />
+            <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="2"
+                       Text="{Binding TotalBudgeted, StringFormat=C}" />
+            <TextBlock Grid.Row="1" Grid.Column="3" FontSize="10" HorizontalAlignment="Center" Text=" = " />
+            <TextBlock Style="{StaticResource TotalLabel}" Grid.Row="0" Grid.Column="4" Text="Remaining To Budget" />
+            <TextBlock Style="{StaticResource TotalValue}" Grid.Row="1" Grid.Column="4"
+                       Text="{Binding RemainingBalanceToBudget, StringFormat=C}"
+                       Background="{Binding RemainingBalanceToBudget, Converter={StaticResource DecimalToBackgroundColourConverter}}" />
+        </Grid>
+        <ContentControl Grid.Row="2" Content="{Binding CurrentPage}" />
     </Grid>
 </Window>

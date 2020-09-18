@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Envelopes.Models.Models;
+using Envelopes.Models;
 
 namespace Envelopes.Persistence.Importer {
     public interface ITransactionsImporter {

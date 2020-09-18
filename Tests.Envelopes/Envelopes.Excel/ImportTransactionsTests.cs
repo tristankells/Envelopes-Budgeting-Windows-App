@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Envelopes.Models.Models;
+using Envelopes.Models;
 using Envelopes.Persistence.Helpers;
 using Envelopes.Persistence.Importer;
 using NUnit.Framework;
@@ -83,7 +83,7 @@ namespace Tests.Envelopes.Envelopes.Excel {
         public async Task ProxyTransactionsImporter_Import_TransactionsWithDifferentIds() {
             transactionsImporter = new ProxyTransactionImporter();
             IEnumerable<AccountTransaction> actualTransactions = await transactionsImporter.Import(string.Empty, new AccountTransactionColumnMap());
-            Assert.IsTrue(actualTransactions.Count(t=> t.AccountId == 1) > 0);
+            Assert.IsTrue(actualTransactions.Count(t => t.AccountId == 1) > 0);
             Assert.IsTrue(actualTransactions.Count(t => t.AccountId == 2) > 0);
             Assert.IsTrue(actualTransactions.Count(t => t.AccountId == 3) > 0);
         }

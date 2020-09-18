@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Envelopes.Models;
-using Envelopes.Models.Models;
 
 namespace Envelopes.Data {
     /// <summary>

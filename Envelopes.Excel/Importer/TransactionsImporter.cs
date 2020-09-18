@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using CsvHelper.Configuration;
-using CsvHelper.TypeConversion;
-using Envelopes.Models.Models;
+using Envelopes.Models;
 using OfficeOpenXml;
 
 namespace Envelopes.Persistence.Importer {
@@ -40,8 +38,8 @@ namespace Envelopes.Persistence.Importer {
                 }
 
                 while (csv.Read()) {
-                    var transaction = new AccountTransaction() {
-                        Payee = csv.GetField<string>(map.PayeeColumnIndex),
+                    var transaction = new AccountTransaction {
+                        Payee = csv.GetField<string>(map.PayeeColumnIndex)
                     };
 
                     string dateAsString = csv.GetField<string>(map.DateColumnIndex);
@@ -77,7 +75,7 @@ namespace Envelopes.Persistence.Importer {
             var accountTransactions = new List<AccountTransaction>();
             bool isTransactionRowValid = true;
             for (int row = 2; isTransactionRowValid; row++) {
-                if (cells[row, map.DateColumnIndex+1].Value != null) { // If row does not have a date, it is invalid. This will likely indicate the end transactions.
+                if (cells[row, map.DateColumnIndex + 1].Value != null) { // If row does not have a date, it is invalid. This will likely indicate the end transactions.
                     accountTransactions.Add(ParseTransactionFromExcelWorksheetRow(cells, row, map));
                 } else {
                     isTransactionRowValid = false;

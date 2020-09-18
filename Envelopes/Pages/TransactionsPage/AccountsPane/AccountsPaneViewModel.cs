@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using Envelopes.Common;
 using Envelopes.Models;
 using GongSolutions.Wpf.DragDrop;
@@ -7,7 +8,7 @@ using GongSolutions.Wpf.DragDrop;
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPaneViewModel : IItemsViewModelBase<Account> {
         decimal AccountsTotalBalance { get; set; }
-        IAsyncCommand ShowAllTransactionsCommand { get; set; }
+        ICommand ShowAllTransactionsCommand { get; set; }
         public event EventHandler SelectedAccountChanged;
     }
 
@@ -18,7 +19,7 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
             PropertyChanged += AccountsPaneViewModel_PropertyChanged;
         }
 
-        public IAsyncCommand ShowAllTransactionsCommand { get; set; }
+        public ICommand ShowAllTransactionsCommand { get; set; }
         public event EventHandler SelectedAccountChanged;
 
         public decimal AccountsTotalBalance {

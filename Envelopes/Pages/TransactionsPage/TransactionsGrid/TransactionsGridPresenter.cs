@@ -1,14 +1,12 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Models;
-using Envelopes.Models.Models;
 using Envelopes.Persistence.Importer;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
@@ -19,9 +17,9 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public class TransactionsGridPresenter : Presenter, ITransactionsGridPresenter {
         private readonly IDataService dataService;
         private readonly INotificationService notificationService;
+        private readonly ITransactionsImporter transactionsImporter;
         private readonly ITransactionsGridView view;
         private readonly ITransactionsGridViewModel viewModel;
-        private readonly ITransactionsImporter transactionsImporter;
         private Account? activeAccount; //The currently selected Account in the AccountsPane
 
 
@@ -44,7 +42,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
 
         private void BindCommands() {
             viewModel.AddItemCommand = new AsyncCommand(ExecuteAddTransaction, CanExecuteAddTransaction);
-            viewModel.DeleteItemCommand = new AsyncCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
+            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteTransaction, CanExecuteDeleteTransaction);
             viewModel.ImportTransactionsCommand = new AsyncCommand(ExecuteImportTransactions, CanImportTransactions);
         }
 
@@ -57,27 +55,22 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
 
         private bool CanExecuteDeleteTransaction() => true;
 
-        private async Task ExecuteDeleteTransaction() {
-            await Task.Run(() => {
-                AccountTransaction? selectedTransaction = viewModel.SelectedItem;
+        private void ExecuteDeleteTransaction() {
+            AccountTransaction? selectedTransaction = viewModel.SelectedItem;
 
-                if (dataService.RemoveAccountTransaction(selectedTransaction)) {
-                    viewModel.RemoveItem(selectedTransaction);
-                }
-            });
+            if (dataService.RemoveAccountTransaction(selectedTransaction)) {
+                viewModel.RemoveItem(selectedTransaction);
+            }
         }
 
         private bool CanImportTransactions() => true;
 
         private async Task ExecuteImportTransactions() {
             IEnumerable<AccountTransaction>? transactions = await transactionsImporter.Import("", new AccountTransactionColumnMap()); // Passing blank values as using a proxy for now that has hard coded bank maps and file locations
-        
+
             foreach (AccountTransaction transaction in transactions) {
-                bool isTransactionDuplicate = viewModel.AccountTransactions.Any(at => at.AccountId == transaction.AccountId
-                                                                                     && at.Date == transaction.Date && at.Total == transaction.Total);
-                if (!isTransactionDuplicate) {
+                if (dataService.AddAccountTransaction(transaction)) {
                     viewModel.AddItem(transaction);
-                    dataService.AddAccountTransaction(transaction);
                 }
             }
 
@@ -123,6 +116,13 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             foreach (var category in categories) {
                 viewModel.Categories.Add(category);
             }
+
+            viewModel.Categories.Add(new Category {
+                Name = "Inflow"
+            });
+            //viewModel.Categories.Add(new Category() {
+            //    Name = "Transfer"
+            //});
         }
 
         private void PopulateAccounts() {

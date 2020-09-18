@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -11,11 +9,10 @@ namespace Envelopes.Common {
     }
 
     public class AsyncCommand : IAsyncCommand {
-        public event EventHandler CanExecuteChanged;
+        private readonly Func<bool> canExecute;
+        private readonly Func<Task> execute;
 
         private bool isExecuting;
-        private readonly Func<Task> execute;
-        private readonly Func<bool> canExecute;
 
         public AsyncCommand(
             Func<Task> execute,
@@ -24,16 +21,17 @@ namespace Envelopes.Common {
             this.canExecute = canExecute;
         }
 
-        public bool CanExecute() {
-            return !isExecuting && (canExecute?.Invoke() ?? true);
-        }
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute() => !isExecuting && (canExecute?.Invoke() ?? true);
 
         public async Task ExecuteAsync() {
             if (CanExecute()) {
                 try {
                     isExecuting = true;
                     await execute();
-                } finally {
+                }
+                finally {
                     isExecuting = false;
                 }
             }
@@ -46,15 +44,15 @@ namespace Envelopes.Common {
         }
 
         #region Explicit implementations
-        bool ICommand.CanExecute(object parameter) {
-            return CanExecute();
-        }
+
+        bool ICommand.CanExecute(object parameter) => CanExecute();
 
         void ICommand.Execute(object parameter) {
 #pragma warning disable 4014
             ExecuteAsync();
 #pragma warning restore 4014
         }
+
         #endregion
     }
 }

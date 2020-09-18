@@ -7,10 +7,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
-using Envelopes.Models.Models;
 
 namespace Envelopes.Data {
     public interface IDataService {
+        public bool IgnoreApplicationSaveEvents { get; set; }
+
         // Accounts
         public IEnumerable<Account> Accounts();
         public Account AddAccount();
@@ -24,7 +25,7 @@ namespace Envelopes.Data {
         // Account Transactions
         public IEnumerable<AccountTransaction> AccountTransactions();
         public Task<AccountTransaction> AddAccountTransaction(Account activeAccountId);
-        public void AddAccountTransaction(AccountTransaction transaction);
+        public bool AddAccountTransaction(AccountTransaction transaction);
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
 
         public Task LoadApplicationData();
@@ -33,7 +34,6 @@ namespace Envelopes.Data {
         public decimal GetTotalInflow();
         decimal GetTotalBalance();
         public Task SaveBudget();
-        public bool IgnoreApplicationSaveEvents { get; set; }
     }
 
     public class DataService : IDataService {
@@ -47,8 +47,6 @@ namespace Envelopes.Data {
         private readonly INotificationService notificationService;
         private readonly IPersistenceService persistenceService;
 
-        public bool IgnoreApplicationSaveEvents { get;  set; }
-
         public DataService(IPersistenceService persistenceService,
             IIdentifierService identifierService,
             INotificationService notificationService) {
@@ -56,6 +54,8 @@ namespace Envelopes.Data {
             this.persistenceService = persistenceService;
             this.identifierService = identifierService;
         }
+
+        public bool IgnoreApplicationSaveEvents { get; set; }
 
         public async Task LoadApplicationData() {
             IgnoreApplicationSaveEvents = true;
@@ -87,6 +87,23 @@ namespace Envelopes.Data {
 
         public decimal GetRemainingAccountBalanceToBudget() =>
             accountTransactions.Sum(accountTransaction => accountTransaction.Inflow) - categories.Sum(category => category.Budgeted);
+
+
+        /// <summary>
+        ///     Attempts to save data to specified persistence service.
+        /// </summary>
+        public async Task SaveBudget() {
+            if (IgnoreApplicationSaveEvents) {
+                return;
+            }
+
+            var applicationData = new ApplicationData {
+                Accounts = accounts.ToList(),
+                Categories = categories.ToList(),
+                AccountTransactions = accountTransactions.ToList()
+            };
+            await persistenceService.SaveApplicationData(applicationData);
+        }
 
         private void SetAccountsTotals() {
             foreach (Account account in accounts) {
@@ -140,24 +157,6 @@ namespace Envelopes.Data {
                     await SaveBudget();
                     break;
             }
-            
-        }
-
-
-        /// <summary>
-        ///     Attempts to save data to specified persistence service.
-        /// </summary>
-        public async Task SaveBudget() {
-            if (IgnoreApplicationSaveEvents) {
-                return;
-            }
-
-            var applicationData = new ApplicationData {
-                Accounts = accounts.ToList(),
-                Categories = categories.ToList(),
-                AccountTransactions = accountTransactions.ToList()
-            };
-            await persistenceService.SaveApplicationData(applicationData);
         }
 
         #region Accounts
@@ -258,7 +257,6 @@ namespace Envelopes.Data {
 
         public async Task<AccountTransaction> AddAccountTransaction(Account activeAccount) {
             var transaction = new AccountTransaction {
-                Id = identifierService.GetNewTransactionId(),
                 AccountId = activeAccount.Id,
                 AccountName = activeAccount.Name,
                 Date = DateTime.Now
@@ -269,14 +267,20 @@ namespace Envelopes.Data {
             return transaction;
         }
 
-        public void AddAccountTransaction(AccountTransaction transaction) {
-            transaction.Id = identifierService.GetNewTransactionId();
+        public bool AddAccountTransaction(AccountTransaction transaction) {
+            bool isTransactionDuplicate = accountTransactions.Any(at => at.AccountId == transaction.AccountId
+                                                                        && at.Date.Date == transaction.Date.Date && at.Total == transaction.Total);
+            if (isTransactionDuplicate) {
+                return false;
+            }
+
             transaction.PropertyChanged += OnTransactionPropertyChanged;
             accountTransactions.Add(transaction);
+            return true;
         }
 
         private async void OnTransactionPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if (e is Common.PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
+            if (e is PropertyChangedExtendedEventArgs<decimal> pcExtendedEventArgs) {
                 decimal difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
                 var transaction = sender as AccountTransaction;
 
@@ -325,6 +329,7 @@ namespace Envelopes.Data {
                     if (account == null) {
                         return;
                     }
+
                     account.Total += updatedTransaction.Total;
 
                     notificationService.NotifyTransactionBalanceChanged();
@@ -334,7 +339,6 @@ namespace Envelopes.Data {
         }
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) => accountTransactions.Remove(transaction);
-
 
         #endregion
     }

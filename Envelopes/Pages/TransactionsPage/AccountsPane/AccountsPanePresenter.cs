@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Models;
 using Envelopes.Presentation;
-using OfficeOpenXml;
 
 namespace Envelopes.Pages.TransactionsPage.AccountsPane {
     public interface IAccountsPanePresenter {
@@ -49,9 +47,9 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
         }
 
         private void BindCommands() {
-            viewModel.AddItemCommand = new AsyncCommand(ExecuteAddAccount, CanExecuteAddAccount);
-            viewModel.DeleteItemCommand = new AsyncCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
-            viewModel.ShowAllTransactionsCommand = new AsyncCommand(ExecuteShowAllTransactions, CanExecuteShowAllTransactions);
+            viewModel.AddItemCommand = new DelegateCommand(ExecuteAddAccount, CanExecuteAddAccount);
+            viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteAccount, CanExecuteDeleteAccount);
+            viewModel.ShowAllTransactionsCommand = new DelegateCommand(ExecuteShowAllTransactions, CanExecuteShowAllTransactions);
         }
 
         private void OnTransactionBalanceChanged(object? sender, EventArgs e) {
@@ -96,41 +94,35 @@ namespace Envelopes.Pages.TransactionsPage.AccountsPane {
 
         private bool CanExecuteAddAccount() => true;
 
-        private async Task ExecuteAddAccount() {
-            await Task.Factory.StartNew( () => {
-                Account? newAccount = dataService.AddAccount();
-                viewModel.AddItem(newAccount);
-            });
-
+        private void ExecuteAddAccount() {
+            Account? newAccount = dataService.AddAccount();
+            viewModel.AddItem(newAccount);
         }
 
         private bool CanExecuteShowAllTransactions() => true;
 
-        private async Task ExecuteShowAllTransactions() {
-
+        private void ExecuteShowAllTransactions() {
             notificationService.NotifyShowAllTransactionsExecuted();
         }
 
         private bool CanExecuteDeleteAccount() => true;
 
-        private async Task ExecuteDeleteAccount() {
-            await Task.Factory.StartNew( () => {
-                //Confirm the user would like to delete the account
-                MessageBoxResult result =
-                    messageBoxWrapper.Show(
-                        "Are you sure you would like to delete your account? This will remove all transactions attaches to this account?",
-                        "Delete Account", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                switch (result) {
-                    case MessageBoxResult.No:
-                    case MessageBoxResult.Cancel:
-                        // Don't delete account
-                        break;
-                    case MessageBoxResult.Yes:
-                        // Attempt to delete account
-                        DeleteAccount();
-                        break;
-                }
-            });
+        private void ExecuteDeleteAccount() {
+            //Confirm the user would like to delete the account
+            MessageBoxResult result =
+                messageBoxWrapper.Show(
+                    "Are you sure you would like to delete your account? This will remove all transactions attaches to this account?",
+                    "Delete Account", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            switch (result) {
+                case MessageBoxResult.No:
+                case MessageBoxResult.Cancel:
+                    // Don't delete account
+                    break;
+                case MessageBoxResult.Yes:
+                    // Attempt to delete account
+                    DeleteAccount();
+                    break;
+            }
         }
 
         private void DeleteAccount() {

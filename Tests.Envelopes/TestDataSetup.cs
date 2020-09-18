@@ -1,5 +1,4 @@
 ﻿using Envelopes.Models;
-using Envelopes.Models.Models;
 
 namespace Tests.Envelopes {
     public static class TestDataSetup {
@@ -19,7 +18,6 @@ namespace Tests.Envelopes {
         public static AccountTransaction CreateAccountTransaction() =>
             new AccountTransaction {
                 AccountId = 1,
-                Id = 1,
                 CategoryId = 1,
                 Inflow = 100.0M,
                 Outflow = 0.0M,

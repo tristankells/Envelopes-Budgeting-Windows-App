@@ -14,13 +14,19 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <StackPanel>
-        <TextBlock Style="{StaticResource GridAndListTitleLabelStyle}" Text="Transactions" />
-        <DataGrid Name="TransactionsDataGrid"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="7*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Style="{StaticResource GridAndListTitleLabelStyle}" Text="Transactions" />
+        <DataGrid Grid.Row="1"
+                  Name="TransactionsDataGrid"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"
-                  ItemsSource="{Binding ItemList}">
+                  ItemsSource="{Binding AccountTransactions}">
             <DataGrid.Columns>
                 <DataGridComboBoxColumn Width="3*"
                                         Header="Account"
@@ -106,7 +112,9 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding AddItemCommand}" Content="Add Transaction" />
-        <Button Name="importTransactionButton" Command="{Binding ImportTransactionsCommand}" Content="Import Transactions" />
-    </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Command="{Binding AddItemCommand}" Content="Add Transaction" />
+            <Button Command="{Binding ImportTransactionsCommand}" Content="Import Transactions" />
+        </StackPanel>
+    </Grid>
 </UserControl>

@@ -7,7 +7,6 @@ namespace Envelopes.Data {
         public event EventHandler OnTransactionBalanceChanged;
         public event EventHandler OnActiveAccountChanged;
         public event EventHandler OnShowAllTransactionsExecuted;
-        public event EventHandler OnTransactionsImportCompleted;
         void NotifyActiveAccountChanged(Account account);
         void NotifyCategoryBudgetedChanged();
         void NotifyTransactionBalanceChanged();
@@ -20,7 +19,6 @@ namespace Envelopes.Data {
         public event EventHandler OnTransactionBalanceChanged;
         public event EventHandler OnActiveAccountChanged;
         public event EventHandler OnShowAllTransactionsExecuted;
-        public event EventHandler OnTransactionsImportCompleted;
 
         public void NotifyActiveAccountChanged(Account account) {
             OnActiveAccountChanged?.Invoke(account, new EventArgs());

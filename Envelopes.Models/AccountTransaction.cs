@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Envelopes.Models.Models {
+namespace Envelopes.Models {
     public class AccountTransaction : Model {
         public string AccountName {
             get => accountName;
@@ -9,7 +9,6 @@ namespace Envelopes.Models.Models {
 
         #region Fields
 
-        private int id;
         private int accountId;
         private DateTime date;
         private string payee;
@@ -22,11 +21,6 @@ namespace Envelopes.Models.Models {
         #endregion
 
         #region Properties
-
-        public int Id {
-            get => id;
-            set => SetPropertyValue(ref id, value, nameof(Id));
-        }
 
         public int AccountId {
             get => accountId;

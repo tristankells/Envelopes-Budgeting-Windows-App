@@ -1,4 +1,4 @@
-﻿using Envelopes.Models.Models;
+﻿using Envelopes.Models;
 
 namespace Envelopes.Persistence.Importer {
     /// <summary>
@@ -7,7 +7,7 @@ namespace Envelopes.Persistence.Importer {
     /// <example>
     ///     Example: First CSV column is Date? DateColumnIndex = 0
     /// </example>
-    public  class AccountTransactionColumnMap {
+    public class AccountTransactionColumnMap {
         public int DateColumnIndex { get; set; }
         public int PayeeColumnIndex { get; set; }
         public int AmountColumnIndex { get; set; }

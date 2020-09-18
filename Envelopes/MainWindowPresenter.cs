@@ -5,7 +5,6 @@ using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Pages.BudgetPage;
 using Envelopes.Pages.TransactionsPage;
-using Envelopes.Persistence.Importer;
 
 namespace Envelopes {
     public interface IMainWindowPresenter {
@@ -32,7 +31,7 @@ namespace Envelopes {
             this.budgetPagePresenter = budgetPagePresenter;
             this.dataService = dataService;
             this.notificationService = notificationService;
-         
+
 
             BindEvents();
             BindCommands();

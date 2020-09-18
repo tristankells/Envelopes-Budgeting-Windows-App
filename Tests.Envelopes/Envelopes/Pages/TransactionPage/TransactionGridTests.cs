@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Envelopes.Data;
 using Envelopes.Data.Persistence;
-using Envelopes.Models.Models;
+using Envelopes.Models;
 using Envelopes.Pages.TransactionsPage.TransactionsGrid;
 using Envelopes.Persistence.Importer;
 using Moq;
@@ -14,9 +13,9 @@ using NUnit.Framework;
 namespace Tests.Envelopes.Envelopes.Pages.TransactionPage {
     [Apartment(ApartmentState.STA)]
     internal class TransactionGridTests : PageTestBase {
-        private TransactionsGridViewModel transactionsGridViewModel;
-        private Mock<ITransactionsGridView> transactionsGridView;
         private TransactionsGridPresenter transactionsGridPresenter;
+        private Mock<ITransactionsGridView> transactionsGridView;
+        private TransactionsGridViewModel transactionsGridViewModel;
 
         [SetUp]
         public void Setup() {
@@ -30,22 +29,22 @@ namespace Tests.Envelopes.Envelopes.Pages.TransactionPage {
         [Test]
         public async Task OnTransactionImport_AddsCorrectNumberOfTransactionsToGrid() {
             TransactionsImporter.Setup(importer => importer.Import(It.IsAny<string>(), It.IsAny<AccountTransactionColumnMap>())).ReturnsAsync(
-                new List<AccountTransaction>() {
-                    new AccountTransaction() {
+                new List<AccountTransaction> {
+                    new AccountTransaction {
                         AccountId = 1,
                         Date = DateTime.Today,
                         Outflow = 20
                     },
-                    new AccountTransaction() {
+                    new AccountTransaction {
                         AccountId = 2,
                         Date = DateTime.Today,
                         Outflow = 20
                     },
-                    new AccountTransaction() {
+                    new AccountTransaction {
                         AccountId = 3,
                         Date = DateTime.Today,
                         Outflow = 20
-                    },
+                    }
                 }
             );
             await transactionsGridViewModel.ImportTransactionsCommand.ExecuteAsync();
@@ -54,34 +53,34 @@ namespace Tests.Envelopes.Envelopes.Pages.TransactionPage {
 
         [Test]
         public async Task OnTransactionImport_WillNotDuplicateTransactions_WithMatchingAmountsAndAccountsAndDates() {
-            transactionsGridViewModel.AccountTransactions.Add(new AccountTransaction() {
+            transactionsGridViewModel.AccountTransactions.Add(new AccountTransaction {
                 AccountId = 1,
                 Date = DateTime.Today,
                 Outflow = 20
             });
 
             TransactionsImporter.Setup(importer => importer.Import(It.IsAny<string>(), It.IsAny<AccountTransactionColumnMap>())).ReturnsAsync(
-                new List<AccountTransaction>() {
-                    new AccountTransaction() {
+                new List<AccountTransaction> {
+                    new AccountTransaction {
                         AccountId = 1,
                         Date = DateTime.Today,
                         Outflow = 20
                     },
-                    new AccountTransaction() {
+                    new AccountTransaction {
                         AccountId = 2,
                         Date = DateTime.Today,
                         Outflow = 20
                     },
-                    new AccountTransaction() {
+                    new AccountTransaction {
                         AccountId = 1,
                         Date = DateTime.Today.AddDays(1),
                         Outflow = 20
                     },
-                    new AccountTransaction() {
+                    new AccountTransaction {
                         AccountId = 1,
                         Date = DateTime.Today,
                         Outflow = 30
-                    },
+                    }
                 }
             );
 
@@ -93,13 +92,13 @@ namespace Tests.Envelopes.Envelopes.Pages.TransactionPage {
     // Setups all the shared services that will be used by multiple classes.
     // This way if we make big changes to how are services are consumed should have less places to make changes.
     public class PageTestBase {
-        
-        protected Mock<IFileProcessor> FileProcessor;
-        protected Mock<ITransactionsImporter> TransactionsImporter;
         protected IDataService DataService;
-        protected IPersistenceService PersistenceService;
+
+        protected Mock<IFileProcessor> FileProcessor;
         protected IIdentifierService IdentifierService;
         protected INotificationService NotificationService;
+        protected IPersistenceService PersistenceService;
+        protected Mock<ITransactionsImporter> TransactionsImporter;
 
         protected void SetupServices() {
             FileProcessor = new Mock<IFileProcessor>();

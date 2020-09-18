@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Envelopes.Data;
 using Envelopes.Data.Persistence;
 using Envelopes.Models;
-using Envelopes.Models.Models;
 using Moq;
 using NUnit.Framework;
 using OfficeOpenXml;
 
-namespace Tests.Envelopes.Data.Persistence {
+namespace Tests.Envelopes.Envelopes.Persistence {
     public class ExcelPersistenceServiceTests {
         private const string CategoriesWorksheetName = "Categories";
         private const string AccountTransactionsWorksheetName = "Account Transactions";
@@ -58,7 +57,6 @@ namespace Tests.Envelopes.Data.Persistence {
         }
 
         private static void ValidateExcelPackageContainsAccountTransaction(ExcelPackage excelPackage, AccountTransaction account) {
-            Assert.AreEqual(account.Id, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].GetValue<int>());
             Assert.AreEqual(account.AccountId, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].GetValue<int>());
             Assert.AreEqual(account.Date, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].GetValue<DateTime>());
             Assert.AreEqual(account.Payee, excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].GetValue<string>());
@@ -85,7 +83,6 @@ namespace Tests.Envelopes.Data.Persistence {
             excelPackage.Workbook.Worksheets[CategoriesWorksheetName].Cells[2, 3].Value = category.Budgeted;
 
             excelPackage.Workbook.Worksheets.Add(AccountTransactionsWorksheetName);
-            excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 1].Value = accountTransaction.Id;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 2].Value = accountTransaction.AccountId;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 3].Value = accountTransaction.Date;
             excelPackage.Workbook.Worksheets[AccountTransactionsWorksheetName].Cells[2, 4].Value = accountTransaction.Payee;

@@ -23,12 +23,12 @@ namespace Envelopes.Common {
         /// <summary>
         ///     The add item command. Bind to the "Add" function of an user control.
         /// </summary>
-        public IAsyncCommand AddItemCommand { get; set; }
+        public ICommand AddItemCommand { get; set; }
 
         /// <summary>
         ///     The remove item command. Bind to the "Remove" function of an user control.
         /// </summary>
-        public IAsyncCommand DeleteItemCommand { get; set; }
+        public ICommand DeleteItemCommand { get; set; }
 
         /// <summary>
         ///     Add an item to the view model's collection.
@@ -63,8 +63,8 @@ namespace Envelopes.Common {
 
         #region Properties
 
-        public IAsyncCommand AddItemCommand { get; set; }
-        public IAsyncCommand DeleteItemCommand { get; set; }
+        public ICommand AddItemCommand { get; set; }
+        public ICommand DeleteItemCommand { get; set; }
 
         public T SelectedItem {
             get => selectedItem;

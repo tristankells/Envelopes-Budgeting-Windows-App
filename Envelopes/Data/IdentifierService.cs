@@ -5,12 +5,10 @@ namespace Envelopes.Data {
         public void Setup(ApplicationData applicationData);
         public int GetNewAccountId();
         public int GetNewCategoryId();
-        int GetNewTransactionId();
     }
 
     public class IdentifierService : IIdentifierService {
         private int accountIdCounter;
-        private int accountTransactionsIdCounter;
         private int categoryIdCounter;
 
         public void Setup(ApplicationData applicationData) {
@@ -19,9 +17,6 @@ namespace Envelopes.Data {
                 : 0;
             categoryIdCounter = applicationData.Categories.Any()
                 ? applicationData.Categories.Select(account => account.Id).Max()
-                : 0;
-            accountTransactionsIdCounter = applicationData.AccountTransactions.Any()
-                ? applicationData.AccountTransactions.Select(account => account.Id).Max()
                 : 0;
         }
 
@@ -33,11 +28,6 @@ namespace Envelopes.Data {
         public int GetNewCategoryId() {
             categoryIdCounter++;
             return categoryIdCounter;
-        }
-
-        public int GetNewTransactionId() {
-            accountTransactionsIdCounter++;
-            return accountTransactionsIdCounter;
         }
     }
 }

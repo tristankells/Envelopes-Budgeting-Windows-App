@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Envelopes.Models;
-using Envelopes.Models.Models;
 using OfficeOpenXml;
 
 namespace Envelopes.Data.Persistence {
@@ -115,7 +114,6 @@ namespace Envelopes.Data.Persistence {
         private static void AddAccountTransactionsWorksheetToExcelPackage(ExcelPackage package, IList<AccountTransaction> transactions) {
             ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Account Transactions");
 
-            worksheet.Cells[1, 1].Value = "Id";
             worksheet.Cells[1, 2].Value = "Account Id";
             worksheet.Cells[1, 3].Value = "Date";
             worksheet.Cells[1, 4].Value = "Payee Id";
@@ -125,7 +123,6 @@ namespace Envelopes.Data.Persistence {
             worksheet.Cells[1, 8].Value = "Inflow";
 
             for (int i = 0; i < transactions.Count; i++) {
-                worksheet.Cells["A" + (i + 2)].Value = transactions[i].Id;
                 worksheet.Cells["B" + (i + 2)].Value = transactions[i].AccountId;
                 worksheet.Cells["C" + (i + 2)].Value = transactions[i].Date;
                 worksheet.Cells["D" + (i + 2)].Value = transactions[i].Payee;
@@ -203,10 +200,9 @@ namespace Envelopes.Data.Persistence {
             var accountTransactions = new List<AccountTransaction>();
             bool isAccountTransactionRowValid = true;
             for (int row = 2; isAccountTransactionRowValid; row++) {
-                if (worksheet.Cells[row, 1].Value != null) {
-                    // If current row, does not have an Id (col = 1), then not a valid row.
+                if (worksheet.Cells[row, 2].Value != null) {
+                    // If current row, does not have an Account ID (col = 2), then not a valid row.
                     accountTransactions.Add(new AccountTransaction {
-                        Id = worksheet.Cells[row, 1].GetValue<int>(),
                         AccountId = worksheet.Cells[row, 2].GetValue<int>(),
                         Date = worksheet.Cells[row, 3].GetValue<DateTime>(),
                         Payee = worksheet.Cells[row, 4].GetValue<string>(),

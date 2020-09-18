@@ -5,7 +5,6 @@ using NUnit.Framework;
 namespace Tests.Envelopes.Envelopes.Helpers {
     [Apartment(ApartmentState.STA)]
     internal class GridValidatorTests {
-
         [Test]
         public void ParseAmountFromString_RegularNumberIsNotChanged() {
             bool ableToParseAmount = GridValidator.ParseAmountFromString("1", out decimal parsedDecimalAmount);

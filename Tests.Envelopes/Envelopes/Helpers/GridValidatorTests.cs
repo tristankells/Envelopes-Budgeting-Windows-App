@@ -7,10 +7,14 @@ namespace Tests.Envelopes.Envelopes.Helpers {
     internal class GridValidatorTests {
         [Test]
         public void ParseAmountFromString_RegularNumberIsNotChanged() {
-            bool ableToParseAmount = GridValidator.ParseAmountFromString("1", out decimal parsedDecimalAmount);
-
-            Assert.IsTrue(ableToParseAmount);
+            GridValidator.ParseAmountFromString("1", out decimal parsedDecimalAmount);
             Assert.AreEqual(1M, parsedDecimalAmount);
+
+            GridValidator.ParseAmountFromString("-10", out parsedDecimalAmount);
+            Assert.AreEqual(-10M, parsedDecimalAmount);
+
+            GridValidator.ParseAmountFromString("100.98", out parsedDecimalAmount);
+            Assert.AreEqual(100.98M, parsedDecimalAmount);
         }
 
         [Test]
@@ -32,6 +36,9 @@ namespace Tests.Envelopes.Envelopes.Helpers {
 
             GridValidator.ParseAmountFromString("($9.00) - 9", out parsedDecimalAmount);
             Assert.AreEqual(-18M, parsedDecimalAmount);
+
+            GridValidator.ParseAmountFromString("($9.00) - 9 - 5", out parsedDecimalAmount);
+            Assert.AreEqual(-23M, parsedDecimalAmount);
         }
 
         [Test]
@@ -39,7 +46,7 @@ namespace Tests.Envelopes.Envelopes.Helpers {
             GridValidator.ParseAmountFromString("$1.00 + $1.00", out decimal parsedDecimalAmount);
             Assert.AreEqual(2M, parsedDecimalAmount);
 
-            GridValidator.ParseAmountFromString("9 + 7", out parsedDecimalAmount);
+            GridValidator.ParseAmountFromString("9+7", out parsedDecimalAmount);
             Assert.AreEqual(16M, parsedDecimalAmount);
 
             GridValidator.ParseAmountFromString("$1000 + 8.85", out parsedDecimalAmount);
@@ -47,9 +54,6 @@ namespace Tests.Envelopes.Envelopes.Helpers {
 
             GridValidator.ParseAmountFromString("100 + $9.12", out parsedDecimalAmount);
             Assert.AreEqual(109.12M, parsedDecimalAmount);
-
-            GridValidator.ParseAmountFromString("+9", out parsedDecimalAmount);
-            Assert.AreEqual(9M, parsedDecimalAmount);
 
             GridValidator.ParseAmountFromString("($9.00) + 9", out parsedDecimalAmount);
             Assert.AreEqual(0M, parsedDecimalAmount);

@@ -22,12 +22,17 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Style="{StaticResource GridAndListTitleLabelStyle}" Text="Transactions" />
         <DataGrid Grid.Row="1"
-                  Name="TransactionsDataGrid"
+                  Name="transactionsGrid"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   HeadersVisibility="Column"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding AccountTransactions}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding MyCommand}" Header="MyCommand"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridComboBoxColumn Width="3*"
                                         Header="Account"

@@ -39,12 +39,12 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         #region Events
 
         private void BindEvents() {
-            view.Loaded += View_Loaded;
-            view.DataGridCellEditEnding += CategoriesDataGrid_CellEditEnding;
-            view.Unloaded += View_Unloaded;
+            view.Loaded += OnViewLoaded;
+            view.DataGridCellEditEnding += OnCategoriesGridCellEditEnding;
+            view.Unloaded += OnViewUnloaded;
         }
 
-        private void CategoriesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+        private void OnCategoriesGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
             switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
                 case nameof(Category.Name):
                     OnNameCellEditEnding(((TextBox) e.EditingElement).Text);
@@ -77,12 +77,11 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
             viewModel.SelectedItem.Budgeted = GridValidator.ParseAmountFromString(newText, out decimal newBudgetedAmount) ? newBudgetedAmount : 0;
         }
 
-
-        private void View_Unloaded(object sender, RoutedEventArgs e) {
+        private void OnViewUnloaded(object sender, RoutedEventArgs e) {
             viewModel.ItemList.Clear();
         }
 
-        private void View_Loaded(object sender, RoutedEventArgs e) {
+        private void OnViewLoaded(object sender, RoutedEventArgs e) {
             PopulateCategoriesList();
         }
 
@@ -95,7 +94,13 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
         private void BindCommands() {
             viewModel.AddItemCommand = new DelegateCommand(ExecuteAddCategory, CanExecuteAddCategory);
             viewModel.DeleteItemCommand = new DelegateCommand(ExecuteDeleteCategory, CanExecuteDeleteCategory);
+            viewModel.CoverOverBudgetCommand = new DelegateCommand(ExecuteCoverOverBudget, CanExecuteCoverOverBudget);
         }
+
+        private void ExecuteCoverOverBudget() {
+        }
+
+        private bool CanExecuteCoverOverBudget() => true;
 
         private static bool CanExecuteDeleteCategory() => true;
 

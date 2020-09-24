@@ -23,6 +23,15 @@
           "lib/netstandard1.5/Castle.Core.dll": {}
         }
       },
+      "CoreCLR-NCalc/2.2.88": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/NCalc.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/NCalc.dll": {}
+        }
+      },
       "coverlet.collector/1.2.0": {
         "type": "package",
         "build": {
@@ -2061,6 +2070,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
+          "CoreCLR-NCalc": "2.2.88",
           "EPPlus": "5.3.1",
           "Envelopes.Models": "1.0.0",
           "Envelopes.Persistence": "1.0.0",
@@ -2129,6 +2139,20 @@
         "lib/netstandard1.5/Castle.Core.dll",
         "lib/netstandard1.5/Castle.Core.xml",
         "readme.txt"
+      ]
+    },
+    "CoreCLR-NCalc/2.2.88": {
+      "sha512": "jxzMfKeBkN1NJ4tUOXzifER4bcMekUKohgoBjwg5G4Djrq8C0VX+aZoYhMMzK4CYN55AGDUfDyVivLCq+CGL4g==",
+      "type": "package",
+      "path": "coreclr-ncalc/2.2.88",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "coreclr-ncalc.2.2.88.nupkg.sha512",
+        "coreclr-ncalc.nuspec",
+        "lib/net45/NCalc.dll",
+        "lib/netstandard1.3/NCalc.dll",
+        "lib/netstandard2.0/NCalc.dll"
       ]
     },
     "coverlet.collector/1.2.0": {

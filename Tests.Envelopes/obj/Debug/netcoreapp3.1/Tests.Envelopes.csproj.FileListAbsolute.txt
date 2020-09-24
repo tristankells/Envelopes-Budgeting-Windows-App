@@ -253,3 +253,4 @@ C:\Projects\Envelopes\Tests.Envelopes\obj\Debug\netcoreapp3.1\Tests.Envelopes.cs
 C:\Projects\Envelopes\Tests.Envelopes\obj\Debug\netcoreapp3.1\Tests.Envelopes.dll
 C:\Projects\Envelopes\Tests.Envelopes\obj\Debug\netcoreapp3.1\Tests.Envelopes.pdb
 C:\Projects\Envelopes\Tests.Envelopes\obj\Debug\netcoreapp3.1\Tests.Envelopes.genruntimeconfig.cache
+C:\Projects\Envelopes\Tests.Envelopes\bin\Debug\netcoreapp3.1\NCalc.dll

@@ -21,6 +21,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="9*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Style="{StaticResource GridAndListTitleLabelStyle}" Text="Categories" />
         <DataGrid Grid.Row="1" Name="categoriesDataGrid"
@@ -31,6 +32,11 @@
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedItem}"
                   ItemsSource="{Binding ItemList}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding CoverOverBudgetCommand}" Header="Cover Over Budget"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"
                                     Width="7*"
@@ -42,7 +48,9 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
+                <!-- Ignoring these columns to find some where to better surface the data -->
                 <DataGridTextColumn Header="Budgeted"
+                                    Visibility="Collapsed" 
                                     Width="2*"
                                     Binding="{Binding Budgeted, StringFormat=C}"
                                     FontSize="15">
@@ -53,7 +61,9 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
+                <!-- Ignoring these columns to find some where to better surface the data -->
                 <DataGridTextColumn Header="Activity"
+                                    Visibility="Collapsed"
                                     Width="2*"
                                     IsReadOnly="True"
                                     Binding="{Binding Activity, StringFormat=C}"
@@ -95,5 +105,6 @@
         </DataGrid>
         <Button Grid.Row="2" FontSize="20" Width="300" Style="{StaticResource PageNavigationButton}"
                 Command="{Binding AddItemCommand }" Content="Add Category" />
+        <TextBlock Grid.Row="3" Style="{StaticResource GridAndListTitleLabelStyle}" Text="{Binding TotalAvailable}" />
     </Grid>
 </UserControl>

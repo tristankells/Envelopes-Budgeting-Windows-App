@@ -1,7 +1,9 @@
-﻿using Envelopes.Common;
+﻿using System.Windows.Controls;
+using Envelopes.Common;
 
 namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
     public interface ITransactionsGridView : IView {
+        public DataGrid TransactionsGrid { get; }
     }
 
     /// <summary>
@@ -11,5 +13,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         public TransactionsGridView() {
             InitializeComponent();
         }
+
+        public DataGrid TransactionsGrid => transactionsGrid;
     }
 }

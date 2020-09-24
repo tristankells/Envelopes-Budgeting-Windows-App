@@ -163,6 +163,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "CoreCLR-NCalc": {
+              "target": "Package",
+              "version": "[2.2.88, )"
+            },
             "EPPlus": {
               "target": "Package",
               "version": "[5.3.1, )"

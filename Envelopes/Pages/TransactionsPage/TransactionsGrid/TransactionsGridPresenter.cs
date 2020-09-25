@@ -1,11 +1,13 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Envelopes.Common;
 using Envelopes.Data;
+using Envelopes.Helpers;
 using Envelopes.Models;
 using Envelopes.Persistence.Importer;
 
@@ -87,8 +89,31 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         private void BindEvents() {
             view.Loaded += OnViewLoaded;
             view.Unloaded += OnViewUnloaded;
+            view.DataGridCellEditEnding += OnTransactionsGridCellEditEnding;
             notificationService.OnActiveAccountChanged += OnActiveAccountChanged;
             notificationService.OnShowAllTransactionsExecuted += OnShowAllTransactionsExecuted;
+        }
+
+        private static void OnTransactionsGridCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e) {
+            switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
+                case nameof(AccountTransaction.Outflow):
+                    OnOutflowCellEditEnding((TextBox)e.EditingElement);
+                    break;
+
+                case nameof(AccountTransaction.Inflow):
+                    OnInflowCellEditEnding((TextBox)e.EditingElement);
+                    break;
+            }
+        }
+
+        private static void OnOutflowCellEditEnding(TextBox textBox) {
+            GridValidator.ParseAmountFromString(textBox.Text, out decimal newBudgetedAmount);
+            textBox.Text = newBudgetedAmount.ToString(CultureInfo.CurrentUICulture);
+        }
+
+        private static void OnInflowCellEditEnding(TextBox textBox) {
+            GridValidator.ParseAmountFromString(textBox.Text, out decimal newBudgetedAmount);
+            textBox.Text = newBudgetedAmount.ToString(CultureInfo.CurrentUICulture);
         }
 
         private void OnShowAllTransactionsExecuted(object? sender, EventArgs e) {
@@ -120,9 +145,6 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             viewModel.Categories.Add(new Category {
                 Name = "Inflow"
             });
-            //viewModel.Categories.Add(new Category() {
-            //    Name = "Transfer"
-            //});
         }
 
         private void PopulateAccounts() {

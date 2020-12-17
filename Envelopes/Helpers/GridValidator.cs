@@ -13,13 +13,22 @@ namespace Envelopes.Helpers {
                 return true; // Empty string should be parsed as $0.00
             }
 
-            string amountAsStringCleanedUp = amountAsString.Replace('(', '-')
+            string amountAsStringCleanedUp = amountAsString
+                .Replace('(', '-')
                 .Replace(")", "")
-                .Replace("$", ""); // Removes '$' and replaces instance of (x) with -x
+                .Replace(",", "")
+                .Replace("$", ""); // Removes '$', replaces instance of '(' with '-', removes instances of ')' and ','
 
-            var expr = new Expression(amountAsStringCleanedUp);
-            Func<decimal> f = expr.ToLambda<decimal>();
-            amountAsDecimal = f();
+            try {
+                var expr = new Expression(amountAsStringCleanedUp);
+                Func<decimal> f = expr.ToLambda<decimal>();
+                amountAsDecimal = f();
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+                return false;
+            }
+           
             return true;
         }
     }

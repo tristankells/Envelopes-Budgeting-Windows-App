@@ -17,10 +17,10 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             TransactionsGrid.CellEditEnding += OnCellEditEnding;
         }
 
-        public event EventHandler<DataGridCellEditEndingEventArgs> DataGridCellEditEnding;
+        public event EventHandler<DataGridCellEditEndingEventArgs>? DataGridCellEditEnding;
         public DataGrid TransactionsGrid => transactionsGrid;
 
-        private void OnCellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+        private void OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e) {
             DataGridCellEditEnding?.Invoke(sender, e);
         }
     }

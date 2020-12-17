@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Envelopes.Common;
 using Envelopes.Data;
 using Envelopes.Helpers;
@@ -143,7 +144,8 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
             }
 
             viewModel.Categories.Add(new Category {
-                Name = "Inflow"
+                Name = "Inflow",
+                Id = 999
             });
         }
 

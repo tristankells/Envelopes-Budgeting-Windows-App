@@ -23,7 +23,7 @@ namespace Envelopes.Data {
 
         // Account Transactions
         public IEnumerable<AccountTransaction> AccountTransactions();
-        public Task<AccountTransaction> AddAccountTransaction(Account activeAccountId);
+        public Task<AccountTransaction> AddAccountTransaction(Account? activeAccountId);
         public bool AddAccountTransaction(AccountTransaction transaction);
         public bool RemoveAccountTransaction(AccountTransaction selectedAccount);
 
@@ -54,7 +54,7 @@ namespace Envelopes.Data {
             this.identifierService = identifierService;
         }
 
-        public bool IgnoreApplicationSaveEvents { get; set; }
+        private bool IgnoreApplicationSaveEvents { get; set; }
 
         public async Task LoadApplicationData() {
             IgnoreApplicationSaveEvents = true;
@@ -254,12 +254,16 @@ namespace Envelopes.Data {
             return accountTransactions.OrderByDescending(a => a.Date);
         }
 
-        public async Task<AccountTransaction> AddAccountTransaction(Account activeAccount) {
+        public async Task<AccountTransaction> AddAccountTransaction(Account? activeAccount) {
             var transaction = new AccountTransaction {
-                AccountId = activeAccount.Id,
-                AccountName = activeAccount.Name,
                 Date = DateTime.Now
             };
+
+            if (activeAccount != null) {
+                transaction.AccountId = activeAccount.Id;
+                transaction.AccountName = activeAccount.Name;
+            } 
+
             transaction.PropertyChanged += OnTransactionPropertyChanged;
             accountTransactions.Add(transaction);
             await SaveBudget();
@@ -283,7 +287,7 @@ namespace Envelopes.Data {
                 decimal difference = pcExtendedEventArgs.NewValue - pcExtendedEventArgs.OldValue;
                 var transaction = sender as AccountTransaction;
 
-                Account account = accounts.FirstOrDefault(a => a.Id == transaction?.AccountId);
+                Account? account = accounts.FirstOrDefault(a => a.Id == transaction?.AccountId);
                 if (account == null) {
                     return;
                 }
@@ -303,14 +307,14 @@ namespace Envelopes.Data {
             await SaveBudget();
         }
 
-        private void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private async void OnAccountTransactionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 // Deduct the transaction total from the transaction account balance.
                 case NotifyCollectionChangedAction.Remove: {
-                    AccountTransaction updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
+                    AccountTransaction? updatedTransaction = e.OldItems.OfType<AccountTransaction>().FirstOrDefault();
                     if (updatedTransaction == null) return;
 
-                    Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
+                    Account? account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
                     if (account == null) return;
                     account.Total -= updatedTransaction.Total;
 
@@ -319,12 +323,12 @@ namespace Envelopes.Data {
                 }
 
                 case NotifyCollectionChangedAction.Add: {
-                    AccountTransaction updatedTransaction = e.NewItems.OfType<AccountTransaction>().FirstOrDefault();
+                    AccountTransaction? updatedTransaction = e.NewItems.OfType<AccountTransaction>().FirstOrDefault();
                     if (updatedTransaction == null) {
                         return;
                     }
 
-                    Account account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
+                    Account? account = Accounts().FirstOrDefault(a => a.Id == updatedTransaction.AccountId);
                     if (account == null) {
                         return;
                     }
@@ -335,6 +339,7 @@ namespace Envelopes.Data {
                     break;
                 }
             }
+            await SaveBudget();
         }
 
         public bool RemoveAccountTransaction(AccountTransaction transaction) => accountTransactions.Remove(transaction);

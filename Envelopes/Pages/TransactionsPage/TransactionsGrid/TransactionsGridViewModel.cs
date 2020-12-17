@@ -7,19 +7,19 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         public ObservableCollection<AccountTransaction> AccountTransactions { get; }
         public ObservableCollection<Category> Categories { get; }
         public ObservableCollection<Account> Accounts { get; }
-        IAsyncCommand ImportTransactionsCommand { get; set; }
+        IAsyncCommand? ImportTransactionsCommand { get; set; }
     }
 
     public class TransactionsGridViewModel : ItemsViewModelBase<AccountTransaction>, ITransactionsGridViewModel {
-        private ObservableCollection<Account> accounts;
-        private ObservableCollection<Category> categories;
+        private ObservableCollection<Account> accounts = new ObservableCollection<Account>();
+        private ObservableCollection<Category> categories = new ObservableCollection<Category>();
 
-        public IAsyncCommand ImportTransactionsCommand { get; set; }
+        public IAsyncCommand? ImportTransactionsCommand { get; set; }
 
         public ObservableCollection<AccountTransaction> AccountTransactions => ItemList;
 
         public ObservableCollection<Category> Categories {
-            get => categories ??= new ObservableCollection<Category>();
+            get => categories;
             private set {
                 categories = value;
                 OnPropertyChanged(nameof(Categories));
@@ -27,7 +27,7 @@ namespace Envelopes.Pages.TransactionsPage.TransactionsGrid {
         }
 
         public ObservableCollection<Account> Accounts {
-            get => accounts ??= new ObservableCollection<Account>();
+            get => accounts;
             private set {
                 accounts = value;
                 OnPropertyChanged(nameof(Accounts));

@@ -9,7 +9,7 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance envelopes:IMainWindowViewModel}"
-        Background="AliceBlue"
+        Background="{x:Static presentation:ColourPalette.LightBlue}"
         Title="Envelopes" Height="900" Width="1600">
     <Window.Resources>
         <ResourceDictionary>

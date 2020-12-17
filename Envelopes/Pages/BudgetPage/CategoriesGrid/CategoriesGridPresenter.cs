@@ -44,7 +44,7 @@ namespace Envelopes.Pages.BudgetPage.CategoriesGrid {
             view.Unloaded += OnViewUnloaded;
         }
 
-        private void OnCategoriesGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+        private void OnCategoriesGridCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e) {
             switch ((e.Column as DataGridTextColumn)?.SortMemberPath) {
                 case nameof(Category.Name):
                     OnNameCellEditEnding(((TextBox) e.EditingElement).Text);
